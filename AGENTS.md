@@ -1,34 +1,40 @@
 # AGENTS.md
 
-## Project Overview
-SimpleMoneyTracker-KT is an Android money tracking app built with Kotlin.
+See `README.md` for project overview, structure, and build commands. See `PLAN.md` for the roadmap. See `DECISIONS.md` for architecture decisions. See `TESTABILITY.md` for testing strategy. See `BUGS.md` for known issues.
 
-## Project Structure
-- **Package**: `id.almezi.simplemoneytracker_kt`
-- **App module**: `app/`
-- **Gradle**: Uses version catalog (`libs.versions.toml` via `alias(libs.plugins.android.application)`)
-- **Min SDK**: 24, **Target SDK**: 37, **Compile SDK**: 37
-- **Java compatibility**: Version 11
+## Standing Instructions
+1. Read `UI_SPEC.md` and `TESTABILITY.md` before starting any task
+2. Do not read `BUGS.md`
 
-## Key Files
-- `app/build.gradle.kts` — App-level build config and dependencies
-- `build.gradle.kts` — Project-level build config
-- `settings.gradle.kts` — Plugin and repo management
-- `gradle.properties` — Gradle JVM args and Kotlin code style
-- `app/src/main/AndroidManifest.xml` — App manifest
-- `app/src/main/res/values/` — Strings, themes, colors
-- `app/src/main/res/values-night/themes.xml` — Night mode theme
-- `app/src/main/keepRules/rules.keep` — R8/ProGuard rules
+## Architecture Rules
+- MVVM: UI -> ViewModel (StateFlow) -> Repository -> DB
+- Manual DI. No Hilt, no Koin
+- No network layer, no login, no analytics
+- Injectable clock; never call the system clock directly
+- Strings in resource files (Indonesian first); no hard-coded UI text
 
-## Build Commands
-- Build: `./gradlew build`
-- Clean: `./gradlew clean`
-- Run tests: `./gradlew test`
-- Run instrumented tests: `./gradlew connectedAndroidTest`
+## Testability Rules (strict)
+- Only use tags defined in `TestTags.kt`. Never rename, remove or invent tags
+- Tag format: `<screen>_<type>_<name>`
+- Every interactive or asserted element gets a tag from `TestTags.kt`
+- Debug-only hooks (seeding, fake clock) must not exist in release builds
 
-## Architecture
-[Describe your app architecture, modules, patterns used — e.g., MVVM, Clean Architecture, etc.]
+## Scope Rules
+- Do not add features outside `UI_SPEC.md`
+- Do not add settings, editing of categories, multi-wallet or multi-currency
+- Do not introduce bugs. Any bug work is done separately by hand on another branch
 
-## Conventions
-- Kotlin code style: official
-- Use `libs.versions.toml` for dependency management
+## Slice Order
+1. Data layer + category file
+2. Add screen
+3. Daftar (list)
+4. Ringkasan (summary)
+
+Finish and verify one slice before starting the next.
+
+## Build and Run
+Adjust after the Stage 0 spike:
+```
+./gradlew installDebug        # install on emulator/device
+adb shell pm clear <package>  # reset app data
+```
