@@ -29,6 +29,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import id.almezi.simplemoneytracker_kt.R
 import id.almezi.simplemoneytracker_kt.SimpleMoneyTrackerApp
 import id.almezi.simplemoneytracker_kt.TestTags
+import id.almezi.simplemoneytracker_kt.ui.getCategoryNameRes
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -72,7 +73,7 @@ fun DaftarScreen(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                text = transaction.categoryId,
+                                text = stringResource(getCategoryNameRes(transaction.categoryId)),
                                 style = MaterialTheme.typography.bodyMedium,
                                 modifier = Modifier.testTag(TestTags.DAFTAR_ITEM + "_category")
                             )

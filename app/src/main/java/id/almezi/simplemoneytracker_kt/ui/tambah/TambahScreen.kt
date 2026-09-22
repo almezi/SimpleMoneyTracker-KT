@@ -36,6 +36,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import id.almezi.simplemoneytracker_kt.R
 import id.almezi.simplemoneytracker_kt.SimpleMoneyTrackerApp
 import id.almezi.simplemoneytracker_kt.TestTags
+import id.almezi.simplemoneytracker_kt.ui.getCategoryNameRes
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @Composable
 fun TambahScreen(
@@ -53,6 +56,7 @@ fun TambahScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
     val calendar = Calendar.getInstance()
+    val dateFormat = remember { SimpleDateFormat("dd MMM yyyy", Locale("id", "ID")) }
 
     Scaffold(
         modifier = modifier,
@@ -109,7 +113,7 @@ fun TambahScreen(
                     FilterChip(
                         selected = uiState.selectedCategoryId == category.id,
                         onClick = { viewModel.updateCategory(category.id) },
-                        label = { Text(category.id) },
+                        label = { Text(stringResource(getCategoryNameRes(category.id))) },
                         modifier = Modifier.padding(end = 4.dp)
                             .testTag(TestTags.TAMBAH_CATEGORY_ITEM + "_" + category.id)
                     )
@@ -141,7 +145,7 @@ fun TambahScreen(
                 modifier = Modifier.padding(vertical = 8.dp)
                     .testTag(TestTags.TAMBAH_DATE_PICKER)
             ) {
-                Text(text = stringResource(R.string.tambah_date_button))
+                Text(text = dateFormat.format(uiState.dateMillis))
             }
 
             OutlinedTextField(

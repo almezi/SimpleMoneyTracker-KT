@@ -23,6 +23,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import id.almezi.simplemoneytracker_kt.R
 import id.almezi.simplemoneytracker_kt.SimpleMoneyTrackerApp
 import id.almezi.simplemoneytracker_kt.TestTags
+import id.almezi.simplemoneytracker_kt.ui.getCategoryNameRes
 
 @Composable
 fun RingkasanScreen(
@@ -99,7 +100,7 @@ fun RingkasanScreen(
                                 modifier = Modifier.padding(16.dp)
                             ) {
                                 Text(
-                                    text = category,
+                                    text = stringResource(getCategoryNameRes(category)),
                                     style = MaterialTheme.typography.bodyLarge
                                 )
                                 Spacer(modifier = Modifier.weight(1f))

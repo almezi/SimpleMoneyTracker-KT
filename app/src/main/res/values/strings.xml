@@ -17,4 +17,43 @@
     <string name="tambah_save_success">Transaksi berhasil disimpan</string>
     <string name="delete">Hapus</string>
     <string name="loading">Memuat…</string>
+
+    <!-- Category Names -->
+    <string name="cat_inc_salary">Gaji</string>
+    <string name="cat_inc_freelance">Freelance</string>
+    <string name="cat_inc_bonus_thr">Bonus &amp; THR</string>
+    <string name="cat_inc_investment">Investasi</string>
+    <string name="cat_inc_sales">Penjualan</string>
+    <string name="cat_inc_refund">Refund</string>
+    <string name="cat_inc_transfer_in">Transfer Masuk</string>
+    <string name="cat_inc_gift">Hadiah</string>
+    <string name="cat_inc_other">Lainnya</string>
+
+    <string name="cat_exp_finance_investment">Investasi</string>
+    <string name="cat_exp_finance_savings">Tabungan</string>
+    <string name="cat_exp_daily_food">Makanan &amp; Minuman</string>
+    <string name="cat_exp_daily_groceries">Belanja Bulanan</string>
+    <string name="cat_exp_daily_household">Kebutuhan Rumah Tangga</string>
+    <string name="cat_exp_daily_other">Lainnya (Harian)</string>
+    <string name="cat_exp_health_doctor">Dokter</string>
+    <string name="cat_exp_health_medicine">Obat-obatan</string>
+    <string name="cat_exp_health_gym">Olahraga / Gym</string>
+    <string name="cat_exp_health_other">Lainnya (Kesehatan)</string>
+    <string name="cat_exp_lifestyle_clothing">Pakaian</string>
+    <string name="cat_exp_lifestyle_electronics">Elektronik</string>
+    <string name="cat_exp_lifestyle_grooming">Perawatan Diri</string>
+    <string name="cat_exp_lifestyle_other">Lainnya (Gaya Hidup)</string>
+    <string name="cat_exp_transport_fuel">Bahan Bakar</string>
+    <string name="cat_exp_transport_parking">Parkir</string>
+    <string name="cat_exp_transport_public">Transportasi Umum</string>
+    <string name="cat_exp_transport_travel">Perjalanan / Travel</string>
+    <string name="cat_exp_transport_other">Lainnya (Transportasi)</string>
+    <string name="cat_exp_finance_transfer_out">Transfer Keluar</string>
+    <string name="cat_exp_finance_insurance">Asuransi</string>
+    <string name="cat_exp_finance_tax">Pajak</string>
+    <string name="cat_exp_finance_other">Lainnya (Keuangan)</string>
+    <string name="cat_exp_education_course">Kursus / Pelatihan</string>
+    <string name="cat_exp_education_books">Buku / Edukasi</string>
+    <string name="cat_exp_education_other">Lainnya (Pendidikan)</string>
+    <string name="cat_exp_other">Lainnya</string>
 </resources>
