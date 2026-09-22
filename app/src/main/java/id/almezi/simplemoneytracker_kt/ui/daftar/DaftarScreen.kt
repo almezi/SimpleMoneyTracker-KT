@@ -79,7 +79,7 @@ fun DaftarScreen(
                             )
                             Spacer(modifier = Modifier.weight(1f))
                             IconButton(
-                                onClick = { /* TODO: Implement delete */ },
+                                onClick = { viewModel.deleteTransaction(transaction.id) },
                                 modifier = Modifier.testTag(TestTags.DAFTAR_ITEM + "_delete")
                             ) {
                                 Icon(

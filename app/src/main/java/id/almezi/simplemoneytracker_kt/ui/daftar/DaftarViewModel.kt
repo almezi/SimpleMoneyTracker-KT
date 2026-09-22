@@ -27,8 +27,10 @@ class DaftarViewModel(
         }
     }
 
-    suspend fun deleteTransaction(id: Long) {
-        repository.deleteTransaction(id)
+    fun deleteTransaction(id: Long) {
+        viewModelScope.launch {
+            repository.deleteTransaction(id)
+        }
     }
 
     class Factory(
