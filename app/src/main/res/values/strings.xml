@@ -17,6 +17,9 @@
     <string name="tambah_save_success">Transaksi berhasil disimpan</string>
     <string name="delete">Hapus</string>
     <string name="loading">Memuat…</string>
+    <string name="delete_dialog_title">Hapus transaksi?</string>
+    <string name="delete_dialog_message">Transaksi ini akan dihapus permanen.</string>
+    <string name="cancel">Batal</string>
 
     <!-- Category Names -->
     <string name="cat_inc_salary">Gaji</string>

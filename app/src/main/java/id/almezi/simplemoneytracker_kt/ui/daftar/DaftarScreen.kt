@@ -13,10 +13,15 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.ui.Alignment
@@ -44,6 +49,34 @@ fun DaftarScreen(
 ) {
     val transactions by viewModel.transactions.collectAsState()
     val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale("id", "ID"))
+    var transactionToDelete by remember { mutableStateOf<Long?>(null) }
+
+    if (transactionToDelete != null) {
+        AlertDialog(
+            onDismissRequest = { transactionToDelete = null },
+            title = { Text(stringResource(R.string.delete_dialog_title)) },
+            text = { Text(stringResource(R.string.delete_dialog_message)) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        transactionToDelete?.let { viewModel.deleteTransaction(it) }
+                        transactionToDelete = null
+                    },
+                    modifier = Modifier.testTag("delete_dialog_confirm")
+                ) {
+                    Text(stringResource(R.string.delete))
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { transactionToDelete = null },
+                    modifier = Modifier.testTag("delete_dialog_cancel")
+                ) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
+        )
+    }
 
     Scaffold(
         modifier = modifier.testTag(TestTags.DAFTAR_SCREEN),
@@ -79,7 +112,7 @@ fun DaftarScreen(
                             )
                             Spacer(modifier = Modifier.weight(1f))
                             IconButton(
-                                onClick = { viewModel.deleteTransaction(transaction.id) },
+                                onClick = { transactionToDelete = transaction.id },
                                 modifier = Modifier.testTag(TestTags.DAFTAR_ITEM + "_delete")
                             ) {
                                 Icon(
