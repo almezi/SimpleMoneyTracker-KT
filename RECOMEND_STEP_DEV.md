@@ -20,35 +20,36 @@ The project currently has Slice 1 (Data Layer) and Slice 2 (Tambah Screen with V
 
 ---
 
-## Phase 2 — Daftar (List Screen)
+## Phase 2 — Daftar (List Screen) — ✅ DONE
 
-| Step | Task | Why |
-|------|------|-----|
-| 8 | Create `DaftarViewModel.kt` — reads all transactions from `TransactionDao.getAll()` as StateFlow | MVVM pattern |
-| 9 | Create `DaftarScreen.kt` — LazyColumn listing transactions, grouped by date | Core list screen per slice order |
-| 10 | Add `DAFTAR_SCREEN` tag on screen root, `DAFTAR_ITEM` on each transaction row | TestTags rule: every interactive/asserted element gets a tag |
-| 11 | Add tags for list item elements (date header, amount, category, note, delete button) | Testability |
-
----
-
-## Phase 3 — Ringkasan (Summary Screen)
-
-| Step | Task | Why |
-|------|------|-----|
-| 12 | Create `RingkasanViewModel.kt` — aggregates totals by type (pemasukan/pengeluaran), by category | MVVM pattern |
-| 13 | Create `RingkasanScreen.kt` — totals for pemasukan/pengeluaran, category breakdown | Core summary screen per slice order |
-| 14 | Add `RINGKASAN_SCREEN` tag on screen root and tags for summary cards | Testability |
+| Step | Task | Status |
+|------|------|--------|
+| 8 | Create `DaftarViewModel.kt` — reads all transactions from `TransactionDao.getAll()` as StateFlow | ✅ Done |
+| 9 | Create `DaftarScreen.kt` — LazyColumn listing transactions, grouped by date | ✅ Done |
+| 10 | Add `DAFTAR_SCREEN` tag on screen root, `DAFTAR_ITEM` on each transaction row | ✅ Done |
+| 11 | Add tags for list item elements (date header, amount, category, note, delete button) | ✅ Done |
 
 ---
 
-## Phase 4 — Navigation (Cross-Cutting)
+## Phase 3 — Ringkasan (Summimplement phase 4
+ary Screen) — ✅ DONE
 
-| Step | Task | Why |
-|------|------|-----|
-| 15 | Add `navigation-compose` dependency in `app/build.gradle.kts` | NavHost for multi-screen app |
-| 16 | Create `NavGraph.kt` with routes: `tambah`, `daftar`, `ringkasan` | Screen routing |
-| 17 | Add bottom navigation bar in `MainActivity` tying ViewModels to screens | Standard mobile navigation pattern |
-| 18 | Move `TambahScreen` behind nav route, remove direct call from `MainActivity` | Currently hardcoded — not scalable |
+| Step | Task | Status |
+|------|------|--------|
+| 12 | Create `RingkasanViewModel.kt` — aggregates totals by type (pemasukan/pengeluaran), by category | ✅ Done |
+| 13 | Create `RingkasanScreen.kt` — totals for pemasukan/pengeluaran, category breakdown | ✅ Done |
+| 14 | Add `RINGKASAN_SCREEN` tag on screen root and tags for summary cards | ✅ Done |
+
+---
+
+## Phase 4 — Navigation (Cross-Cutting) — ✅ DONE
+
+| Step | Task | Status |
+|------|------|--------|
+| 15 | Add `navigation-compose` dependency in `app/build.gradle.kts` | ✅ Done |
+| 16 | Create `NavGraph.kt` with routes: `tambah`, `daftar`, `ringkasan` | ✅ Done |
+| 17 | Add bottom navigation bar in `MainActivity` tying ViewModels to screens | ✅ Done |
+| 18 | Move `TambahScreen` behind nav route, remove direct call from `MainActivity` | ✅ Done |
 
 ---
 
