@@ -19,4 +19,6 @@ object TestTags {
 
     // Ringkasan (summary) — reserved
     const val RINGKASAN_SCREEN = "ringkasan_screen"
+    const val RINGKASAN_TOTALS_CARD = "ringkasan_totals_card"
+    const val RINGKASAN_CATEGORY_ITEM = "ringkasan_category_item"
 }

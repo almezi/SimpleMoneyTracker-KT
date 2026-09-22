@@ -15,4 +15,6 @@
     <string name="tambah_error_amount">Jumlah tidak valid</string>
     <string name="tambah_error_category">Pilih kategori</string>
     <string name="tambah_save_success">Transaksi berhasil disimpan</string>
+    <string name="delete">Hapus</string>
+    <string name="loading">Memuat…</string>
 </resources>

@@ -17,6 +17,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -27,7 +29,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import id.almezi.simplemoneytracker_kt.R
 import id.almezi.simplemoneytracker_kt.SimpleMoneyTrackerApp
 import id.almezi.simplemoneytracker_kt.TestTags
-import id.almezi.simplemoneytracker_kt.data.Transaction
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -58,7 +59,7 @@ fun DaftarScreen(
                         Text(
                             text = dateFormat.format(transaction.dateEpochMillis),
                             style = MaterialTheme.typography.titleMedium,
-                            modifier = Modifier.testTag(TestTags.DAFTAR_ITEM_DATE)
+                            modifier = Modifier.testTag(TestTags.DAFTAR_ITEM + "_date")
                         )
                         Row(
                             modifier = Modifier.fillMaxWidth(),
@@ -67,21 +68,21 @@ fun DaftarScreen(
                             Text(
                                 text = transaction.amount.toString(),
                                 style = MaterialTheme.typography.bodyLarge,
-                                modifier = Modifier.testTag(TestTags.DAFTAR_ITEM_AMOUNT)
+                                modifier = Modifier.testTag(TestTags.DAFTAR_ITEM + "_amount")
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
                                 text = transaction.categoryId,
                                 style = MaterialTheme.typography.bodyMedium,
-                                modifier = Modifier.testTag(TestTags.DAFTAR_ITEM_CATEGORY)
+                                modifier = Modifier.testTag(TestTags.DAFTAR_ITEM + "_category")
                             )
                             Spacer(modifier = Modifier.weight(1f))
                             IconButton(
                                 onClick = { /* TODO: Implement delete */ },
-                                modifier = Modifier.testTag(TestTags.DAFTAR_ITEM_DELETE)
+                                modifier = Modifier.testTag(TestTags.DAFTAR_ITEM + "_delete")
                             ) {
                                 Icon(
-                                    imageVector = androidx.compose.material.icons.Icons.Default.Delete,
+                                    imageVector = Icons.Default.Delete,
                                     contentDescription = stringResource(R.string.delete)
                                 )
                             }
@@ -90,7 +91,7 @@ fun DaftarScreen(
                             Text(
                                 text = transaction.note,
                                 style = MaterialTheme.typography.bodySmall,
-                                modifier = Modifier.testTag(TestTags.DAFTAR_ITEM_NOTE)
+                                modifier = Modifier.testTag(TestTags.DAFTAR_ITEM + "_note")
                             )
                         }
                     }
