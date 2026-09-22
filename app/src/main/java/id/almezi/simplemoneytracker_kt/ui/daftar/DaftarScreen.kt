@@ -1,8 +1,10 @@
 package id.almezi.simplemoneytracker_kt.ui.daftar
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -81,52 +83,67 @@ fun DaftarScreen(
     Scaffold(
         modifier = modifier.testTag(TestTags.DAFTAR_SCREEN),
     ) { padding ->
-        LazyColumn(modifier = Modifier.padding(padding)) {
-            items(transactions) { transaction ->
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp)
-                        .testTag(TestTags.DAFTAR_ITEM)
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Text(
-                            text = dateFormat.format(transaction.dateEpochMillis),
-                            style = MaterialTheme.typography.titleMedium,
-                            modifier = Modifier.testTag(TestTags.DAFTAR_ITEM + "_date")
-                        )
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
+        if (transactions.isEmpty()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .padding(16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = stringResource(R.string.daftar_empty),
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
+        } else {
+            LazyColumn(modifier = Modifier.padding(padding)) {
+                items(transactions) { transaction ->
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                            .testTag(TestTags.DAFTAR_ITEM)
+                    ) {
+                        Column(modifier = Modifier.padding(16.dp)) {
                             Text(
-                                text = transaction.amount.toString(),
-                                style = MaterialTheme.typography.bodyLarge,
-                                modifier = Modifier.testTag(TestTags.DAFTAR_ITEM + "_amount")
+                                text = dateFormat.format(transaction.dateEpochMillis),
+                                style = MaterialTheme.typography.titleMedium,
+                                modifier = Modifier.testTag(TestTags.DAFTAR_ITEM + "_date")
                             )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = stringResource(getCategoryNameRes(transaction.categoryId)),
-                                style = MaterialTheme.typography.bodyMedium,
-                                modifier = Modifier.testTag(TestTags.DAFTAR_ITEM + "_category")
-                            )
-                            Spacer(modifier = Modifier.weight(1f))
-                            IconButton(
-                                onClick = { transactionToDelete = transaction.id },
-                                modifier = Modifier.testTag(TestTags.DAFTAR_ITEM + "_delete")
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Icon(
-                                    imageVector = Icons.Default.Delete,
-                                    contentDescription = stringResource(R.string.delete)
+                                Text(
+                                    text = transaction.amount.toString(),
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    modifier = Modifier.testTag(TestTags.DAFTAR_ITEM + "_amount")
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    text = stringResource(getCategoryNameRes(transaction.categoryId)),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    modifier = Modifier.testTag(TestTags.DAFTAR_ITEM + "_category")
+                                )
+                                Spacer(modifier = Modifier.weight(1f))
+                                IconButton(
+                                    onClick = { transactionToDelete = transaction.id },
+                                    modifier = Modifier.testTag(TestTags.DAFTAR_ITEM + "_delete")
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Delete,
+                                        contentDescription = stringResource(R.string.delete)
+                                    )
+                                }
+                            }
+                            if (transaction.note != null) {
+                                Text(
+                                    text = transaction.note,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    modifier = Modifier.testTag(TestTags.DAFTAR_ITEM + "_note")
                                 )
                             }
-                        }
-                        if (transaction.note != null) {
-                            Text(
-                                text = transaction.note,
-                                style = MaterialTheme.typography.bodySmall,
-                                modifier = Modifier.testTag(TestTags.DAFTAR_ITEM + "_note")
-                            )
                         }
                     }
                 }

@@ -20,6 +20,7 @@
     <string name="delete_dialog_title">Hapus transaksi?</string>
     <string name="delete_dialog_message">Transaksi ini akan dihapus permanen.</string>
     <string name="cancel">Batal</string>
+    <string name="daftar_empty">Belum ada transaksi bulan ini</string>
 
     <!-- Category Names -->
     <string name="cat_inc_salary">Gaji</string>
