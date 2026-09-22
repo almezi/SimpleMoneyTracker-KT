@@ -31,7 +31,7 @@ Transaction
 
 ## 4. Navigation
 
-Three screens, reached from a bottom navigation bar: **Tambah**, **Daftar**, **Ringkasan**. App opens on Daftar. Editing a transaction reuses the Tambah form.
+Three screens, reached from a bottom navigation bar: **Tambah**, **Daftar**, **Ringkasan**. App opens on Tambah. Navigation implemented with Jetpack Navigation Compose.
 
 ## 5. Design language
 
@@ -91,10 +91,25 @@ Only transactions with `countsInTotals = true` are included. Empty month: all ti
 
 Login or PIN (maybe later), multi-wallet, multi-currency, category editing, budgets, recurring transactions, export/import, charts, cloud sync, notifications.
 
-## 8. Assumptions to confirm (delete this section once decided)
+## 8. Current Development Status
 
-- Optional note field, 100 characters max
-- Edit reuses the Tambah form
-- Bottom navigation and the app opening on Daftar
-- Ringkasan tiles and the per-group expense list
-- Copy strings above are drafts; change them freely, they live in resource files
+### Completed
+- Data layer with Room database
+- Category management with fixed list
+- Tambah screen with validation and save
+- Daftar screen with transaction list
+- Ringkasan screen with summary
+- Navigation with bottom navigation bar
+- Test tags for all interactive elements
+
+### Architecture
+- MVVM: UI → ViewModel (StateFlow) → Repository → DB
+- Manual DI: No Hilt, no Koin
+- Injectable clock: Never call system clock directly
+- Testability: All UI elements use test tags from TestTags.kt
+
+### Next Steps
+- Month selector filter for Daftar and Ringkasan screens
+- Delete confirmation dialog
+- Edit transaction functionality
+- Theme customization

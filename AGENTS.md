@@ -28,6 +28,16 @@ A small, local-only personal money tracker, built purely as a test target for mo
 - Do not add settings, editing of categories, multi-wallet or multi-currency
 - Do not introduce bugs. Any bug work is done separately by hand on another branch
 
+## Current Development Status
+
+All slices have been completed:
+1. Data layer + category file (completed)
+2. Add screen (completed)
+3. Daftar (list) (completed)
+4. Ringkasan (summary) (completed)
+
+Navigation has been implemented to connect all screens.
+
 ## Slice order
 1. Data layer + category file
 2. Add screen

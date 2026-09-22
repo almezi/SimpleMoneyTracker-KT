@@ -29,9 +29,22 @@ Categories under each group (about 45 in total, overlapping ones merged), ID for
 |---|---|---|---|
 | Keuangan | exp_finance_investment | Investasi | false |
 | Keuangan | exp_finance_savings | Tabungan | false |
-| (rest) | | PASTE YOUR CLEANED LIST HERE | true |
+| Kebutuhan sehari-hari | exp_daily_food | Makanan & Minuman | true |
+| Kebutuhan sehari-hari | exp_daily_household | Kebutuhan Rumah Tangga | true |
+| Kebutuhan sehari-hari | exp_daily_other | Lainnya | true |
+| Kesehatan | exp_health_medical | Obat-obatan | true |
+| Kesehatan | exp_health_insurance | Asuransi Kesehatan | true |
+| Kesehatan | exp_health_other | Lainnya | true |
+| Lifestyle | exp_lifestyle_entertainment | Hiburan | true |
+| Lifestyle | exp_lifestyle_shopping | Belanja | true |
+| Lifestyle | exp_lifestyle_other | Lainnya | true |
+| Transportasi & perjalanan | exp_transport_fuel | Bahan Bakar | true |
+| Transportasi & perjalanan | exp_transport_public | Transportasi Umum | true |
+| Transportasi & perjalanan | exp_transport_other | Lainnya | true |
+| Pendidikan & karier | exp_education_training | Pelatihan | true |
+| Pendidikan & karier | exp_education_other | Lainnya | true |
 
-Each group also needs its own "Lainnya" fallback if your cleaned list has one.
+Each group has its own "Lainnya" fallback category.
 
 ## Rules
 - Only Transfer Masuk, Investasi (expense) and Tabungan are excluded from totals
