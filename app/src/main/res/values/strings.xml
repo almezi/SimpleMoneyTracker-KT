@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">SimpleMoneyTracker-KT</string>
     <string name="tambah_transaksi">Tambah Transaksi</string>
+    <string name="daftar_transaksi">Daftar Transaksi</string>
+    <string name="ringkasan_transaksi">Ringkasan</string>
     <string name="tambah_screen_title_pemasukan">Tambah Pemasukan</string>
     <string name="tambah_screen_title_pengeluaran">Tambah Pengeluaran</string>
     <string name="tambah_type_pemasukan">Pemasukan</string>

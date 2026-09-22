@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -11,10 +12,12 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Summarize
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -41,9 +44,9 @@ class MainActivity : ComponentActivity() {
                                     launchSingleTop = true
                                 } },
                                 icon = { Icon(
-                                    imageVector = androidx.compose.material.icons.Icons.Default.Add,
+                                    imageVector = Icons.Default.Add,
                                     contentDescription = stringResource(R.string.tambah_transaksi)
-                                },
+                                ) },
                                 label = { Text(stringResource(R.string.tambah_transaksi)) }
                             )
                             NavigationBarItem(
@@ -53,9 +56,9 @@ class MainActivity : ComponentActivity() {
                                     launchSingleTop = true
                                 } },
                                 icon = { Icon(
-                                    imageVector = androidx.compose.material.icons.Icons.Default.List,
+                                    imageVector = Icons.AutoMirrored.Filled.List,
                                     contentDescription = stringResource(R.string.daftar_transaksi)
-                                },
+                                ) },
                                 label = { Text(stringResource(R.string.daftar_transaksi)) }
                             )
                             NavigationBarItem(
@@ -65,16 +68,16 @@ class MainActivity : ComponentActivity() {
                                     launchSingleTop = true
                                 } },
                                 icon = { Icon(
-                                    imageVector = androidx.compose.material.icons.Icons.Default.Summarize,
+                                    imageVector = Icons.Default.Summarize,
                                     contentDescription = stringResource(R.string.ringkasan_transaksi)
-                                },
+                                ) },
                                 label = { Text(stringResource(R.string.ringkasan_transaksi)) }
                             )
                         }
                     }
                 ) { padding ->
                     Surface(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier.fillMaxSize().padding(padding),
                         color = MaterialTheme.colorScheme.background
                     ) {
                         NavGraph(navController = navController)
