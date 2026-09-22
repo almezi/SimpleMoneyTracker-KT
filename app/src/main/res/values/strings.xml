@@ -1,4 +1,16 @@
 <resources>
     <string name="app_name">SimpleMoneyTracker-KT</string>
     <string name="tambah_transaksi">Tambah Transaksi</string>
+    <string name="tambah_screen_title_pemasukan">Tambah Pemasukan</string>
+    <string name="tambah_screen_title_pengeluaran">Tambah Pengeluaran</string>
+    <string name="tambah_type_pemasukan">Pemasukan</string>
+    <string name="tambah_type_pengeluaran">Pengeluaran</string>
+    <string name="tambah_amount_label">Jumlah</string>
+    <string name="tambah_category_label">Kategori</string>
+    <string name="tambah_date_button">Pilih Tanggal</string>
+    <string name="tambah_note_label">Catatan</string>
+    <string name="tambah_save_button">Simpan</string>
+    <string name="tambah_error_amount">Jumlah tidak valid</string>
+    <string name="tambah_error_category">Pilih kategori</string>
+    <string name="tambah_save_success">Transaksi berhasil disimpan</string>
 </resources>

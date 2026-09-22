@@ -18,5 +18,7 @@ class TransactionRepository(
 
     suspend fun getCategory(id: String): Category? = categoryDao.getById(id)
 
+    fun getCategoriesByType(type: String): Flow<List<Category>> = categoryDao.getByType(type)
+
     suspend fun insertCategories(vararg categories: Category) = categoryDao.insert(*categories)
 }

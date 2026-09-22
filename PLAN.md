@@ -11,7 +11,7 @@
 
 ### Phase 2: Core Features (Pending)
 - [ ] Add data model (Transaction, Category, etc.)
-- [ ] Implement local storage (database)
+- [ ] Implement local storage (databaasse)
 - [ ] Create UI for adding/viewing transactions
 - [ ] Implement transaction list screen
 - [ ] Implement transaction detail/edit screen
