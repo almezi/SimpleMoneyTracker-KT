@@ -41,6 +41,10 @@ A small, local-only personal money tracker built with Kotlin and Jetpack Compose
 - Tags follow format: `<screen>_<type>_<name>`
 - Debug hooks for testing: seed data, fake clock, reset state
 
+## Download APK
+
+You can download the pre-built APK from [here](release/SimpleMoneyTrackerKT-v1.0.apk).
+
 ## Conventions
 - Kotlin code style: official
 - Use `libs.versions.toml` for dependency management
