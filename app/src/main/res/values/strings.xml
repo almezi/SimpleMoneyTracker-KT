@@ -1,5 +1,7 @@
 <resources>
-    <string name="app_name">SimpleMoneyTracker-KT</string>
+    <string name="app_name">Saku</string>
+    <string name="saku_tagline">Kelola keuangan harian kamu dengan mudah dan teratur</string>
+    <string name="saku_loading_status">Memuat data dari perangkat…</string>
     <string name="tambah_transaksi">Tambah Transaksi</string>
     <string name="daftar_transaksi">Daftar Transaksi</string>
     <string name="ringkasan_transaksi">Ringkasan</string>

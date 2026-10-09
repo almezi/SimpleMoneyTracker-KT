@@ -1,6 +1,9 @@
 package id.almezi.simplemoneytracker_kt
 
 object TestTags {
+    // App shell
+    const val LOADING_SCREEN = "loading_screen"
+
     // Tambah / Edit Transaction screen
     const val TAMBAH_SCREEN = "tambah_screen"
     const val TAMBAH_TOGGLE_TYPE = "tambah_toggle_type"

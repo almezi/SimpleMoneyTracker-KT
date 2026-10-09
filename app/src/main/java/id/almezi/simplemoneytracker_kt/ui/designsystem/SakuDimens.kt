@@ -68,4 +68,5 @@ object SakuMotion {
     const val toastMillis = 2000L
     const val undoToastMillis = 5000L
     const val pressScale = 0.98f
+    const val loadingMinimumMillis = 1200L
 }

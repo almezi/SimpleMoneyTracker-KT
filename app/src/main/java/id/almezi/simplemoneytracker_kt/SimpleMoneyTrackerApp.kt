@@ -4,6 +4,9 @@ import android.app.Application
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import id.almezi.simplemoneytracker_kt.data.AppContainer
 import id.almezi.simplemoneytracker_kt.data.AccountSeed
@@ -16,6 +19,9 @@ class SimpleMoneyTrackerApp : Application() {
 
     private val applicationScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
+    private val _isReady = MutableStateFlow(false)
+    val isReady: StateFlow<Boolean> = _isReady.asStateFlow()
+
     override fun onCreate() {
         super.onCreate()
         container = AppContainer(this)
@@ -25,6 +31,7 @@ class SimpleMoneyTrackerApp : Application() {
             CategorySeed.all.forEach { seed ->
                 container.categoryRepository.assignColorIfMissing(seed.id, SakuCategoryPalette.hexFor(seed.id))
             }
+            _isReady.value = true
         }
     }
 }
