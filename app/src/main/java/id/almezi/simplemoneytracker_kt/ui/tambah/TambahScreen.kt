@@ -102,6 +102,7 @@ fun TambahScreen(
             saveTone = if (isExpense) PrimaryButtonTone.Expense else PrimaryButtonTone.Brand,
             helperText = helperText,
             showKelolaKategoriLink = true,
+            showQuickCategoryChips = false,
             onOpenKelolaKategori = onOpenKelolaKategori,
             maxDateMillis = viewModel.todayMillis(),
             bottomReserve = SakuSize.navReserve + SakuSpace.screenBottom,

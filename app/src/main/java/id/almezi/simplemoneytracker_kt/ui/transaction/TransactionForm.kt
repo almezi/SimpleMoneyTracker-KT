@@ -96,6 +96,7 @@ fun TransactionForm(
     helperText: String?,
     saveTone: PrimaryButtonTone = PrimaryButtonTone.Brand,
     showKelolaKategoriLink: Boolean = true,
+    showQuickCategoryChips: Boolean = true,
     onOpenKelolaKategori: () -> Unit = {},
     onSave: () -> Unit,
     maxDateMillis: Long,
@@ -116,9 +117,13 @@ fun TransactionForm(
     } else {
         listOf("inc_salary", "inc_freelance", "inc_bonus_thr", "inc_other")
     }
-    val quickItems = state.categories
-        .filter { it.id in quickCategoryIds }
-        .map { CategoryChipItem(id = it.id, label = categoryDisplayName(it)) }
+    val quickItems = if (showQuickCategoryChips) {
+        state.categories
+            .filter { it.id in quickCategoryIds }
+            .map { CategoryChipItem(id = it.id, label = categoryDisplayName(it)) }
+    } else {
+        emptyList()
+    }
 
     Box(
         modifier = modifier

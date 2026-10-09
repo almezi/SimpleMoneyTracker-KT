@@ -13,6 +13,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,12 +29,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import id.almezi.simplemoneytracker_kt.TestTags
+import id.almezi.simplemoneytracker_kt.R
 import id.almezi.simplemoneytracker_kt.ui.designsystem.SAKU_AMOUNT_PLACEHOLDER
 import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuRadius
 import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuSize
@@ -171,6 +176,59 @@ fun SelectField(
                     )
                     if (trailingIcon != null) trailingIcon()
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun SearchField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    placeholder: String,
+    modifier: Modifier = Modifier,
+    testTag: String = TestTags.COMPONENT_FIELD_SEARCH,
+) {
+    Surface(
+        modifier = modifier
+            .fillMaxWidth()
+            .testTag(testTag),
+        shape = RoundedCornerShape(SakuRadius.input),
+        color = SakuTheme.colors.surface,
+        border = BorderStroke(SakuSpace.hairline, SakuTheme.colors.border),
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(min = SakuSize.fieldHeight)
+                .padding(horizontal = FieldPadding),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(SakuSpace.chipGap),
+        ) {
+            Icon(
+                imageVector = Icons.Default.Search,
+                contentDescription = stringResource(R.string.cd_cari_kategori),
+                tint = SakuTheme.colors.textMuted,
+            )
+            Box(modifier = Modifier.weight(1f)) {
+                BasicTextField(
+                    value = value,
+                    onValueChange = onValueChange,
+                    singleLine = true,
+                    textStyle = SakuTheme.text.body.copy(color = SakuTheme.colors.text),
+                    cursorBrush = SolidColor(SakuTheme.colors.accentText),
+                    modifier = Modifier.fillMaxWidth(),
+                    decorationBox = { inner ->
+                        if (value.isEmpty()) {
+                            Text(
+                                text = placeholder,
+                                style = SakuTheme.text.body,
+                                color = SakuTheme.colors.textPlaceholder,
+                            )
+                        }
+                        inner()
+                    },
+                )
             }
         }
     }

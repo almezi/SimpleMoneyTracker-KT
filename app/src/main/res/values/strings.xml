@@ -240,4 +240,7 @@
     <string name="cat_group_other">Lainnya</string>
     <string name="cat_group_income">Pemasukan</string>
     <string name="pilih_kategori_title">Pilih Kategori</string>
+    <string name="cari_kategori_placeholder">Cari kategori…</string>
+    <string name="kategori_tidak_ditemukan">Kategori tidak ditemukan</string>
+    <string name="cd_cari_kategori">Cari kategori</string>
 </resources>

@@ -5,6 +5,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import id.almezi.simplemoneytracker_kt.R
 import id.almezi.simplemoneytracker_kt.data.Category
+import id.almezi.simplemoneytracker_kt.ui.components.SakuPickerOptionGroup
 
 fun getCategoryNameRes(id: String): Int {
     return when (id) {
@@ -70,3 +71,21 @@ fun categoryColorOrNull(category: Category): Color? =
     category.colorHex?.let { hex ->
         runCatching { Color(android.graphics.Color.parseColor(hex)) }.getOrNull()
     }
+
+fun matchesCategoryQuery(label: String, query: String): Boolean {
+    val needle = query.trim().lowercase()
+    if (needle.isEmpty()) return true
+    return label.lowercase().contains(needle)
+}
+
+fun filterCategoryGroups(
+    groups: List<SakuPickerOptionGroup>,
+    query: String
+): List<SakuPickerOptionGroup> {
+    val needle = query.trim()
+    if (needle.isEmpty()) return groups
+    return groups.mapNotNull { group ->
+        val matches = group.options.filter { matchesCategoryQuery(it.label, needle) }
+        if (matches.isEmpty()) null else group.copy(options = matches)
+    }
+}
