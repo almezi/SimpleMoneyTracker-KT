@@ -30,6 +30,48 @@ object TestTags {
     const val DAFTAR_DAY_HEADER = "daftar_day_header"
     const val DAFTAR_EMPTY_STATE = "daftar_empty_state"
 
+    // Anggaran (steps 7 and 8)
+    const val ANGGARAN_SCREEN = "anggaran_screen"
+    const val ANGGARAN_TOTAL_CARD = "anggaran_total_card"
+    const val ANGGARAN_LIST = "anggaran_list"
+    const val ANGGARAN_ROW = "anggaran_row"
+    const val ANGGARAN_ADD_BUTTON = "anggaran_add_button"
+    const val ANGGARAN_EMPTY_STATE = "anggaran_empty_state"
+    const val ANGGARAN_FORM_SCREEN = "anggaran_form_screen"
+    const val ANGGARAN_FORM_CATEGORY = "anggaran_form_category"
+    const val ANGGARAN_FORM_LIMIT = "anggaran_form_limit"
+    const val ANGGARAN_FORM_SWITCH = "anggaran_form_switch"
+    const val ANGGARAN_FORM_NOTE = "anggaran_form_note"
+    const val ANGGARAN_FORM_SAVE = "anggaran_form_save"
+    const val ANGGARAN_FORM_DELETE = "anggaran_form_delete"
+    const val ANGGARAN_DELETE_SHEET = "anggaran_delete_sheet"
+
+    // Kelola kategori (step 9)
+    const val KATEGORI_SCREEN = "kategori_screen"
+    const val KATEGORI_TOGGLE_TYPE = "kategori_toggle_type"
+    const val KATEGORI_ROW = "kategori_row"
+    const val KATEGORI_ROW_EDIT = "kategori_row_edit"
+    const val KATEGORI_ROW_HIDE = "kategori_row_hide"
+    const val KATEGORI_ROW_DELETE = "kategori_row_delete"
+    const val KATEGORI_ADD_BUTTON = "kategori_add_button"
+    const val KATEGORI_HINT = "kategori_hint"
+    const val KATEGORI_DELETE_SHEET = "kategori_delete_sheet"
+    const val KATEGORI_FORM_SCREEN = "kategori_form_screen"
+    const val KATEGORI_FORM_NAME = "kategori_form_name"
+    const val KATEGORI_FORM_SWATCH = "kategori_form_swatch"
+    const val KATEGORI_FORM_PREVIEW = "kategori_form_preview"
+    const val KATEGORI_FORM_SAVE = "kategori_form_save"
+
+    // Cadangan (step 10)
+    const val CADANGAN_SCREEN = "cadangan_screen"
+    const val CADANGAN_STATUS_CARD = "cadangan_status_card"
+    const val CADANGAN_EXPORT_CSV = "cadangan_export_csv"
+    const val CADANGAN_EXPORT_JSON = "cadangan_export_json"
+    const val CADANGAN_IMPORT_BUTTON = "cadangan_import_button"
+    const val CADANGAN_IMPORT_RESULT = "cadangan_import_result"
+    const val CADANGAN_IMPORT_ERROR = "cadangan_import_error"
+    const val CADANGAN_WARNING = "cadangan_warning"
+
     // Ubah transaksi
     const val UBAH_SCREEN = "ubah_screen"
     const val UBAH_HEADER = "ubah_header"
@@ -37,10 +79,22 @@ object TestTags {
     const val UBAH_BUTTON_DELETE = "ubah_button_delete"
     const val UBAH_DELETE_SHEET = "ubah_delete_sheet"
 
-    // Ringkasan (summary) — reserved
+    // Ringkasan (summary)
     const val RINGKASAN_SCREEN = "ringkasan_screen"
     const val RINGKASAN_TOTALS_CARD = "ringkasan_totals_card"
     const val RINGKASAN_CATEGORY_ITEM = "ringkasan_category_item"
+    const val RINGKASAN_MONTH_SWITCHER = "ringkasan_month_switcher"
+    const val RINGKASAN_BALANCE_CARD = "ringkasan_balance_card"
+    const val RINGKASAN_BALANCE_VALUE = "ringkasan_balance_value"
+    const val RINGKASAN_SAVINGS_ROW = "ringkasan_savings_row"
+    const val RINGKASAN_SAVINGS_VALUE = "ringkasan_savings_value"
+    const val RINGKASAN_ANGGARAN_BUTTON = "ringkasan_anggaran_button"
+    const val RINGKASAN_KELOLA_BUTTON = "ringkasan_kelola_button"
+    const val RINGKASAN_COMPARISON = "ringkasan_comparison"
+    const val RINGKASAN_BREAKDOWN_INCOME = "ringkasan_breakdown_income"
+    const val RINGKASAN_BREAKDOWN_EXPENSE = "ringkasan_breakdown_expense"
+    const val RINGKASAN_EMPTY_STATE = "ringkasan_empty_state"
+    const val RINGKASAN_EMPTY_ACTION = "ringkasan_empty_action"
 
     // Shared design system components
     const val COMPONENT_BUTTON_PRIMARY = "component_button_primary"

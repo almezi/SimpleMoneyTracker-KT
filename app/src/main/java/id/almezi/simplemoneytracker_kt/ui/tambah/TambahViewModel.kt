@@ -164,7 +164,7 @@ class TambahViewModel(
 
     private fun observeCategories(type: TransactionType) {
         viewModelScope.launch {
-            repository.getCategoriesByType(type.storageValue).collect { _categories.value = it }
+            repository.getVisibleCategoriesByType(type.storageValue).collect { _categories.value = it }
         }
     }
 

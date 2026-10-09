@@ -43,7 +43,6 @@ object SakuSize {
     val navBarHeight = 64.dp
     val navBarBottomOffset = 20.dp
     val navBarSideMargin = 16.dp
-    val navItemHorizontalPadding = 18.dp
     val navItemVerticalPadding = 10.dp
     val arrowIconPadding = 8.dp
     val navReserve = 84.dp

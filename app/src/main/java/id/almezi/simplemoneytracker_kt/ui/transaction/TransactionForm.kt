@@ -58,7 +58,7 @@ import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuTheme
 import id.almezi.simplemoneytracker_kt.ui.designsystem.TransactionType
 import id.almezi.simplemoneytracker_kt.ui.designsystem.formatShortDate
 import id.almezi.simplemoneytracker_kt.ui.designsystem.typeAccent
-import id.almezi.simplemoneytracker_kt.ui.getCategoryNameRes
+import id.almezi.simplemoneytracker_kt.ui.categoryDisplayName
 import java.util.Calendar
 import java.util.TimeZone
 
@@ -104,7 +104,7 @@ fun TransactionForm(
     var showAccountSheet by remember { mutableStateOf(false) }
     val isExpense = state.type == TransactionType.Expense
     val chipItems = state.categories.map { category ->
-        CategoryChipItem(id = category.id, label = stringResource(getCategoryNameRes(category.id)))
+        CategoryChipItem(id = category.id, label = categoryDisplayName(category))
     }
 
     Box(

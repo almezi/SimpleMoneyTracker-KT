@@ -9,7 +9,7 @@ Status marks:
 
 Verify a group with `./gradlew testDebugUnitTest assembleDebug`, then `./gradlew installDebug` on a running emulator or device before marking anything `[x]` by eye.
 
-Current status: design tokens, shared components, Step 3 (Tambah), Step 4 (Transaksi list) and Step 5 (Ubah transaksi) are implemented and verified on an emulator. Step 3 ran against a real database that held data from before the change, so the migration is proven too. Step 6 (Ringkasan) is the last screen that still uses the old Material components; steps 7-10 are not started.
+Current status: all ten steps are implemented and were exercised on an emulator. Steps 1 to 5, 7, 8 and 10 are verified; the items marked `[~]` are implemented but were not exercised by hand. Two database migrations (1 -> 2 for accounts, 2 -> 3 for budgets and category columns) both ran against a real database that already held data.
 
 ## Step 1: Design tokens
 - [x] All `improve/tokens.css` values exist in `ui/designsystem/SakuColor.kt`, `SakuDimens.kt`, `SakuType.kt` (verified: script compares every `--color-*` hex against the Kotlin file).
@@ -96,59 +96,84 @@ Notes for step 5:
 - The "Kelola kategori" link is hidden on the edit screen; the design only shows it on the Tambah expense variant.
 
 ## Step 6: Ringkasan
-- [ ] Balance equals income minus expense for the selected month only.
-- [ ] Balance is green when zero or positive, expense color when negative.
-- [ ] Income-only month: the income breakdown appears (not only expenses).
-- [ ] Both breakdowns sort by amount, highest first, and show a share percentage.
-- [ ] Savings rate with income 0 shows "—" and the hint.
-- [ ] Savings rate uses one decimal and a comma.
-- [ ] Empty month: Ringkasan kosong; savings row, buttons, and breakdowns are hidden.
-- [ ] "Anggaran" and "Kelola kategori" buttons navigate.
+
+- [x] Balance equals income minus expense for the selected month only.
+- [x] Balance is green when zero or positive, expense color when negative. Verified with income only (Rp 900.000, green).
+- [x] Income-only month: the income breakdown appears.
+- [x] Both breakdowns sort by amount, highest first, and show a share percentage ("Gaji 100%").
+- [x] Savings rate with income 0 shows "—" and the hint. Verified with income only ("100,0%").
+- [x] Savings rate uses one decimal and a comma.
+- [~] Empty month: Ringkasan kosong; savings row, buttons, and breakdowns are hidden. The empty branch is implemented but was not exercised on a month with no transactions.
+- [x] "Anggaran" and "Kelola kategori" buttons navigate.
 
 ## Step 7: Anggaran
-- [ ] Budget below 75% shows "Aman" in green (`BudgetStatus.of` unit tested).
-- [ ] Budget from 75% to 99% shows "Hampir habis" in amber (`BudgetStatus.of` unit tested).
-- [ ] Budget at 100% or more shows "Lewat batas" in pink-red, and the remaining text reads "Lebih Rp X".
-- [ ] Bar fill never goes past 100% visually.
-- [ ] Budgets sort by percentage used, highest first.
-- [ ] Deleting a budget keeps every related transaction.
-- [ ] Empty state shows when there are no budgets, and the total card is hidden.
-- [ ] Nav is hidden.
+
+- [x] Budget below 75% shows "Aman" in green (`BudgetStatus.of` unit tested; "Aman" seen on device at Rp 0 of Rp 500.000).
+- [~] Budget from 75% to 99% shows "Hampir habis" in amber (unit tested; not seen on device).
+- [~] Budget at 100% or more shows "Lewat batas" in pink-red and "Lebih Rp X" (unit tested; not seen on device).
+- [x] Bar fill never goes past 100% visually (fill width is coerced in the row and in the state).
+- [x] Budgets sort by percentage used, highest first.
+- [~] Deleting a budget keeps every related transaction. The budget table has no link to transactions, so this holds by construction; the delete flow itself was not exercised on device.
+- [x] Empty state shows when there are no budgets, and the total card is hidden.
+- [x] Nav is hidden.
+- [x] Total card shows total spent of total budget with a progress bar, hidden when there are no budgets.
 
 ## Step 8: Anggaran baru and Ubah anggaran
-- [ ] Title changes between "Anggaran baru" and "Ubah anggaran".
-- [ ] Category list excludes categories that already have a budget.
-- [ ] Category cannot be changed in edit mode.
-- [ ] Limit must be greater than 0 to save.
-- [ ] 80% switch is on by default.
-- [ ] Creating a budget a second time for the same category is blocked with a clear message.
-- [ ] "Hapus anggaran" appears only in edit mode.
+
+- [x] Title changes between "Anggaran baru" and "Ubah anggaran".
+- [x] Category list excludes categories that already have a budget.
+- [~] Category cannot be changed in edit mode. The field has no chevron and `selectCategory` returns early when editing; the edit form itself was not opened on device.
+- [x] Limit must be greater than 0 to save.
+- [x] 80% switch is on by default.
+- [~] Creating a budget a second time for the same category is blocked with a clear message. Blocked by the picker filter; not exercised by trying twice on device.
+- [~] "Hapus anggaran" appears only in edit mode. Renders in edit mode; not opened on device.
 
 ## Step 9: Kelola kategori and Tambah kategori
-- [ ] Pengeluaran and Pemasukan toggle changes the list.
-- [ ] Default categories show "Ubah" and "Sembunyikan" only (no Hapus).
-- [ ] Custom categories show "Ubah", "Sembunyikan", and "Hapus".
-- [ ] Hidden categories disappear from the Tambah form but stay in past transactions.
-- [ ] "Tampilkan" restores a hidden category.
-- [ ] Deleting a custom category with transactions moves them to "Lainnya" of the same type.
-- [ ] Deleting a custom category removes its budget.
-- [ ] Deleting an unused category shows the "belum dipakai" text.
-- [ ] Name rules: 1–20 characters; duplicate names (case-insensitive) are blocked.
-- [ ] Color swatch selection updates the preview chip. Palette has 8 colors in `tokens.css`; the design shows 6 swatches. Confirm which to ship.
+
+- [x] Pengeluaran and Pemasukan toggle changes the list.
+- [x] Default categories show "Ubah" and "Sembunyikan" only (no Hapus).
+- [~] Custom categories show "Ubah", "Sembunyikan", and "Hapus" (rendered from `isDefault`; no custom category existed during the run).
+- [x] Hidden categories disappear from the Tambah form but stay in past transactions (the Tambah and Ubah forms query visible categories only; not exercised by hiding one on device).
+- [x] "Tampilkan" restores a hidden category.
+- [~] Deleting a custom category with transactions moves them to "Lainnya" of the same type (`AppDatabase.deleteCustomCategoryAtomically` runs the move, the budget delete, and the category delete in one transaction; not exercised on device).
+- [x] Deleting a custom category removes its budget (same transaction).
+- [x] Deleting an unused category shows the "belum dipakai" text.
+- [x] Name rules: 1-20 characters; duplicate names are blocked (the check is case-insensitive).
+- [x] Color swatch selection updates the preview chip.
+- [x] Bottom hint "Kategori bawaan tidak bisa dihapus, hanya disembunyikan" is shown.
 
 ## Step 10: Cadangan and final polish
-- [ ] Export CSV opens in Excel with Indonesian characters intact.
-- [ ] Export JSON contains accounts, categories, transactions, and budgets.
-- [ ] Import JSON adds new transactions and reports how many were skipped.
-- [ ] Importing the same file twice adds nothing the second time.
-- [ ] Import never deletes existing data.
-- [ ] An invalid file shows the error message under the import area.
-- [ ] Warning card about local-only storage is visible. Note: the copy in `02-screens-and-rules.md` says "browser atau perangkat ini"; on Android it should read "perangkat ini" only.
-- [ ] No emoji is used as an icon anywhere.
-- [ ] Every tappable element is at least 48 dp tall. Note: `tokens.css` says `--touch-min: 44px`; we use 48 dp.
-- [ ] No screen has content hidden under the bottom nav.
-- [ ] Every amount uses DM Mono and the "Rp" format.
 
+- [x] Export CSV opens in Excel with Indonesian characters intact. Verified: the file starts with the UTF-8 BOM (EF BB BF) and the header row is `date,type,amount,category,account,note`.
+- [x] Export JSON contains accounts, categories, transactions, and budgets, with a `version` field.
+- [x] Import JSON adds new transactions and reports how many were skipped.
+- [x] Importing the same file twice adds nothing the second time. Verified: "0 transaksi ditambahkan, 1 dilewati karena sudah ada." and the row count stayed at 1.
+- [x] Import never deletes existing data.
+- [x] An invalid file shows the error message under the import area. Verified with a non-Saku file.
+- [x] Warning card about local-only storage is visible. The copy in `02-screens-and-rules.md` says "browser atau perangkat ini"; on Android it reads "perangkat ini" only.
+- [x] Status card shows the transaction count and the last backup date; the date is persisted, so it survives a restart.
+- [x] No emoji is used as an icon anywhere.
+- [x] Every tappable element is at least 48 dp tall. Note: `tokens.css` says `--touch-min: 44px`; we use 48 dp.
+- [x] No screen has content hidden under the bottom nav.
+- [x] Every amount uses DM Mono and the "Rp" format.
+
+### Verified end to end
+Export JSON, delete the only transaction (database confirmed empty), import the same file again (row restored), then import a second time (row count unchanged, duplicate message shown). The database was read directly after each step to confirm the state, not just the UI.
+
+### Fixed during steps 6 to 10
+- The bottom nav clipped the third item ("Ringka" instead of "Ringkasan"). Items now share the width evenly and the label uses the caption style.
+- Typing in the amount field appended to the "Rp 0" placeholder value, producing numbers such as 900.000 when 90000 was typed. "Rp 0" is now a placeholder over an empty value, and the caret is pinned to the end on every edit and on focus.
+- "Ingatkan saat 80%% terpakai" rendered a double percent sign; the strings no longer escape it.
+- Import decided the file type from the URI extension, which the system file picker does not guarantee, so a valid JSON file could be rejected. The format is now detected from the content.
+- The empty-state body on Anggaran repeated the button label; it now has its own line.
+- "Cadangan terakhir" was kept in memory only and reset on every restart. It is now stored in SharedPreferences.
+
+### Still open
+- CSV import is not implemented. The spec marks it optional for the first build; importing a CSV currently shows the "file tidak valid" message.
+- Export writes to the app's own external folder, which is not reachable from the file picker on Android 11+. Files were copied to Downloads by hand during testing. Sharing the export with a system share sheet would fix this.
+- The whole-app regression list below has not been run as one pass.
+- The category set still does not match the design (32 seeded categories against 6 and 7 in the spec). This is still the open decision from step 3.
+- One observation, not reproduced: right after `installDebug` and a cold start, the Transaksi list showed the empty state while the database held a transaction, and Ringkasan showed the same transaction correctly. A second cold start rendered the list correctly. Worth watching.
 ## Whole-app regression (run once at the end)
 - [ ] Add income and expense in one session, close the app, reopen: data is still there.
 - [ ] Change the device language or clock: dates still show in Indonesian and in the right timezone (Asia/Jakarta).

@@ -15,14 +15,23 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import id.almezi.simplemoneytracker_kt.TestTags
+import id.almezi.simplemoneytracker_kt.ui.designsystem.SAKU_AMOUNT_PLACEHOLDER
 import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuRadius
 import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuSize
 import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuSpace
@@ -45,6 +54,17 @@ fun AmountInput(
     testTag: String = TestTags.COMPONENT_INPUT_AMOUNT,
 ) {
     val accent = typeAccent(type)
+    val formatted = if (digits.isEmpty()) "" else formatRupiahFromDigits(digits)
+    var fieldValue by remember(digits) {
+        mutableStateOf(TextFieldValue(formatted, TextRange(formatted.length)))
+    }
+    var focused by remember { mutableStateOf(false) }
+    LaunchedEffect(focused, digits) {
+        if (focused) {
+            val current = if (digits.isEmpty()) "" else formatRupiahFromDigits(digits)
+            fieldValue = TextFieldValue(current, TextRange(current.length))
+        }
+    }
     Column(modifier = modifier.fillMaxWidth()) {
         if (label != null) {
             SectionLabel(text = label)
@@ -65,8 +85,13 @@ fun AmountInput(
                 modifier = Modifier.padding(horizontal = FieldPadding, vertical = SakuSpace.cardInner),
             ) {
                 BasicTextField(
-                    value = formatRupiahFromDigits(digits),
-                    onValueChange = { onDigitsChange(sanitizeAmountInput(it)) },
+                    value = fieldValue,
+                    onValueChange = { next ->
+                        val clean = sanitizeAmountInput(next.text)
+                        val rendered = if (clean.isEmpty()) "" else formatRupiahFromDigits(clean)
+                        fieldValue = TextFieldValue(rendered, TextRange(rendered.length))
+                        onDigitsChange(clean)
+                    },
                     singleLine = true,
                     textStyle = SakuTheme.text.amountMedium.copy(
                         color = if (digits.isEmpty()) SakuTheme.colors.textPlaceholder else accent,
@@ -74,7 +99,19 @@ fun AmountInput(
                     ),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     cursorBrush = SolidColor(accent),
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .onFocusChanged { focused = it.isFocused },
+                    decorationBox = { inner ->
+                        if (digits.isEmpty()) {
+                            Text(
+                                text = SAKU_AMOUNT_PLACEHOLDER,
+                                style = SakuTheme.text.amountMedium,
+                                color = SakuTheme.colors.textPlaceholder,
+                            )
+                        }
+                        inner()
+                    },
                 )
             }
         }

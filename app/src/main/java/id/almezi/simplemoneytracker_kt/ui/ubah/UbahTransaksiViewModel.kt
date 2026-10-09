@@ -137,7 +137,7 @@ class UbahTransaksiViewModel(
     private fun observeCategories(type: TransactionType) {
         categoryJob?.cancel()
         categoryJob = viewModelScope.launch {
-            repository.getCategoriesByType(type.storageValue).collect { categories ->
+            repository.getVisibleCategoriesByType(type.storageValue).collect { categories ->
                 _uiState.update { state ->
                     state.copy(
                         categories = categories,

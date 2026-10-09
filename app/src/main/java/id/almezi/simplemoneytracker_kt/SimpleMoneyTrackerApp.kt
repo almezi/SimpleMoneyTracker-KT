@@ -8,6 +8,7 @@ import kotlinx.coroutines.launch
 import id.almezi.simplemoneytracker_kt.data.AppContainer
 import id.almezi.simplemoneytracker_kt.data.AccountSeed
 import id.almezi.simplemoneytracker_kt.data.CategorySeed
+import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuCategoryPalette
 
 class SimpleMoneyTrackerApp : Application() {
     lateinit var container: AppContainer
@@ -21,6 +22,9 @@ class SimpleMoneyTrackerApp : Application() {
         applicationScope.launch {
             container.categoryDao.insert(*CategorySeed.all.toTypedArray())
             container.accountDao.insert(*AccountSeed.all.toTypedArray())
+            CategorySeed.all.forEach { seed ->
+                container.categoryRepository.assignColorIfMissing(seed.id, SakuCategoryPalette.hexFor(seed.id))
+            }
         }
     }
 }

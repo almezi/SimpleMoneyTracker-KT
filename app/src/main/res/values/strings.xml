@@ -79,6 +79,77 @@
     <string name="ubah_save">Simpan perubahan</string>
     <string name="ubah_delete">Hapus transaksi</string>
 
+    <!-- Ringkasan (step 6) -->
+    <string name="ringkasan_saldo">SALDO BERSIH</string>
+    <string name="ringkasan_pemasukan">Pemasukan</string>
+    <string name="ringkasan_pengeluaran">Pengeluaran</string>
+    <string name="ringkasan_tingkat_tabungan">Tingkat tabungan</string>
+    <string name="ringkasan_saving_hint">Tambah pemasukan untuk melihat tingkat tabungan</string>
+    <string name="ringkasan_anggaran">Anggaran</string>
+    <string name="ringkasan_breakdown_vs">Pemasukan vs pengeluaran</string>
+    <string name="ringkasan_breakdown_income">Pemasukan per kategori</string>
+    <string name="ringkasan_breakdown_expense">Pengeluaran per kategori</string>
+    <string name="ringkasan_empty_title">Belum ada data untuk diringkas</string>
+    <string name="ringkasan_empty_body">Ringkasan akan muncul setelah kamu mencatat transaksi pertama bulan ini.</string>
+    <string name="ringkasan_empty_action">Tambah transaksi</string>
+
+    <!-- Anggaran (steps 7 and 8) -->
+    <string name="anggaran_title">Anggaran</string>
+    <string name="anggaran_total_spent">%1$s dari %2$s</string>
+    <string name="anggaran_baru">Atur anggaran baru</string>
+    <string name="anggaran_empty_body">Belum ada batas bulanan yang aktif.</string>
+    <string name="anggaran_empty_title">Belum ada anggaran</string>
+    <string name="anggaran_form_new">Anggaran baru</string>
+    <string name="anggaran_form_edit">Ubah anggaran</string>
+    <string name="anggaran_form_category">KATEGORI</string>
+    <string name="anggaran_form_limit">Batas bulanan</string>
+    <string name="anggaran_form_note_new">Batas berlaku mulai %1$s. Bulan berikutnya mengikuti batas ini.</string>
+    <string name="anggaran_form_note_edit">Batas berlaku untuk %1$s saja.</string>
+    <string name="anggaran_form_switch">Ingatkan saat 80% terpakai</string>
+    <string name="anggaran_form_save">Simpan anggaran</string>
+    <string name="anggaran_form_delete">Hapus anggaran</string>
+    <string name="anggaran_delete_title">Hapus anggaran %1$s?</string>
+    <string name="anggaran_delete_body">Batas %1$s untuk %2$s akan dihapus. Pengeluaran yang sudah dicatat tetap ada di daftar transaksi.</string>
+    <string name="anggaran_pilih_kategori">Pilih kategori</string>
+    <string name="budget_alert_reached">%1$s sudah memakai 80% anggaran</string>
+
+    <!-- Kelola kategori (step 9) -->
+    <string name="kategori_title">Kelola kategori</string>
+    <string name="kategori_bawaan">Bawaan</string>
+    <string name="kategori_buatan_sendiri">Buatan sendiri</string>
+    <string name="kategori_dipakai">%1$d transaksi</string>
+    <string name="kategori_sembunyikan">Sembunyikan</string>
+    <string name="kategori_tampilkan">Tampilkan</string>
+    <string name="kategori_hint">Kategori bawaan tidak bisa dihapus, hanya disembunyikan</string>
+    <string name="kategori_rename_title">Ubah kategori</string>
+    <string name="kategori_rename_hint">1–20 karakter</string>
+    <string name="kategori_duplicate">Nama kategori sudah dipakai</string>
+    <string name="kategori_delete_unused">Kategori ini belum dipakai. Tindakan ini tidak bisa dibatalkan.</string>
+    <string name="kategori_delete_used">Kategori ini dipakai di %1$d transaksi. Transaksi tersebut akan dipindah ke %2$s. Tindakan ini tidak bisa dibatalkan.</string>
+    <string name="kategori_delete_title">Hapus kategori %1$s?</string>
+    <string name="kategori_form_new">Tambah kategori</string>
+    <string name="kategori_form_name">NAMA KATEGORI</string>
+    <string name="kategori_form_save">Simpan kategori</string>
+    <string name="daftar_kategori_label">WARNA</string>
+
+    <!-- Cadangan (step 10) -->
+    <string name="cadangan_title">Cadangan data</string>
+    <string name="cadangan_status_title">Data tersimpan di perangkat ini</string>
+    <string name="cadangan_transaction_count">%1$d transaksi tersimpan</string>
+    <string name="cadangan_last_backup">Cadangan terakhir: %1$s</string>
+    <string name="cadangan_never">Cadangan terakhir: belum pernah</string>
+    <string name="cadangan_export">Ekspor</string>
+    <string name="cadangan_export_csv">Ekspor CSV</string>
+    <string name="cadangan_export_json">Ekspor JSON</string>
+    <string name="cadangan_import">Impor</string>
+    <string name="cadangan_import_button">Impor dari cadangan</string>
+    <string name="cadangan_import_note">Transaksi yang sama persis akan dilewati. Data yang ada tidak pernah dihapus.</string>
+    <string name="cadangan_import_result">%1$d transaksi ditambahkan, %2$d dilewati karena sudah ada.</string>
+    <string name="cadangan_import_error">File tidak valid. Pilih file CSV atau JSON dari Saku.</string>
+    <string name="cadangan_importing">Mengimpor…</string>
+    <string name="cadangan_warning">Data hanya tersimpan di perangkat ini. Jika data dihapus atau ganti perangkat, buat cadangan dulu.</string>
+    <string name="cadangan_export_saved">Cadangan tersimpan di %1$s</string>
+
     <!-- Design system: formatting -->
     <string name="date_short_format">%1$d %2$s %3$d</string>
     <string name="month_year_format">%1$s %2$d</string>

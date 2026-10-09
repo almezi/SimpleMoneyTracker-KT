@@ -76,6 +76,16 @@ val SakuDarkColors = SakuColors(
 val LocalSakuColors = staticCompositionLocalOf { SakuDarkColors }
 
 object SakuCategoryPalette {
+    val hexSwatches: List<String> = listOf(
+        "#F0708A", "#FB923C", "#F6C453", "#5FD3E6",
+        "#7C8CFF", "#C4A3FF", "#9A9AA8", "#C9A25A",
+    )
+
+    val defaultHex: String = "#C4A3FF"
+
+    fun hexFor(categoryId: String): String =
+        hexSwatches[(categoryId.hashCode() and Int.MAX_VALUE) % hexSwatches.size]
+
     val swatches: List<Color> = listOf(
         Color(0xFFF0708A),
         Color(0xFFFB923C),
@@ -86,8 +96,6 @@ object SakuCategoryPalette {
         Color(0xFF9A9AA8),
         Color(0xFFC9A25A),
     )
-
-    val default = Color(0xFFC4A3FF)
 
     fun colorFor(categoryId: String): Color =
         swatches[(categoryId.hashCode() and Int.MAX_VALUE) % swatches.size]

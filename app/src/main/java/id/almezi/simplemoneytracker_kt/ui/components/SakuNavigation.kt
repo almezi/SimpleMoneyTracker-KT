@@ -62,8 +62,9 @@ fun SakuBottomNav(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(height),
-            horizontalArrangement = Arrangement.SpaceEvenly,
+                .height(height)
+                .padding(horizontal = SakuSpace.tight),
+            horizontalArrangement = Arrangement.spacedBy(SakuSpace.tight),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             items.forEach { item ->
@@ -71,23 +72,25 @@ fun SakuBottomNav(
                 val tint = if (selected) SakuTheme.colors.accentText else SakuTheme.colors.textMuted
                 Surface(
                     onClick = { onSelect(item.route) },
-                    modifier = Modifier.testTag(testTag + "_" + item.route),
+                    modifier = Modifier
+                        .weight(1f)
+                        .testTag(testTag + "_" + item.route),
                     shape = RoundedCornerShape(SakuRadius.navItem),
                     color = if (selected) SakuTheme.colors.accentSurface else Color.Transparent,
                     contentColor = tint,
                 ) {
                     Row(
-                        modifier = Modifier.padding(
-                            horizontal = SakuSize.navItemHorizontalPadding,
+                        modifier = Modifier.fillMaxWidth().padding(
+                            horizontal = SakuSpace.tight,
                             vertical = SakuSize.navItemVerticalPadding,
                         ),
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(SakuSpace.chipGap),
+                        horizontalArrangement = Arrangement.Center,
                     ) {
                         Icon(imageVector = item.icon, contentDescription = null, tint = tint)
                         Text(
                             text = stringResource(item.labelRes),
-                            style = SakuTheme.text.buttonSecondary,
+                            style = SakuTheme.text.caption,
                             color = tint,
                             maxLines = 1,
                         )

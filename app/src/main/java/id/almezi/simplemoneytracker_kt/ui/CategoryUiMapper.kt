@@ -1,6 +1,10 @@
 package id.almezi.simplemoneytracker_kt.ui
 
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import id.almezi.simplemoneytracker_kt.R
+import id.almezi.simplemoneytracker_kt.data.Category
 
 fun getCategoryNameRes(id: String): Int {
     return when (id) {
@@ -44,3 +48,12 @@ fun getCategoryNameRes(id: String): Int {
         else -> R.string.tambah_category_label
     }
 }
+
+@Composable
+fun categoryDisplayName(category: Category): String =
+    category.customName ?: stringResource(getCategoryNameRes(category.id))
+
+fun categoryColorOrNull(category: Category): Color? =
+    category.colorHex?.let { hex ->
+        runCatching { Color(android.graphics.Color.parseColor(hex)) }.getOrNull()
+    }

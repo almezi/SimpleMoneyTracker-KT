@@ -15,9 +15,31 @@ class AppContainer(context: Context) {
     val accountDao: AccountDao = database.accountDao()
     val clock: Clock = RealClock()
 
+    val budgetDao: BudgetDao = database.budgetDao()
+
     val transactionRepository: TransactionRepository = TransactionRepository(
+        database,
         transactionDao,
         categoryDao,
+        accountDao
+    )
+
+    val categoryRepository: CategoryRepository = CategoryRepository(
+        database,
+        categoryDao,
+        transactionDao
+    )
+
+    val budgetRepository: BudgetRepository = BudgetRepository(
+        database,
+        budgetDao,
+        clock
+    )
+
+    val backupRepository: BackupRepository = BackupRepository(
+        transactionRepository,
+        categoryRepository,
+        budgetRepository,
         accountDao
     )
 }
