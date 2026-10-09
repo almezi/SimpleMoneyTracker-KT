@@ -90,7 +90,7 @@ fun TransactionForm(
     state: TransactionFormState,
     actions: TransactionFormActions,
     modifier: Modifier = Modifier,
-    header: @Composable () -> Unit,
+    header: (@Composable () -> Unit)? = null,
     saveLabel: String,
     saveEnabled: Boolean,
     helperText: String?,
@@ -138,9 +138,10 @@ fun TransactionForm(
                 .padding(horizontal = SakuSpace.screenHorizontal)
                 .padding(top = SakuSpace.screenHorizontal, bottom = bottomReserve),
         ) {
-            header()
-
-            Spacer(modifier = Modifier.height(SakuSpace.screenHorizontal))
+            if (header != null) {
+                header()
+                Spacer(modifier = Modifier.height(SakuSpace.screenHorizontal))
+            }
 
             SegmentedToggle(
                 options = listOf(
