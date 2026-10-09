@@ -6,6 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import id.almezi.simplemoneytracker_kt.data.AppContainer
+import id.almezi.simplemoneytracker_kt.data.AccountSeed
 import id.almezi.simplemoneytracker_kt.data.CategorySeed
 
 class SimpleMoneyTrackerApp : Application() {
@@ -19,6 +20,7 @@ class SimpleMoneyTrackerApp : Application() {
         container = AppContainer(this)
         applicationScope.launch {
             container.categoryDao.insert(*CategorySeed.all.toTypedArray())
+            container.accountDao.insert(*AccountSeed.all.toTypedArray())
         }
     }
 }

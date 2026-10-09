@@ -22,6 +22,104 @@
     <string name="cancel">Batal</string>
     <string name="daftar_empty">Belum ada transaksi bulan ini</string>
 
+    <!-- Design system: shared components -->
+    <string name="nav_tambah">Tambah</string>
+    <string name="nav_transaksi">Transaksi</string>
+    <string name="nav_ringkasan">Ringkasan</string>
+    <string name="action_ubah">Ubah</string>
+    <string name="action_ya_hapus">Ya, hapus</string>
+    <string name="action_urungkan">Urungkan</string>
+    <string name="cd_back">Kembali</string>
+    <string name="cd_close">Tutup</string>
+    <string name="cd_previous_month">Bulan sebelumnya</string>
+    <string name="cd_next_month">Bulan berikutnya</string>
+    <string name="cd_open_picker">Buka pilihan</string>
+    <string name="type_pemasukan">Pemasukan</string>
+    <string name="type_pengeluaran">Pengeluaran</string>
+    <string name="status_aman">Aman</string>
+    <string name="status_hampir_habis">Hampir habis</string>
+    <string name="status_lewat_batas">Lewat batas</string>
+    <string name="budget_remaining">Sisa %1$s</string>
+    <string name="budget_over">Lebih %1$s</string>
+    <string name="budget_spent_of">%1$s dari %2$s</string>
+    <string name="label_jumlah">JUMLAH</string>
+
+    <!-- Tambah screen (step 3) -->
+    <string name="tambah_header_pemasukan">Tambah transaksi</string>
+    <string name="tambah_header_pengeluaran">Tambah Pengeluaran</string>
+    <string name="tambah_simpan_transaksi">Simpan transaksi</string>
+    <string name="tambah_simpan_pengeluaran">Simpan Pengeluaran</string>
+    <string name="tambah_helper_amount">Isi jumlah dulu</string>
+    <string name="tambah_helper_category">Pilih kategori dulu</string>
+    <string name="tambah_helper_both">Isi jumlah dan kategori dulu</string>
+    <string name="label_kategori">KATEGORI</string>
+    <string name="label_akun">AKUN</string>
+    <string name="label_tanggal">TANGGAL</string>
+    <string name="note_placeholder">Tambah catatan (opsional)</string>
+    <string name="kelola_kategori">Kelola kategori</string>
+    <string name="pilih_akun_title">Pilih akun</string>
+    <string name="toast_transaksi_disimpan">Transaksi disimpan</string>
+    <string name="toast_gagal_menyimpan">Gagal menyimpan. Coba lagi.</string>
+    <string name="kelola_kategori_placeholder_body">Kelola kategori akan hadir di langkah berikutnya.</string>
+
+    <!-- Transaksi list (step 4) -->
+    <string name="daftar_masuk">Masuk</string>
+    <string name="daftar_keluar">Keluar</string>
+    <string name="daftar_backup_button">Cadangan &amp; ekspor data</string>
+    <string name="daftar_empty_title">Belum ada transaksi bulan ini</string>
+    <string name="daftar_empty_body">Catat pemasukan atau pengeluaran pertamamu. Semua tersimpan di perangkat ini.</string>
+    <string name="daftar_empty_primary">Tambah transaksi</string>
+    <string name="daftar_empty_secondary">Impor dari cadangan</string>
+    <string name="delete_sheet_title">Hapus transaksi?</string>
+    <string name="delete_sheet_body">%1$s sebesar %2$s pada %3$s akan dihapus permanen. Tindakan ini tidak bisa dibatalkan.</string>
+    <string name="toast_transaksi_dihapus">Transaksi dihapus</string>
+
+    <!-- Ubah transaksi (step 5) -->
+    <string name="ubah_header">Ubah transaksi</string>
+    <string name="ubah_save">Simpan perubahan</string>
+    <string name="ubah_delete">Hapus transaksi</string>
+
+    <!-- Design system: formatting -->
+    <string name="date_short_format">%1$d %2$s %3$d</string>
+    <string name="month_year_format">%1$s %2$d</string>
+    <string-array name="days_short">
+        <item>Senin</item>
+        <item>Selasa</item>
+        <item>Rabu</item>
+        <item>Kamis</item>
+        <item>Jumat</item>
+        <item>Sabtu</item>
+        <item>Minggu</item>
+    </string-array>
+    <string-array name="months_short">
+        <item>Jan</item>
+        <item>Feb</item>
+        <item>Mar</item>
+        <item>Apr</item>
+        <item>Mei</item>
+        <item>Jun</item>
+        <item>Jul</item>
+        <item>Agu</item>
+        <item>Sep</item>
+        <item>Okt</item>
+        <item>Nov</item>
+        <item>Des</item>
+    </string-array>
+    <string-array name="months_long">
+        <item>Januari</item>
+        <item>Februari</item>
+        <item>Maret</item>
+        <item>April</item>
+        <item>Mei</item>
+        <item>Juni</item>
+        <item>Juli</item>
+        <item>Agustus</item>
+        <item>September</item>
+        <item>Oktober</item>
+        <item>November</item>
+        <item>Desember</item>
+    </string-array>
+
     <!-- Category Names -->
     <string name="cat_inc_salary">Gaji</string>
     <string name="cat_inc_freelance">Freelance</string>
