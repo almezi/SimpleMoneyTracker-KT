@@ -84,6 +84,10 @@ fun DaftarScreen(
     ) {
         if (uiState.isEmpty) {
             DaftarEmptyState(
+                monthLabel = formatMonthLabel(context, uiState.month),
+                nextEnabled = uiState.month < monthOf(viewModel.currentMonthMillis()),
+                onPrevious = viewModel::previousMonth,
+                onNext = viewModel::nextMonth,
                 onAddTransaction = onAddTransaction,
                 onOpenBackup = onOpenBackup,
                 modifier = Modifier.fillMaxSize(),
@@ -267,6 +271,10 @@ private fun DayGroup(
 
 @Composable
 private fun DaftarEmptyState(
+    monthLabel: String,
+    nextEnabled: Boolean,
+    onPrevious: () -> Unit,
+    onNext: () -> Unit,
     onAddTransaction: () -> Unit,
     onOpenBackup: () -> Unit,
     modifier: Modifier = Modifier
@@ -275,9 +283,17 @@ private fun DaftarEmptyState(
         modifier = modifier
             .statusBarsPadding()
             .padding(horizontal = SakuSpace.screenHorizontal)
-            .padding(bottom = SakuSize.navReserve),
-        verticalArrangement = Arrangement.Center,
+            .padding(top = SakuSpace.screenHorizontal, bottom = SakuSize.navReserve),
+        verticalArrangement = Arrangement.Top,
     ) {
+        MonthSwitcher(
+            label = monthLabel,
+            onPrevious = onPrevious,
+            onNext = onNext,
+            nextEnabled = nextEnabled,
+            testTag = TestTags.DAFTAR_MONTH_SWITCHER,
+        )
+        Spacer(modifier = Modifier.height(SakuSpace.section))
         EmptyState(
             title = stringResource(R.string.daftar_empty_title),
             body = stringResource(R.string.daftar_empty_body),
