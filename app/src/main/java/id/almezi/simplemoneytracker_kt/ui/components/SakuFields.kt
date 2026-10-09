@@ -1,6 +1,7 @@
 package id.almezi.simplemoneytracker_kt.ui.components
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -125,6 +126,7 @@ fun SelectField(
     modifier: Modifier = Modifier,
     label: String? = null,
     placeholder: String = "",
+    leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
     testTag: String = TestTags.COMPONENT_FIELD_SELECT,
 ) {
@@ -153,7 +155,9 @@ fun SelectField(
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(SakuSpace.chipGap),
                 ) {
+                    if (leadingIcon != null) leadingIcon()
                     Text(
                         text = if (value.isEmpty()) placeholder else value,
                         style = SakuTheme.text.bodyStrong,

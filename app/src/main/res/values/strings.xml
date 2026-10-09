@@ -229,4 +229,15 @@
     <string name="cat_exp_education_books">Buku / Edukasi</string>
     <string name="cat_exp_education_other">Lainnya (Pendidikan)</string>
     <string name="cat_exp_other">Lainnya</string>
+
+    <!-- Category Group Names -->
+    <string name="cat_group_daily">Kebutuhan Sehari-hari</string>
+    <string name="cat_group_transport">Transportasi &amp; Perjalanan</string>
+    <string name="cat_group_finance">Keuangan</string>
+    <string name="cat_group_health">Kesehatan</string>
+    <string name="cat_group_lifestyle">Lifestyle</string>
+    <string name="cat_group_education">Pendidikan &amp; Karier</string>
+    <string name="cat_group_other">Lainnya</string>
+    <string name="cat_group_income">Pemasukan</string>
+    <string name="pilih_kategori_title">Pilih Kategori</string>
 </resources>

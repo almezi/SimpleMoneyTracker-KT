@@ -49,6 +49,19 @@ fun getCategoryNameRes(id: String): Int {
     }
 }
 
+fun getCategoryGroupNameRes(groupId: String?): Int {
+    return when (groupId) {
+        "grp_daily" -> R.string.cat_group_daily
+        "grp_transport" -> R.string.cat_group_transport
+        "grp_finance" -> R.string.cat_group_finance
+        "grp_health" -> R.string.cat_group_health
+        "grp_lifestyle" -> R.string.cat_group_lifestyle
+        "grp_education" -> R.string.cat_group_education
+        "grp_other" -> R.string.cat_group_other
+        else -> R.string.cat_group_income
+    }
+}
+
 @Composable
 fun categoryDisplayName(category: Category): String =
     category.customName ?: stringResource(getCategoryNameRes(category.id))

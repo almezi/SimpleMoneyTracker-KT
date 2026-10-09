@@ -7,7 +7,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -19,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.unit.dp
 import id.almezi.simplemoneytracker_kt.TestTags
 import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuRadius
 import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuSize
@@ -29,6 +33,11 @@ data class SakuPickerOption(
     val id: String,
     val label: String,
     val mark: (@Composable () -> Unit)? = null,
+)
+
+data class SakuPickerOptionGroup(
+    val title: String,
+    val options: List<SakuPickerOption>
 )
 
 @Composable
@@ -62,6 +71,56 @@ fun SakuPickerSheet(
                     },
                     testTag = testTag + "_option_" + option.id,
                 )
+            }
+        }
+    }
+}
+
+@Composable
+fun CategoryPickerSheet(
+    title: String,
+    groups: List<SakuPickerOptionGroup>,
+    selectedId: String?,
+    onSelect: (String) -> Unit,
+    onDismissRequest: () -> Unit,
+    modifier: Modifier = Modifier,
+    testTag: String = TestTags.COMPONENT_PICKER_SHEET,
+) {
+    SakuBottomSheet(onDismissRequest = onDismissRequest, modifier = modifier.testTag(testTag)) {
+        Text(
+            text = title,
+            style = SakuTheme.text.bodyStrong,
+            color = SakuTheme.colors.text,
+        )
+        Spacer(modifier = Modifier.height(SakuSpace.cardInner))
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(max = 480.dp),
+            verticalArrangement = Arrangement.spacedBy(SakuSpace.tight)
+        ) {
+            groups.forEach { group ->
+                if (group.title.isNotEmpty()) {
+                    item {
+                        Text(
+                            text = group.title.uppercase(),
+                            style = SakuTheme.text.sectionLabel,
+                            color = SakuTheme.colors.accentText,
+                            modifier = Modifier.padding(top = SakuSpace.cardInner, bottom = SakuSpace.tight)
+                        )
+                    }
+                }
+                items(group.options) { option ->
+                    PickerRow(
+                        option = option,
+                        selected = option.id == selectedId,
+                        onClick = {
+                            onSelect(option.id)
+                            onDismissRequest()
+                        },
+                        testTag = TestTags.TAMBAH_CATEGORY_ITEM + "_" + option.id,
+                    )
+                }
             }
         }
     }

@@ -38,14 +38,16 @@ import id.almezi.simplemoneytracker_kt.TestTags
 import id.almezi.simplemoneytracker_kt.data.Account
 import id.almezi.simplemoneytracker_kt.data.Category
 import id.almezi.simplemoneytracker_kt.ui.components.AmountInput
-import id.almezi.simplemoneytracker_kt.ui.components.CategoryChipGrid
 import id.almezi.simplemoneytracker_kt.ui.components.CategoryChipItem
 import id.almezi.simplemoneytracker_kt.ui.components.CategoryChipRow
+import id.almezi.simplemoneytracker_kt.ui.components.CategoryMark
+import id.almezi.simplemoneytracker_kt.ui.components.CategoryPickerSheet
 import id.almezi.simplemoneytracker_kt.ui.components.HelperText
 import id.almezi.simplemoneytracker_kt.ui.components.NoteField
 import id.almezi.simplemoneytracker_kt.ui.components.PrimaryButton
 import id.almezi.simplemoneytracker_kt.ui.components.PrimaryButtonTone
 import id.almezi.simplemoneytracker_kt.ui.components.SakuPickerOption
+import id.almezi.simplemoneytracker_kt.ui.components.SakuPickerOptionGroup
 import id.almezi.simplemoneytracker_kt.ui.components.SakuPickerSheet
 import id.almezi.simplemoneytracker_kt.ui.components.SectionLabel
 import id.almezi.simplemoneytracker_kt.ui.components.SegmentedOption
@@ -59,6 +61,7 @@ import id.almezi.simplemoneytracker_kt.ui.designsystem.TransactionType
 import id.almezi.simplemoneytracker_kt.ui.designsystem.formatShortDate
 import id.almezi.simplemoneytracker_kt.ui.designsystem.typeAccent
 import id.almezi.simplemoneytracker_kt.ui.categoryDisplayName
+import id.almezi.simplemoneytracker_kt.ui.getCategoryGroupNameRes
 import java.util.Calendar
 import java.util.TimeZone
 
@@ -102,10 +105,20 @@ fun TransactionForm(
 ) {
     val context = androidx.compose.ui.platform.LocalContext.current
     var showAccountSheet by remember { mutableStateOf(false) }
+    var showCategorySheet by remember { mutableStateOf(false) }
     val isExpense = state.type == TransactionType.Expense
-    val chipItems = state.categories.map { category ->
-        CategoryChipItem(id = category.id, label = categoryDisplayName(category))
+
+    val selectedCategory = state.categories.firstOrNull { it.id == state.selectedCategoryId }
+    val selectedCategoryName = selectedCategory?.let { categoryDisplayName(it) } ?: ""
+
+    val quickCategoryIds = if (isExpense) {
+        listOf("exp_daily_food", "exp_daily_groceries", "exp_transport_fuel", "exp_daily_household", "exp_other")
+    } else {
+        listOf("inc_salary", "inc_freelance", "inc_bonus_thr", "inc_other")
     }
+    val quickItems = state.categories
+        .filter { it.id in quickCategoryIds }
+        .map { CategoryChipItem(id = it.id, label = categoryDisplayName(it)) }
 
     Box(
         modifier = modifier
@@ -162,17 +175,22 @@ fun TransactionForm(
 
             Spacer(modifier = Modifier.height(SakuSpace.cardInner))
 
-            if (isExpense) {
+            SelectField(
+                value = selectedCategoryName,
+                onClick = { showCategorySheet = true },
+                placeholder = stringResource(R.string.pilih_kategori_title),
+                leadingIcon = selectedCategory?.let { cat ->
+                    { CategoryMark(categoryId = cat.id, size = SakuSize.markSmall) }
+                },
+                trailingIcon = { FieldChevron() },
+                modifier = Modifier.fillMaxWidth(),
+                testTag = TestTags.TAMBAH_CATEGORY_PAGER,
+            )
+
+            if (quickItems.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(SakuSpace.cardInner))
                 CategoryChipRow(
-                    items = chipItems,
-                    selectedId = state.selectedCategoryId,
-                    onSelect = actions.onCategoryChange,
-                    type = state.type,
-                    testTag = TestTags.TAMBAH_CATEGORY_ITEM,
-                )
-            } else {
-                CategoryChipGrid(
-                    items = chipItems,
+                    items = quickItems,
                     selectedId = state.selectedCategoryId,
                     onSelect = actions.onCategoryChange,
                     type = state.type,
@@ -241,6 +259,32 @@ fun TransactionForm(
             if (footer != null) {
                 footer()
             }
+        }
+
+        if (showCategorySheet) {
+            val categoryGroups = state.categories
+                .groupBy { it.groupId }
+                .map { (groupId, categories) ->
+                    SakuPickerOptionGroup(
+                        title = stringResource(getCategoryGroupNameRes(groupId)),
+                        options = categories.map { category ->
+                            SakuPickerOption(
+                                id = category.id,
+                                label = categoryDisplayName(category),
+                                mark = { CategoryMark(categoryId = category.id, size = SakuSize.markSmall) }
+                            )
+                        }
+                    )
+                }
+
+            CategoryPickerSheet(
+                title = stringResource(R.string.pilih_kategori_title),
+                groups = categoryGroups,
+                selectedId = state.selectedCategoryId,
+                onSelect = actions.onCategoryChange,
+                onDismissRequest = { showCategorySheet = false },
+                testTag = TestTags.TAMBAH_CATEGORY_ITEM,
+            )
         }
 
         if (showAccountSheet) {
