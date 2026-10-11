@@ -2,27 +2,9 @@
     <string name="app_name">Saku</string>
     <string name="saku_tagline">Kelola keuangan harian kamu dengan mudah dan teratur</string>
     <string name="saku_loading_status">Memuat data dari perangkat…</string>
-    <string name="tambah_transaksi">Tambah Transaksi</string>
-    <string name="daftar_transaksi">Daftar Transaksi</string>
-    <string name="ringkasan_transaksi">Ringkasan</string>
-    <string name="tambah_screen_title_pemasukan">Tambah Pemasukan</string>
-    <string name="tambah_screen_title_pengeluaran">Tambah Pengeluaran</string>
-    <string name="tambah_type_pemasukan">Pemasukan</string>
-    <string name="tambah_type_pengeluaran">Pengeluaran</string>
-    <string name="tambah_amount_label">Jumlah</string>
     <string name="tambah_category_label">Kategori</string>
-    <string name="tambah_date_button">Pilih Tanggal</string>
-    <string name="tambah_note_label">Catatan</string>
-    <string name="tambah_save_button">Simpan</string>
-    <string name="tambah_error_amount">Jumlah tidak valid</string>
-    <string name="tambah_error_category">Pilih kategori</string>
-    <string name="tambah_save_success">Transaksi berhasil disimpan</string>
     <string name="delete">Hapus</string>
-    <string name="loading">Memuat…</string>
-    <string name="delete_dialog_title">Hapus transaksi?</string>
-    <string name="delete_dialog_message">Transaksi ini akan dihapus permanen.</string>
     <string name="cancel">Batal</string>
-    <string name="daftar_empty">Belum ada transaksi bulan ini</string>
 
     <!-- Design system: shared components -->
     <string name="nav_tambah">Tambah</string>
@@ -32,7 +14,6 @@
     <string name="action_ya_hapus">Ya, hapus</string>
     <string name="action_urungkan">Urungkan</string>
     <string name="cd_back">Kembali</string>
-    <string name="cd_close">Tutup</string>
     <string name="cd_previous_month">Bulan sebelumnya</string>
     <string name="cd_next_month">Bulan berikutnya</string>
     <string name="cd_open_picker">Buka pilihan</string>
@@ -47,8 +28,6 @@
     <string name="label_jumlah">JUMLAH</string>
 
     <!-- Tambah screen (step 3) -->
-    <string name="tambah_header_pemasukan">Tambah transaksi</string>
-    <string name="tambah_header_pengeluaran">Tambah Pengeluaran</string>
     <string name="tambah_simpan_transaksi">Simpan transaksi</string>
     <string name="tambah_simpan_pengeluaran">Simpan Pengeluaran</string>
     <string name="tambah_helper_amount">Isi jumlah dulu</string>
@@ -62,7 +41,6 @@
     <string name="pilih_akun_title">Pilih akun</string>
     <string name="toast_transaksi_disimpan">Transaksi disimpan</string>
     <string name="toast_gagal_menyimpan">Gagal menyimpan. Coba lagi.</string>
-    <string name="kelola_kategori_placeholder_body">Kelola kategori akan hadir di langkah berikutnya.</string>
 
     <!-- Transaksi list (step 4) -->
     <string name="daftar_masuk">Masuk</string>
@@ -113,7 +91,6 @@
     <string name="anggaran_delete_title">Hapus anggaran %1$s?</string>
     <string name="anggaran_delete_body">Batas %1$s untuk %2$s akan dihapus. Pengeluaran yang sudah dicatat tetap ada di daftar transaksi.</string>
     <string name="anggaran_pilih_kategori">Pilih kategori</string>
-    <string name="budget_alert_reached">%1$s sudah memakai 80% anggaran</string>
 
     <!-- Kelola kategori (step 9) -->
     <string name="kategori_title">Kelola kategori</string>
