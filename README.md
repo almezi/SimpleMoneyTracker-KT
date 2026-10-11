@@ -20,6 +20,7 @@ A small, local-only personal money tracker built with Kotlin and Jetpack Compose
 
 ## Build Commands
 - Build: `./gradlew build`
+- Build release APK: `./gradlew assembleRelease`
 - Install debug: `./gradlew installDebug`
 - Clean: `./gradlew clean`
 - Run tests: `./gradlew test`
@@ -52,6 +53,10 @@ Tokens and components live in `app/src/main/java/.../ui/designsystem/` and `ui/c
 - The Tambah page header was removed for consistency with the other screens.
 - The Transaksi empty state keeps the month switcher at the top so other months can still be browsed.
 
+## Cleanup
+- Removed unused imports, 23 unused string resources, and the dead code listed in `CODE_REVIEW.md` (unused composables, unused design tokens, unused DAO and repository methods).
+- No behaviour change: `./gradlew assembleDebug` and `./gradlew testDebugUnitTest` both pass.
+
 ## Testability
 - All UI elements use test tags defined in `TestTags.kt`
 - Tags follow format: `<screen>_<type>_<name>`
@@ -59,7 +64,29 @@ Tokens and components live in `app/src/main/java/.../ui/designsystem/` and `ui/c
 
 ## Download APK
 
-You can download the pre-built APK from [here](release/SimpleMoneyTrackerKT-v1.0.apk).
+[Download SimpleMoneyTrackerKT-v1.0.apk](release/SimpleMoneyTrackerKT-v1.0.apk)
+
+| | |
+|---|---|
+| Version | 1.0 (`versionCode` 1) |
+| Build type | Release, unsigned |
+| Min / target SDK | 24 / 37 |
+| Size | 13.99 MiB (14.67 MB) |
+| SHA-256 | `fd7080e690a9b99212a85019e761d5793f0ef6226bba83bc3f16bb9e03e59b54` |
+| Built on | 2026-10-11 |
+
+The APK is **unsigned** — no signing config is defined in `app/build.gradle.kts`.
+Android will refuse to install it until it is signed. To install for local testing,
+use `./gradlew installDebug` instead, which produces a signed debug build.
+
+Rebuild the release artifact with:
+
+```
+./gradlew clean assembleRelease
+cp app/build/outputs/apk/release/app-release-unsigned.apk release/SimpleMoneyTrackerKT-v1.0.apk
+```
+
+Verify the checksum after rebuilding with `shasum -a 256 release/SimpleMoneyTrackerKT-v1.0.apk`.
 
 ## Conventions
 - Kotlin code style: official
