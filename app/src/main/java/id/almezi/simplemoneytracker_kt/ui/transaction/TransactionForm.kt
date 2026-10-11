@@ -59,7 +59,6 @@ import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuSpace
 import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuTheme
 import id.almezi.simplemoneytracker_kt.ui.designsystem.TransactionType
 import id.almezi.simplemoneytracker_kt.ui.designsystem.formatShortDate
-import id.almezi.simplemoneytracker_kt.ui.designsystem.typeAccent
 import id.almezi.simplemoneytracker_kt.ui.categoryDisplayName
 import id.almezi.simplemoneytracker_kt.ui.getCategoryGroupNameRes
 import java.util.Calendar
@@ -374,14 +373,4 @@ fun openDatePicker(
     ).apply {
         datePicker.maxDate = maxMillis
     }.show()
-}
-
-@Composable
-fun ExpenseHeaderLabel(text: String) {
-    TransactionFormHeader(
-        text = text.uppercase(),
-        style = SakuTheme.text.sectionLabel,
-        color = typeAccent(TransactionType.Expense),
-        testTag = TestTags.TAMBAH_HEADER,
-    )
 }

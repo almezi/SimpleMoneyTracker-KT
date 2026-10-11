@@ -83,44 +83,6 @@ fun CategoryAvatar(
 }
 
 @Composable
-fun CategoryChipGrid(
-    items: List<CategoryChipItem>,
-    selectedId: String?,
-    onSelect: (String) -> Unit,
-    type: TransactionType,
-    modifier: Modifier = Modifier,
-    columns: Int = 3,
-    testTag: String = TestTags.COMPONENT_GRID_CATEGORY_CHIP,
-) {
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(SakuSpace.chipGap),
-    ) {
-        items.chunked(columns).forEach { rowItems ->
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(SakuSpace.chipGap),
-            ) {
-                rowItems.forEach { item ->
-                    CategoryChip(
-                        item = item,
-                        selected = item.id == selectedId,
-                        type = type,
-                        onClick = { onSelect(item.id) },
-                        modifier = Modifier.weight(1f),
-                        height = SakuSize.chipHeight,
-                        testTag = testTag + "_" + item.id,
-                    )
-                }
-                repeat(columns - rowItems.size) {
-                    Box(modifier = Modifier.weight(1f))
-                }
-            }
-        }
-    }
-}
-
-@Composable
 fun CategoryChipRow(
     items: List<CategoryChipItem>,
     selectedId: String?,

@@ -24,24 +24,6 @@ import androidx.compose.ui.unit.dp
 private fun Color.hex(): String =
     String.format("#%06X", 0xFFFFFF and toArgb())
 
-@Composable
-private fun Swatch(name: String, color: Color) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Box(
-            modifier = Modifier
-                .width(40.dp)
-                .height(28.dp)
-                .background(color, RoundedCornerShape(SakuRadius.mark)),
-        )
-        Spacer(modifier = Modifier.width(SakuSpace.chipGap))
-        Text(
-            text = name + "  " + color.hex(),
-            style = SakuTheme.text.caption,
-            color = SakuTheme.colors.text,
-        )
-    }
-}
-
 @Preview(name = "Tokens", showBackground = true, backgroundColor = 0xFF0E0E12)
 @Composable
 private fun ColorTokensPreview() {

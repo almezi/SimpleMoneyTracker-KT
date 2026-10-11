@@ -25,36 +25,19 @@ class TransactionRepository(
 
     suspend fun deleteTransaction(id: Long) = transactionDao.delete(id)
 
-    suspend fun getCategory(id: String): Category? = categoryDao.getById(id)
-
-    fun getCategoriesByType(type: String): Flow<List<Category>> = categoryDao.getByType(type)
-
     fun getVisibleCategoriesByType(type: String): Flow<List<Category>> =
         categoryDao.getVisibleByType(type)
 
-    suspend fun insertCategories(vararg categories: Category) = categoryDao.insert(*categories)
-
     fun getAccounts(): Flow<List<Account>> = accountDao.getAll()
-
-    suspend fun getAccount(id: String): Account? = accountDao.getById(id)
-
-    suspend fun insertAccounts(vararg accounts: Account) = accountDao.insert(*accounts)
 
     suspend fun insertTransactions(transactions: List<Transaction>) =
         database.withTransaction { transactionDao.insertAll(transactions) }
-
-    suspend fun transactionsInMonth(startMillis: Long, endMillis: Long): List<Transaction> =
-        database.withTransaction { transactionDao.getAllOnce() }
-            .filter { it.dateEpochMillis in startMillis until endMillis }
 
     suspend fun totalsByCategory(
         type: String,
         startMillis: Long,
         endMillis: Long
     ): List<CategoryTotal> = transactionDao.totalsByCategory(type, startMillis, endMillis)
-
-    suspend fun netBetween(startMillis: Long, endMillis: Long): Long =
-        transactionDao.sumNetBetween(startMillis, endMillis)
 
     suspend fun incomeBetween(startMillis: Long, endMillis: Long): Long =
         transactionDao.sumIncomeBetween(startMillis, endMillis)
@@ -64,7 +47,4 @@ class TransactionRepository(
 
     suspend fun spentForCategory(categoryId: String, startMillis: Long, endMillis: Long): Long =
         transactionDao.sumAmountForCategoryBetween(categoryId, startMillis, endMillis)
-
-    suspend fun usageCountForCategory(categoryId: String): Int =
-        transactionDao.countForCategory(categoryId)
 }

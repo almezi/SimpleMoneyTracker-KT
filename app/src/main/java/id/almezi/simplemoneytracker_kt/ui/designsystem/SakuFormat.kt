@@ -72,11 +72,6 @@ fun formatShortDate(context: Context, epochMillis: Long): String {
     return formatShortDate(context, date.dayOfMonth, date.monthNumber, date.year)
 }
 
-fun jakartaYearMonth(epochMillis: Long): Pair<Int, Int> {
-    val date = Instant.fromEpochMilliseconds(epochMillis).toLocalDateTime(JAKARTA).date
-    return date.monthNumber to date.year
-}
-
 val JAKARTA: TimeZone = TimeZone.of("Asia/Jakarta")
 
 private fun monthIndex(month: Int): Int = (month - 1).coerceIn(0, 11)

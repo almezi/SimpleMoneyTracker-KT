@@ -37,7 +37,6 @@ object SakuSize {
     val primaryButtonHeight = 52.dp
     val secondaryButtonHeight = 48.dp
     val rowButtonHeight = 48.dp
-    val chipHeight = 56.dp
     val chipRowHeight = 48.dp
     val fieldHeight = 48.dp
     val navBarHeight = 64.dp
@@ -57,9 +56,7 @@ object SakuSize {
     val sheetHandleWidth = 40.dp
     val sheetHandleHeight = 4.dp
     val sheetHorizontalPadding = 20.dp
-    val sheetTopPadding = 22.dp
     val sheetBottomPadding = 28.dp
-    val emptyIcon = 72.dp
 }
 
 object SakuMotion {

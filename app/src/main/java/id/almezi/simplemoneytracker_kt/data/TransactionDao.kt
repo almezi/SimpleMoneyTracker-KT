@@ -35,12 +35,6 @@ interface TransactionDao {
     ): Long
 
     @Query(
-        "SELECT COALESCE(SUM(CASE WHEN type = 'pemasukan' THEN amount ELSE -amount END), 0) " +
-            "FROM transactions WHERE dateEpochMillis >= :startMillis AND dateEpochMillis < :endMillis"
-    )
-    suspend fun sumNetBetween(startMillis: Long, endMillis: Long): Long
-
-    @Query(
         "SELECT COALESCE(SUM(CASE WHEN type = 'pemasukan' THEN amount ELSE 0 END), 0) " +
             "FROM transactions WHERE dateEpochMillis >= :startMillis AND dateEpochMillis < :endMillis"
     )

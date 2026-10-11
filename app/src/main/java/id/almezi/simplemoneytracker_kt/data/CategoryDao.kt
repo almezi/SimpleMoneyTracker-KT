@@ -12,9 +12,6 @@ interface CategoryDao {
     fun getAll(): Flow<List<Category>>
 
     @Query("SELECT * FROM categories WHERE type = :type ORDER BY isDefault DESC, id ASC")
-    fun getByType(type: String): Flow<List<Category>>
-
-    @Query("SELECT * FROM categories WHERE type = :type ORDER BY isDefault DESC, id ASC")
     suspend fun getByTypeOnce(type: String): List<Category>
 
     @Query("SELECT * FROM categories WHERE type = :type AND isHidden = 0 ORDER BY isDefault DESC, id ASC")
@@ -37,9 +34,6 @@ interface CategoryDao {
 
     @Query("UPDATE categories SET customName = :name WHERE id = :id")
     suspend fun rename(id: String, name: String?)
-
-    @Query("UPDATE categories SET colorHex = :hex WHERE id = :id")
-    suspend fun setColor(id: String, hex: String)
 
     @Query("DELETE FROM categories WHERE id = :id")
     suspend fun delete(id: String)
