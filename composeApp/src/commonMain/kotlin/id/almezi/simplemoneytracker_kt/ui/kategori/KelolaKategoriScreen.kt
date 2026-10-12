@@ -20,6 +20,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -36,12 +41,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import id.almezi.simplemoneytracker_kt.TestTags
 import id.almezi.simplemoneytracker_kt.ui.components.CategoryMark
 import id.almezi.simplemoneytracker_kt.ui.components.ConfirmDeleteSheet
-import id.almezi.simplemoneytracker_kt.ui.components.DestructiveButton
 import id.almezi.simplemoneytracker_kt.ui.components.HelperText
+import id.almezi.simplemoneytracker_kt.ui.components.IconActionButton
+import id.almezi.simplemoneytracker_kt.ui.components.IconButtonTone
 import id.almezi.simplemoneytracker_kt.ui.components.PrimaryButton
 import id.almezi.simplemoneytracker_kt.ui.components.SakuCard
 import id.almezi.simplemoneytracker_kt.ui.components.ScreenHeader
-import id.almezi.simplemoneytracker_kt.ui.components.SecondaryButton
+import id.almezi.simplemoneytracker_kt.ui.components.SearchField
 import id.almezi.simplemoneytracker_kt.ui.components.SegmentedOption
 import id.almezi.simplemoneytracker_kt.ui.components.SegmentedToggle
 import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuRadius
@@ -92,25 +98,34 @@ fun KelolaKategoriScreen(
 
             SegmentedToggle(
                 options = listOf(
-                    SegmentedOption(SakuStrings.type_pengeluaran, TransactionType.Expense),
                     SegmentedOption(SakuStrings.type_pemasukan, TransactionType.Income),
+                    SegmentedOption(SakuStrings.type_pengeluaran, TransactionType.Expense),
                 ),
-                selectedIndex = if (uiState.type == TransactionType.Expense) 0 else 1,
+                selectedIndex = if (uiState.type == TransactionType.Expense) 1 else 0,
                 onSelect = { index ->
                     viewModel.updateType(
-                        if (index == 1) TransactionType.Income else TransactionType.Expense
+                        if (index == 1) TransactionType.Expense else TransactionType.Income
                     )
                 },
                 testTag = TestTags.KATEGORI_TOGGLE_TYPE,
             )
 
+            Spacer(modifier = Modifier.height(SakuSpace.chipGap))
+
+            SearchField(
+                value = uiState.query,
+                onValueChange = viewModel::updateQuery,
+                placeholder = SakuStrings.cari_kategori_placeholder,
+            )
+
             Spacer(modifier = Modifier.height(SakuSpace.section))
 
+            val visibleRows = uiState.visibleRows
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(SakuSpace.cardInner),
             ) {
-                items(uiState.rows, key = { it.category.id }) { row ->
+                items(visibleRows, key = { it.category.id }) { row ->
                     CategoryRowCard(
                         row = row,
                         onRename = {
@@ -120,6 +135,21 @@ fun KelolaKategoriScreen(
                         onToggleHidden = { viewModel.setHidden(row.category.id, !row.isHidden) },
                         onDelete = { viewModel.requestDelete(row) },
                     )
+                }
+                if (visibleRows.isEmpty()) {
+                    item(key = "empty") {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = SakuSpace.section)
+                                .testTag(TestTags.COMPONENT_STATE_EMPTY),
+                        ) {
+                            HelperText(
+                                text = SakuStrings.kategori_tidak_ditemukan,
+                                modifier = Modifier.fillMaxWidth(),
+                            )
+                        }
+                    }
                 }
                 item(key = "hint") {
                     HelperText(
@@ -184,58 +214,58 @@ private fun CategoryRowCard(
             .fillMaxWidth()
             .testTag(TestTags.KATEGORI_ROW + "_" + row.category.id)
     ) {
-        Column {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                CategoryMark(categoryId = row.category.id, size = SakuSize.mark)
-                Spacer(modifier = Modifier.width(SakuSpace.tight * 2))
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = name,
-                        style = SakuTheme.text.bodyStrong,
-                        color = SakuTheme.colors.text,
-                    )
-                    Text(
-                        text = buildString {
-                            append(
-                                if (row.isDefault) SakuStrings.kategori_bawaan
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            CategoryMark(categoryId = row.category.id, size = SakuSize.mark)
+            Spacer(modifier = Modifier.width(SakuSpace.tight * 2))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = name,
+                    style = SakuTheme.text.bodyStrong,
+                    color = SakuTheme.colors.text,
+                )
+                Text(
+                    text = buildString {
+                        append(
+                            if (row.isDefault) SakuStrings.kategori_bawaan
                                     else SakuStrings.kategori_buatan_sendiri
-                            )
-                            append(" · ")
-                            append(SakuStrings.kategori_dipakai.format(row.usageCount))
-                        },
-                        style = SakuTheme.text.caption,
-                        color = SakuTheme.colors.textMuted,
-                    )
-                }
+                        )
+                        append(" · ")
+                        append(SakuStrings.kategori_dipakai.format(row.usageCount))
+                    },
+                    style = SakuTheme.text.caption,
+                    color = SakuTheme.colors.textMuted,
+                )
             }
-            Spacer(modifier = Modifier.height(SakuSpace.cardInner))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(SakuSpace.chipGap),
-            ) {
-                SecondaryButton(
-                    text = SakuStrings.action_ubah,
-                    onClick = onRename,
-                    modifier = Modifier.weight(1f),
-                    height = SakuSize.rowButtonHeight,
-                    testTag = TestTags.KATEGORI_ROW_EDIT + "_" + row.category.id,
+            Spacer(modifier = Modifier.width(SakuSpace.tight))
+            IconActionButton(
+                icon = Icons.Filled.Edit,
+                contentDescription = SakuStrings.cd_ubah_kategori,
+                onClick = onRename,
+                testTag = TestTags.KATEGORI_ROW_EDIT + "_" + row.category.id,
+            )
+            Spacer(modifier = Modifier.width(SakuSpace.tight))
+            IconActionButton(
+                icon = if (row.isHidden) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
+                contentDescription = if (row.isHidden) {
+                    SakuStrings.cd_tampilkan_kategori
+                } else {
+                    SakuStrings.cd_sembunyikan_kategori
+                },
+                onClick = onToggleHidden,
+                testTag = TestTags.KATEGORI_ROW_HIDE + "_" + row.category.id,
+            )
+            if (!row.isDefault) {
+                Spacer(modifier = Modifier.width(SakuSpace.tight))
+                IconActionButton(
+                    icon = Icons.Filled.Delete,
+                    contentDescription = SakuStrings.cd_hapus_kategori,
+                    onClick = onDelete,
+                    tone = IconButtonTone.Danger,
+                    testTag = TestTags.KATEGORI_ROW_DELETE + "_" + row.category.id,
                 )
-                SecondaryButton(
-                    text = if (row.isHidden) SakuStrings.kategori_tampilkan else SakuStrings.kategori_sembunyikan,
-                    onClick = onToggleHidden,
-                    modifier = Modifier.weight(1f),
-                    height = SakuSize.rowButtonHeight,
-                    testTag = TestTags.KATEGORI_ROW_HIDE + "_" + row.category.id,
-                )
-                if (!row.isDefault) {
-                    DestructiveButton(
-                        text = SakuStrings.delete,
-                        onClick = onDelete,
-                        modifier = Modifier.weight(1f),
-                        height = SakuSize.rowButtonHeight,
-                        testTag = TestTags.KATEGORI_ROW_DELETE + "_" + row.category.id,
-                    )
-                }
             }
         }
     }

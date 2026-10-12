@@ -88,13 +88,13 @@ fun TambahKategoriScreen(
 
         SegmentedToggle(
             options = listOf(
-                SegmentedOption(SakuStrings.type_pengeluaran, TransactionType.Expense),
                 SegmentedOption(SakuStrings.type_pemasukan, TransactionType.Income),
+                SegmentedOption(SakuStrings.type_pengeluaran, TransactionType.Expense),
             ),
-            selectedIndex = if (uiState.type == TransactionType.Expense) 0 else 1,
+            selectedIndex = if (uiState.type == TransactionType.Expense) 1 else 0,
             onSelect = { index ->
                 viewModel.updateType(
-                    if (index == 1) TransactionType.Income else TransactionType.Expense
+                    if (index == 1) TransactionType.Expense else TransactionType.Income
                 )
             },
             testTag = TestTags.KATEGORI_TOGGLE_TYPE,

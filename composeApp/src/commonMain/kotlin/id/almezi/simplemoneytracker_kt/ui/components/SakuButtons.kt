@@ -9,7 +9,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
@@ -210,6 +213,54 @@ fun DestructiveTextButton(
             style = SakuTheme.text.buttonSecondary,
             textAlign = TextAlign.Center,
             color = if (enabled) SakuTheme.colors.dangerText else SakuTheme.colors.textDisabled,
+        )
+    }
+}
+
+enum class IconButtonTone {
+    Neutral,
+    Danger,
+}
+
+/**
+ * A square, icon-only action button. Callers always pass an explicit
+ * [testTag] from TestTags.kt so a test can address the exact row action.
+ */
+@Composable
+fun IconActionButton(
+    icon: ImageVector,
+    contentDescription: String,
+    onClick: () -> Unit,
+    testTag: String,
+    modifier: Modifier = Modifier,
+    tone: IconButtonTone = IconButtonTone.Neutral,
+) {
+    val containerColor = when (tone) {
+        IconButtonTone.Neutral -> SakuTheme.colors.surfaceRaised
+        IconButtonTone.Danger -> SakuTheme.colors.dangerSurface
+    }
+    val contentColor = when (tone) {
+        IconButtonTone.Neutral -> SakuTheme.colors.textSecondary
+        IconButtonTone.Danger -> SakuTheme.colors.dangerText
+    }
+    val border = when (tone) {
+        IconButtonTone.Neutral -> BorderStroke(SakuSpace.hairline, SakuTheme.colors.borderStrong)
+        IconButtonTone.Danger -> BorderStroke(SakuSpace.hairline, SakuTheme.colors.dangerBorder)
+    }
+    SakuButtonSurface(
+        onClick = onClick,
+        enabled = true,
+        height = SakuSize.squareButton,
+        containerColor = containerColor,
+        contentColor = contentColor,
+        shape = RoundedCornerShape(SakuRadius.button),
+        border = border,
+        modifier = modifier.size(SakuSize.squareButton).testTag(testTag),
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = contentDescription,
+            modifier = Modifier.size(SakuSize.actionIcon),
         )
     }
 }

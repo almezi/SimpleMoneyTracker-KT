@@ -5,7 +5,9 @@ import androidx.lifecycle.viewModelScope
 import id.almezi.simplemoneytracker_kt.data.Category
 import id.almezi.simplemoneytracker_kt.data.CategoryRepository
 import id.almezi.simplemoneytracker_kt.data.Clock
+import id.almezi.simplemoneytracker_kt.ui.categoryDisplayName
 import id.almezi.simplemoneytracker_kt.ui.designsystem.TransactionType
+import id.almezi.simplemoneytracker_kt.ui.matchesCategoryQuery
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -28,10 +30,17 @@ data class DeleteCategoryRequest(
 )
 
 data class KelolaKategoriUiState(
-    val type: TransactionType = TransactionType.Expense,
+    val type: TransactionType = TransactionType.Income,
+    val query: String = "",
     val rows: List<CategoryRow> = emptyList(),
     val pendingDelete: DeleteCategoryRequest? = null
-)
+) {
+    val visibleRows: List<CategoryRow> get() = filterCategoryRows(rows, query)
+}
+
+/** Keeps rows whose display name contains [query], case- and space-insensitive. */
+fun filterCategoryRows(rows: List<CategoryRow>, query: String): List<CategoryRow> =
+    rows.filter { matchesCategoryQuery(categoryDisplayName(it.category), query) }
 
 class KelolaKategoriViewModel(
     private val categoryRepository: CategoryRepository,
@@ -51,6 +60,10 @@ class KelolaKategoriViewModel(
         if (type == _uiState.value.type) return
         _uiState.update { it.copy(type = type) }
         reload(type)
+    }
+
+    fun updateQuery(query: String) {
+        _uiState.update { it.copy(query = query) }
     }
 
     fun setHidden(categoryId: String, hidden: Boolean) {

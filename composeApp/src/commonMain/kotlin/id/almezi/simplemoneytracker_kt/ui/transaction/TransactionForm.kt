@@ -58,7 +58,6 @@ import id.almezi.simplemoneytracker_kt.ui.designsystem.TransactionType
 import id.almezi.simplemoneytracker_kt.ui.designsystem.formatShortDate
 import id.almezi.simplemoneytracker_kt.ui.designsystem.safeAreaTop
 import id.almezi.simplemoneytracker_kt.ui.categoryDisplayName
-import id.almezi.simplemoneytracker_kt.ui.getCategoryGroupName
 
 data class TransactionFormState(
     val type: TransactionType,
@@ -169,7 +168,7 @@ fun TransactionForm(
             ) {
                 SectionLabel(text = SakuStrings.label_kategori)
                 Spacer(modifier = Modifier.weight(1f))
-                if (isExpense && showKelolaKategoriLink) {
+                if (showKelolaKategoriLink) {
                     KelolaKategoriLink(onClick = onOpenKelolaKategori)
                 }
             }
@@ -263,20 +262,20 @@ fun TransactionForm(
         }
 
         if (showCategorySheet) {
-            val categoryGroups = state.categories
-                .groupBy { it.groupId }
-                .map { (groupId, categories) ->
-                    SakuPickerOptionGroup(
-                        title = getCategoryGroupName(groupId),
-                        options = categories.map { category ->
-                            SakuPickerOption(
-                                id = category.id,
-                                label = categoryDisplayName(category),
-                                mark = { CategoryMark(categoryId = category.id, size = SakuSize.markSmall) }
-                            )
-                        }
-                    )
-                }
+            // One untitled group: custom categories have no groupId, so grouping
+            // them would strand them under whatever heading the fallback picks.
+            val categoryGroups = listOf(
+                SakuPickerOptionGroup(
+                    title = "",
+                    options = state.categories.map { category ->
+                        SakuPickerOption(
+                            id = category.id,
+                            label = categoryDisplayName(category),
+                            mark = { CategoryMark(categoryId = category.id, size = SakuSize.markSmall) }
+                        )
+                    }
+                )
+            )
 
             CategoryPickerSheet(
                 title = SakuStrings.pilih_kategori_title,

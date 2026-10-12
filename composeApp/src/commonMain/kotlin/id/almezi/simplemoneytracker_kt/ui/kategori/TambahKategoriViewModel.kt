@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 const val CATEGORY_NAME_MAX = 20
 
 data class TambahKategoriUiState(
-    val type: TransactionType = TransactionType.Expense,
+    val type: TransactionType = TransactionType.Income,
     val name: String = "",
     val colorHex: String = SakuCategoryPalette.defaultHex,
     val nameError: Boolean = false,

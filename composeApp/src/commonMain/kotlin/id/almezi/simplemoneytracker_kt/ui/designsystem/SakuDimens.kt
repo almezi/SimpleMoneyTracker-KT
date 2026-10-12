@@ -46,6 +46,7 @@ object SakuSize {
     val arrowIconPadding = 8.dp
     val navReserve = 84.dp
     val squareButton = 48.dp
+    val actionIcon = 20.dp
     val avatar = 40.dp
     val mark = 12.dp
     val markSmall = 10.dp

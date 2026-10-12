@@ -18,6 +18,10 @@
     <string name="cd_previous_month">Bulan sebelumnya</string>
     <string name="cd_next_month">Bulan berikutnya</string>
     <string name="cd_open_picker">Buka pilihan</string>
+    <string name="cd_ubah_kategori">Ubah kategori</string>
+    <string name="cd_sembunyikan_kategori">Sembunyikan kategori</string>
+    <string name="cd_tampilkan_kategori">Tampilkan kategori</string>
+    <string name="cd_hapus_kategori">Hapus kategori</string>
     <string name="type_pemasukan">Pemasukan</string>
     <string name="type_pengeluaran">Pengeluaran</string>
     <string name="status_aman">Aman</string>
@@ -212,15 +216,7 @@
     <string name="cat_exp_education_other">Lainnya (Pendidikan)</string>
     <string name="cat_exp_other">Lainnya</string>
 
-    <!-- Category Group Names -->
-    <string name="cat_group_daily">Kebutuhan Sehari-hari</string>
-    <string name="cat_group_transport">Transportasi &amp; Perjalanan</string>
-    <string name="cat_group_finance">Keuangan</string>
-    <string name="cat_group_health">Kesehatan</string>
-    <string name="cat_group_lifestyle">Lifestyle</string>
-    <string name="cat_group_education">Pendidikan &amp; Karier</string>
-    <string name="cat_group_other">Lainnya</string>
-    <string name="cat_group_income">Pemasukan</string>
+    <!-- Category Picker -->
     <string name="pilih_kategori_title">Pilih Kategori</string>
     <string name="cari_kategori_placeholder">Cari kategori…</string>
     <string name="kategori_tidak_ditemukan">Kategori tidak ditemukan</string>

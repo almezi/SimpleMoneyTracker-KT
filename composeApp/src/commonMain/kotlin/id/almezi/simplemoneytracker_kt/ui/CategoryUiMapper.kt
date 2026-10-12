@@ -48,19 +48,6 @@ fun getCategoryName(id: String): String {
     }
 }
 
-fun getCategoryGroupName(groupId: String?): String {
-    return when (groupId) {
-        "grp_daily" -> SakuStrings.cat_group_daily
-        "grp_transport" -> SakuStrings.cat_group_transport
-        "grp_finance" -> SakuStrings.cat_group_finance
-        "grp_health" -> SakuStrings.cat_group_health
-        "grp_lifestyle" -> SakuStrings.cat_group_lifestyle
-        "grp_education" -> SakuStrings.cat_group_education
-        "grp_other" -> SakuStrings.cat_group_other
-        else -> SakuStrings.cat_group_income
-    }
-}
-
 fun categoryDisplayName(category: Category): String =
     category.customName ?: getCategoryName(category.id)
 

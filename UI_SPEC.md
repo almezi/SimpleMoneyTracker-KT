@@ -58,7 +58,7 @@ Fields, top to bottom:
 1. Header: "Tambah transaksi", or "TAMBAH PENGELUARAN" in the expense color
 2. Type toggle: "Pemasukan" | "Pengeluaran" (default Pemasukan)
 3. Amount: label "JUMLAH", empty state shows "Rp 0" as a placeholder
-4. Category: label "KATEGORI", a "Kelola kategori" link on the expense variant. Grid of chips for income, wrapping pills for expense
+4. Category: label "KATEGORI", a "Kelola kategori" link on both variants. A select field opens the category picker: a search field over one flat list, no group headings
 5. Account select and date select side by side. Placeholder date is today, "9 Okt 2026"
 6. Note: placeholder "Tambah catatan (opsional)", max 60 characters
 7. Helper text above the button: "Isi jumlah dulu", "Pilih kategori dulu" or "Isi jumlah dan kategori dulu"
@@ -94,12 +94,13 @@ Same form as Tambah, header "Ubah transaksi", no bottom bar, all fields pre-fill
 
 ### 6.5 Kelola kategori and Tambah kategori
 
-- Toggle Pengeluaran / Pemasukan.
-- Rows: color square, name, "Bawaan" or "Buatan sendiri", and the transaction count.
-- Default categories: "Ubah" and "Sembunyikan". Custom categories also get "Hapus". Hidden categories show "Tampilkan".
+- Toggle Pemasukan / Pengeluaran, opening on Pemasukan.
+- A search field under the toggle filters the current tab by category name, case-insensitive. It stays put when the tab changes. No match shows "Kategori tidak ditemukan".
+- Rows: color square, name, "Bawaan" or "Buatan sendiri", and the transaction count. Actions are icon-only buttons on the right of the row.
+- Default categories get edit and hide. Custom categories also get delete. Hidden categories show the show icon instead of the hide icon.
 - Hint "Kategori bawaan tidak bisa dihapus, hanya disembunyikan" and a "Tambah kategori" button.
 - Deleting a custom category asks for confirmation and reports how many transactions move to "Lainnya".
-- Tambah kategori: type toggle, name (1-20 characters, unique per type, case-insensitive), one of the eight palette colors with a live preview chip, and "Simpan kategori" disabled until the name is valid.
+- Tambah kategori: type toggle Pemasukan / Pengeluaran, opening on Pemasukan, name (1-20 characters, unique per type, case-insensitive), one of the eight palette colors with a live preview chip, and "Simpan kategori" disabled until the name is valid.
 
 ### 6.6 Anggaran and the budget form
 
