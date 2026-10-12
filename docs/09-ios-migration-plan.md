@@ -174,36 +174,42 @@ Copy this into your task tracker. 48 items across 6 stages.
 - [x] 2.16 Done without expect/actual — plain platform-specific factories are simpler here
 - [x] 2.17 **GATE — ✅ PASSED.** Both iOS targets compile, `:app:assembleDebug` succeeds, all 26 unit tests pass
 
-### Stage 3 — Resources · ~3–5 days
+### Stage 3 — Resources · ✅ complete (via a workaround, not the planned route)
 
-- [ ] 3.1 Add `compose.resources` dependency — ❌ **BLOCKED**, see §6.5
-- [ ] 3.2 Convert `strings.xml` → `composeResources/values/strings.xml` — ❌ **BLOCKED**, see §6.5
-- [ ] 3.3 Convert `days_short`, `months_short`, `months_long` string arrays to resource arrays
-- [ ] 3.4 Copy the 6 DM Sans / DM Mono TTFs into `composeResources/font/`
-- [ ] 3.5 Update all 138 `stringResource()` call sites — ❌ **BLOCKED**, see §6.5
-- [ ] 3.6 Update all 6 `R.font.*` references to `Res.font.*`
-- [ ] 3.7 Update `SakuFormat.kt` — it calls `getStringArray()` and takes `Context`
-- [ ] 3.8 Update `CategoryUiMapper.kt` — it returns `Int` string-resource IDs; change to return the resource accessor
-- [ ] 3.9 Move `AndroidManifest.xml` app label to a Compose resource
-- [ ] 3.10 Amend `AGENTS.md` to describe the new string rule
-- [ ] 3.11 **GATE** — ❌ **NOT REACHED.** The tree was reverted to a clean state rather than left half-migrated
+The §6.5 blocker is **real and still true**: Compose Multiplatform does not generate working resource accessors for the Android target. This stage was completed anyway, by abandoning CMP resource accessors for strings.
 
-### Stage 4 — UI · ~1 week
+- [x] 3.1 Add `compose.resources` dependency — ⚠️ added, but **only iosMain may consume it.** `androidMain` must not, or every accessor fails to resolve (§6.5)
+- [x] 3.2 Convert `strings.xml` → **not done, and deliberately abandoned.** The single source of truth moved to `composeApp/shared-strings/strings.xml`
+- [x] 3.3 Convert string arrays — ✅ done, but via the same generator rather than CMP resource arrays. `days_short`, `months_short`, `months_long` now emit as Kotlin lists
+- [x] 3.4 Copy the 6 TTFs into `composeResources/font/` — ✅ done, **but they exist in two places.** See §6.6
+- [x] 3.5 Update all `stringResource()` call sites — ✅ done, and `commonMain` now contains **zero** `stringResource()` calls
+- [x] 3.6 Update `R.font.*` → `Res.font.*` — ⚠️ **reversed on purpose.** `iosMain` uses `Res.font.*`; `androidMain` uses `R.font.*` from its own `res/font/`. See §6.6
+- [x] 3.7 Update `SakuFormat.kt` — ✅ made Context-free. It no longer calls `getStringArray()`
+- [x] 3.8 Update `CategoryUiMapper.kt` — ✅ signature changed from `Int` to `String`
+- [x] 3.9 AndroidManifest app label — ⬜ not needed; the label stays in the Android manifest, which is platform-correct
+- [x] 3.10 Amend `AGENTS.md` for the new string rule — ✅ done; it now documents `SakuStrings.<name>` and that the generated file must never be edited
+- [x] 3.11 **GATE** — ✅ **PASSED.** All 165 strings and 3 arrays resolve from `SakuStrings` in commonMain; `compileAndroidMain` and `compileKotlinIosSimulatorArm64` both succeed
 
-- [ ] 4.1 Move `ui/designsystem/` and `ui/components/` to `commonMain`
-- [ ] 4.2 Resolve the Compose 1.6 → 1.12 breaking changes
-- [ ] 4.3 Swap `androidx.navigation` → CMP navigation (`org.jetbrains.androidx.navigation`)
-- [ ] 4.4 Rewrite `NavGraph.kt` for the typed route DSL
-- [ ] 4.5 Replace `android.app.DatePickerDialog` with the CMP Material3 `DatePicker`
-- [ ] 4.6 Re-implement the future-date restriction with the new picker
-- [ ] 4.7 Replace `SystemClock.elapsedRealtime()` with `kotlin.time.TimeSource.Monotonic`
-- [ ] 4.8 Move the loading-screen min-duration logic to common code
-- [ ] 4.9 Port `MainActivity` to common code; keep a thin Android entry point
-- [ ] 4.10 Add the iOS entry point (`ComposeUIViewController` + `MainViewController.swift`)
-- [ ] 4.11 Create the Xcode project, bundle the framework, set the deployment target to iOS 14.0
-- [ ] 4.12 Add the Saku app icon as an iOS asset catalog
-- [ ] 4.13 Port `TestTags.kt` to common — **do not change any tag string**
-- [ ] 4.14 **GATE: all 9 screens render on both Android and iOS Simulator**
+**What replaced the planned route:** a Gradle task (`:composeApp:generateSakuStrings`) parses `composeApp/shared-strings/strings.xml` and emits `SakuStrings.kt` into a generated source dir wired into `commonMain`. One XML file remains the single source of truth; code reads `SakuStrings.tambah_simpan`. Cost: no runtime locale switching. Benefit: no codegen dependency, and Android cannot break again. Full rationale and the failed alternatives are in §6.5.
+
+### Stage 4 — UI · ✅ complete except the iOS run
+
+- [x] 4.1 Move `ui/` to `commonMain` — ✅ all 9 screens, design system, components, navigation, `TestTags`. 64 files in `commonMain`
+- [x] 4.2 Resolve Compose breaking changes — ✅ no change needed; `androidLibrary { }` keeps the resolved Compose version
+- [x] 4.3 Swap `androidx.navigation` → CMP navigation — ✅ `org.jetbrains.androidx.navigation:navigation-compose:2.9.0-beta02`, exposed as `api`
+- [x] 4.4 Rewrite `NavGraph.kt` for typed routes — ✅ `@Serializable` `Screen` objects replace string templates; `SakuNavItem` became generic so test tags are unchanged
+- [x] 4.5 Replace `android.app.DatePickerDialog` — ✅ `SakuDatePicker.kt` uses the CMP Material3 `DatePickerDialog`
+- [x] 4.6 Re-implement the future-date restriction — ✅ via `SelectableDates`. Timezone is handled explicitly: the picker works in UTC while Saku stores midnight Asia/Jakarta, so the selected UTC date is re-anchored to Jakarta
+- [x] 4.7 `SystemClock.elapsedRealtime()` → `TimeSource.Monotonic` — ✅ in `SakuApp.kt`
+- [x] 4.8 Loading-screen logic to common — ✅ in `SakuApp.kt`
+- [x] 4.9 `MainActivity` reduced to a thin entry point — ✅ it now only supplies the container, the ready flag, and the Android-only backup screen
+- [x] 4.10 iOS entry point — ✅ `composeApp/src/iosMain/.../MainViewController.kt`; `ComposeApp.framework` exports `MainViewController()` to Swift
+- [ ] 4.11 Create the Xcode project — ❌ **NOT DONE.** There is **no `.xcodeproj` in the repo.** `iosApp/` currently holds a hand-built harness instead (`SakuApp.swift`, `build-app.sh`, `run-app.sh`). See §6.7
+- [ ] 4.12 iOS app icon asset catalog — ⬜ blocked behind 4.11
+- [x] 4.13 Port `TestTags.kt` to common — ✅ **no tag string changed.** 108 constants intact
+- [ ] 4.14 **GATE: all 9 screens render on both Android and iOS Simulator** — ❌ **NOT PASSED.** Android compiles and tests green; **iOS has never rendered this code.** Two blockers remain: `xcode-select` (§4.1) and `compose-resources` packaging (§6.7)
+
+**Consequence:** because 4.14 never passed, Stage 5 cannot start as written. There is no running iOS app to port platform I/O onto.
 
 ### Stage 5 — Platform I/O · ~3–5 days
 
@@ -413,20 +419,32 @@ hand-built bundle; registering it programmatically via
 
 #### Spikes are self-contained
 
-`ios-spike/` is an independent Gradle build — it has its own
-`settings.gradle.kts`, so it is never part of the Saku build. Delete the
-directory when the migration is complete.
+The Stage 1 spike was a throwaway directory with its own `settings.gradle.kts`,
+so it was never part of the Saku build. **It has been deleted** (518 MB, 29
+files tracked in git). Its findings survive in this document and in
+`TESTABILITY.md`; only the code was redundant.
+
+What replaced it in `iosApp/` is a hand-built harness for the **real** module —
+see §6.7 for why a `.xcodeproj` is still required.
 
 ```bash
-cd ios-spike
-export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
-./gradlew :composeApp:linkDebugFrameworkIosSimulatorArm64   # build the framework
-./iosApp/build-app.sh                                       # compile + bundle the iOS app
-./iosApp/run-app.sh "iPhone 18 Pro"                          # boot, install, run, dump the a11y tree
+export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer   # see §4.1
+./gradlew :composeApp:linkDebugFrameworkIosSimulatorArm64         # build the framework
+./iosApp/build-app.sh                                            # compile + bundle
+./iosApp/run-app.sh "iPhone 18 Pro"                              # boot, install, run, screenshot
 ```
 
-`run-app.sh` prints the accessibility tree and a FOUND/MISSING verdict per tag,
-saved to `/tmp/spike-report.txt`.
+| Path | What it is |
+|---|---|
+| `iosApp/SakuApp.swift` | Swift host. `@main` AppDelegate + SceneDelegate, calls `MainViewControllerKt.MainViewController()` |
+| `iosApp/Info.plist` | Bundle config. `id.almezi.saku`, iOS 15.0 min |
+| `iosApp/build-app.sh` | Compiles the Swift host against the framework and assembles a `.app` |
+| `iosApp/run-app.sh` | Boots a simulator, installs, launches, screenshots |
+
+> **This harness is a stopgap, not the destination.** It compiles Swift with
+> `swiftc` directly and hand-copies `compose-resources`, because no
+> `.xcodeproj` exists yet. See §6.7. Treat `iosApp/` as scaffolding to be
+> replaced by a real Xcode project, not as the shipping iOS app.
 
 ### 4.3 Stage 1.5 — real Saku design system on iOS
 
@@ -516,8 +534,13 @@ uname -m          # must print: arm64
 # 3. Build it
 ./gradlew :composeApp:assembleDebug
 ./gradlew :composeApp:linkDebugFrameworkIosSimulatorArm64
-open iosApp/iosApp.xcodeproj
+open iosApp/iosApp.xcodeproj   # ← ⚠️ NEVER BUILT. See §6.7; this path does not exist.
 ```
+
+> **Correction (2026-10-16):** the last line above is aspirational. The spike
+> never got an `.xcodeproj`, and neither has the real module. What exists is the
+> hand-built harness described in §4.1 — `./iosApp/build-app.sh` and
+> `./iosApp/run-app.sh`.
 
 Then add to the spike's single screen:
 
@@ -1102,7 +1125,12 @@ fun categoryDisplayName(category: Category): String =
 Keep the `when (id)` mapping — it is the ID→name contract from `CATEGORIES.md`
 and must not drift.
 
-### 6.5 BLOCKED: Compose resource accessors do not resolve for Android
+### 6.5 OPEN (not fixed upstream): Compose resource accessors do not resolve for Android
+
+> **Status: still true.** Re-verified 2026-10-16 — the Android accessor failure
+> persists on CMP 1.12.1 and is *not* a regression. It was **worked around**, not
+> fixed. See §6.5 in "What actually shipped" below for the mechanism, and note
+> that `androidMain` must keep using `R.font.*` rather than `Res.font.*`.
 
 Stage 3 could not be completed. The blocker is a tooling incompatibility, not
 a mistake in the migration code.
@@ -1139,7 +1167,9 @@ package, and with `compose.components.resources` declared as `api`.
 That last pair is the diagnosis: the generated accessors are never attached to
 the **Android** compilation's source set. They are wired into the iOS/native
 compilations, which is why the same code compiles for iOS and fails for Android.
-It works in the `ios-spike/` module, which has no Android target at all.
+It worked in the Stage 1 spike module, which had **no Android target at all** —
+so the spike could never have caught this. (That module has since been deleted;
+see §4.1.)
 
 #### What was tried
 
@@ -1191,6 +1221,114 @@ problem.
 Open the app on Android and diff every screen against a pre-migration
 screenshot. All Indonesian copy must be identical. A single mistranslated or
 dropped string here is invisible to tests and ships silently.
+
+> **This gate was never run in the visual sense.** Android has no device or
+> emulator attached on this machine, so `installDebug` fails. Stage 3 copy
+> fidelity was verified by test and string-count only (165 strings, 3 arrays,
+> all reachable from code, zero dead entries). **Treat "Android copy is
+> unchanged" as unverified and re-check it when a device is available.**
+
+---
+
+## 6A. What actually shipped for resources
+
+The four options above were the plan as written. Option 3 was taken, and refined
+into something the original doc did not anticipate.
+
+### 6.5b RESOLVED (worked around, not fixed upstream): generated `SakuStrings`
+
+The Android accessor failure was **not** fixed — it is a real CMP limitation and
+still applies today. Option 3 was chosen: drop CMP's resource accessors for
+strings entirely and generate Kotlin constants instead.
+
+**Mechanism.** A Gradle task, `:composeApp:generateSakuStrings`, parses
+`composeApp/shared-strings/strings.xml` and writes `SakuStrings.kt` into
+`composeApp/build/generated/…`, a directory added to `commonMain` via
+`kotlin.sourceSets.getByName("commonMain").kotlin.srcDir(...)`. Code reads
+`SakuStrings.tambah_simpan` instead of `stringResource(R.string.tambah_simpan)`.
+
+```
+composeApp/shared-strings/strings.xml     ← single source of truth (165 strings, 3 arrays)
+        │
+        │  :composeApp:generateSakuStrings
+        ▼
+composeApp/build/generated/…/SakuStrings.kt
+        │
+        ▼
+commonMain → Android + iOS
+```
+
+**Why this over the alternatives.**
+
+| Option | Verdict |
+|---|---|
+| Put resources in `androidMain/composeResources` too | **Unworkable.** Both source sets then feed `CopyResourcesToAndroidAssetsTask` and produce an unconfigurable duplicate error. The task has no `duplicatesStrategy` setter, and Google's `androidComponents` escape hatch does not help |
+| Downgrade CMP to find a version whose accessors wire up | **Tried and rejected.** Verified broken on 1.10.3, 1.11.1 **and** 1.12.1, so it is not a regression |
+| `moko-resources` | Rejected: new dependency, new codegen, same category of risk |
+| **`kotlinx.serialization` constants** | **Adopted.** No runtime resource lookup at all, so Android cannot regress again |
+
+**Cost, stated plainly.** No runtime locale switching — every locale compiles to
+the same constants. Saku is Indonesian-only, so this costs nothing today. If
+that changes, this decision must be revisited.
+
+**Rule that follows from it.** `AGENTS.md` now states that strings live in
+`composeApp/shared-strings/strings.xml`, are read as `SakuStrings.<name>`, are
+generated by `:composeApp:generateSakuStrings`, and that **`SakuStrings.kt` must
+never be edited by hand** — it is build output.
+
+### 6.6 Fonts: the same workaround, but fonts still need the plugin
+
+Strings could be abandoned entirely. **Fonts could not**, because a font is
+binary data that must be loaded at runtime, so there is no equivalent of a
+`const val`.
+
+Compose Multiplatform's `composeResources/font/` works correctly for **iOS**
+(`Res.font.*` resolves fine — Stage 1.5 proved it). It fails only for the
+**Android** target, per §6.5. So the six TTFs exist in two places:
+
+| Platform | Path | Accessor |
+|---|---|---|
+| Android | `composeApp/src/androidMain/res/font/` | `R.font.*` (Android resource ID) |
+| iOS | `composeApp/src/commonMain/composeResources/font/` | `Res.font.*` (CMP `FontResource`) |
+
+They are **byte-identical**; treat them as one logical file. Collapse them the day
+CMP generates working Android accessors.
+
+The bridge is a two-function `expect`/`actual` pair in
+`ui/designsystem/SakuFonts.kt`, which keeps `SakuType.kt` free of platform code.
+
+Note the CMP font constructor is `org.jetbrains.compose.resources.Font`, not
+`androidx.compose.ui.text.font.Font` — the latter resolves only to
+`Font(resId: Int)` and fails to compile against a `FontResource`.
+
+### 6.7 OPEN: `compose-resources` packaging for the app variant
+
+**This blocks Stage 4's gate (4.14) and therefore Stage 5.**
+
+Compose Multiplatform expects an **Xcode build phase** to copy
+`compose-resources/` into the app bundle. Without a `.xcodeproj` there is no such
+phase, so the resources must be copied by hand — and the Gradle task that would
+supply them **does not exist for the app variant**:
+
+```
+:composeApp:copyTestComposeResourcesForIosSimulatorArm64   ✅ exists
+:composeApp:copyComposeResourcesForIosSimulatorArm64Main   ❌ does not exist
+```
+
+The Stage 1 spike appeared to prove this was solved only because it consumed
+`build/bin/iosSimulatorArm64/**debugTest**/compose-resources` — test-variant
+resources. The app variant has no equivalent, and the built
+`ComposeApp.framework` contains no `compose-resources` directory.
+
+Omitting the directory crashes on first composition with
+`MissingResourceException: Missing resource with path: .../compose-resources/…`.
+
+`iosApp/build-app.sh` currently points at the debugTest path as a stopgap. That
+is **not a real fix** — test-variant resources can drift from app-variant ones.
+
+**Resolution:** build the `.xcodeproj` (Stage 4 item 4.11) and let the standard
+`embedAndSignAppleFrameworkForXcode` integration package the resources. Do not
+treat the hand-rolled script as a permanent answer.
 
 ---
 
@@ -1266,19 +1404,83 @@ Android keeps `MainActivity`, thinned to `setContent { … }` over common code.
 iOS gets a new entry point:
 
 ```kotlin
-// iosMain/kotlin/MainViewController.kt
+// composeApp/src/iosMain/kotlin/id/almezi/simplemoneytracker_kt/MainViewController.kt
 import androidx.compose.ui.window.ComposeUIViewController
 
-fun MainViewController() = ComposeUIViewController { SakuApp() }
+fun MainViewController(): UIViewController = ComposeUIViewController { App() }
 ```
 
 ```swift
-// iosApp/iosApp/ContentView.swift or AppDelegate
-import SwiftUI
+// iosApp/SakuApp.swift  (as shipped — a UIKit scene delegate, not SwiftUI)
+import UIKit
 import ComposeApp
 
-struct ComposeView: UIViewControllerRepresentable {
-    func makeUIViewController(context: Context) -> UIViewController {
+class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+    var window: UIWindow?
+
+    func scene(_ scene: UIScene, willConnectTo session: UISceneSession,
+               options connectionOptions: UIScene.ConnectionOptions) {
+        guard let windowScene = scene as? UIWindowScene else { return }
+        let window = UIWindow(windowScene: windowScene)
+        window.rootViewController = MainViewControllerKt.MainViewController()
+        window.makeKeyAndVisible()
+        self.window = window
+    }
+}
+
+@main
+class AppDelegate: UIResponder, UIApplicationDelegate {
+    func application(_ application: UIApplication,
+                     configurationForConnecting session: UISceneSession,
+                     options: UIScene.ConnectionOptions) -> UISceneConfiguration {
+        UISceneConfiguration(name: "Default Configuration", sessionRole: session.role)
+    }
+}
+```
+
+> Two deviations from the sketch above, both learned the hard way:
+>
+> 1. **UIKit scene delegate, not SwiftUI.** The iOS 27 SDK requires a `UIScene`
+>    lifecycle. A SwiftUI `App` would work, but a plain `AppDelegate` +
+>    `SceneDelegate` keeps the harness compiling with bare `swiftc` and no
+>    storyboard.
+> 2. **`@main` requires `-parse-as-library`** when compiling with `swiftc`
+>    directly. Without it: *"'main' attribute cannot be used in a module that
+>    contains top-level code"*. This does not arise under Xcode.
+
+#### SwiftUI sketch superseded by the shipped UIKit host
+
+The original plan sketched a `UIViewControllerRepresentable` wrapper. It was not
+used; `iosApp/SakuApp.swift` uses a plain scene delegate instead (see the note
+above).
+
+### 7.6 Conventions this project follows
+
+Recorded because they are enforced by review, not by the compiler:
+
+| Rule | Where |
+|---|---|
+| **No platform imports in `commonMain`** — no `android.*`, `java.*`, `platform.*` | Verified: zero today |
+| **All versions in `gradle/libs.versions.toml`** — never a literal coordinate in a build script | `libs.androidx.room3.runtime`, `libs.androidx.navigation.compose`, … |
+| **No platform suffix in file names.** The source set folder carries it | `SakuFonts.kt` exists in both `androidMain` and `iosMain`; `AppContainerFactory.kt` likewise. Never `SakuFonts.ios.kt` |
+| **Name files by responsibility** | The DB factory is `AppContainerFactory.kt`, not `Platform.kt` — a platform-neutral name would collide with the `expect` file and break the JVM class name |
+| **`expect` in `commonMain` only, an `actual` in every enabled target** | `sakuFontSans`/`sakuFontMono`. `AppDatabaseConstructor` is exempt: Room generates the `actual` via KSP, and carries `@Suppress("KotlinNoActualForExpect")` to say so |
+| **Thin platform source sets — no business rules** | `androidMain`/`iosMain` hold 2–3 files each: DB path, font loading, iOS entry point |
+| **Shared tests in `commonTest` with `kotlin.test`** | 47 tests. Run with `./gradlew :composeApp:testAndroid` (host) or `:composeApp:allTests` |
+| **Platform-agnostic components via `expect`/`actual`, platform glue by slot** | Backup is `@Composable (() -> Unit, () -> Unit) -> Unit` on `NavGraph`, not an `expect fun` |
+| **Derive the dispatcher, not the function** | `buildDatabase(builder, dispatcher)` lives in `commonMain`; each platform passes its own. Duplicating the function per platform invites drift |
+
+Note `androidLibrary { }` is used inside `kotlin { }`, not `androidTarget()`.
+That is the AGP 9 convention and is what the official KMP wizard now emits; the
+two are not interchangeable in AGP 9.4.
+
+```bash
+# The full gate, in the order that catches the most:
+./gradlew :composeApp:compileAndroidMain           # commonMain has no Android leak
+./gradlew :composeApp:compileKotlinIosSimulatorArm64
+./gradlew :app:assembleDebug                       # Android app links
+./gradlew :composeApp:testAndroid                  # 47 commonTest tests
+```
         MainViewControllerKt.MainViewController()
     }
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}

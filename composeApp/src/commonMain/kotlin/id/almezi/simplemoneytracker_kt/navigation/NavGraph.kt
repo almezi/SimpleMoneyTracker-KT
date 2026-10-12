@@ -5,6 +5,7 @@ import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Summarize
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -66,9 +67,37 @@ val bottomNavItems: List<SakuNavItem<Screen>> = listOf(
     SakuNavItem(Screen.Ringkasan, SakuStrings.nav_ringkasan, Icons.Default.Summarize, "ringkasan"),
 )
 
-/** The tab that matches [destination], or null when the destination is not a tab. */
-fun bottomTabFor(destination: Any?): Screen? =
-    bottomNavItems.firstOrNull { destination is Screen && it.route == destination }?.route
+/**
+ * The tab matching [destination], or null when the destination is not a tab.
+ *
+ * `destination` is a `NavDestination`, never a `Screen`, so it cannot be
+ * compared against the routes directly. An earlier version took `Any?` and
+ * tested `destination is Screen`, which is never true — that silently hid the
+ * bottom bar on both platforms.
+ *
+ * `NavDestination.hasRoute(route: String, arguments: Bundle?)` is a *member*,
+ * and Kotlin resolves members ahead of the reified
+ * `NavDestination.hasRoute<T>()` extension, so the generic form is not
+ * reachable by name. Matching on the serialised route name is the workaround.
+ * `Screen.serializer().descriptor.serialName` derives that name from the type,
+ * so the comparison stays in sync with the sealed interface instead of being a
+ * hand-copied string that can rot.
+ */
+fun bottomTabFor(destination: NavDestination?): Screen? {
+    val route = destination?.route ?: return null
+    return bottomNavItems.firstOrNull { it.route.serialName() == route }?.route
+}
+
+/** The serialised name navigation records for a typed route. */
+private fun Any.serializer(): kotlinx.serialization.KSerializer<*> =
+    when (this) {
+        is Screen.Tambah -> Screen.Tambah.serializer()
+        is Screen.Daftar -> Screen.Daftar.serializer()
+        is Screen.Ringkasan -> Screen.Ringkasan.serializer()
+        else -> error("serialName() is only defined for the three bottom tabs")
+    }
+
+private fun Any.serialName(): String = serializer().descriptor.serialName
 
 /**
  * @param cadanganContent the Cadangan (backup) destination.
