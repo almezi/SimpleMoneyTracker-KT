@@ -64,11 +64,11 @@ Tokens and components live in `app/src/main/java/.../ui/designsystem/` and `ui/c
 
 ## Download APK
 
-[Download SimpleMoneyTrackerKT-v1.0.apk](release/SimpleMoneyTrackerKT-v1.0.apk)
+[Download SimpleMoneyTrackerKT-v2.0.apk](release/SimpleMoneyTrackerKT-v2.0.apk)
 
 | | |
 |---|---|
-| Version | 1.0 (`versionCode` 1) |
+| Version | 2.0 (`versionCode` 2) |
 | Build type | Release, unsigned |
 | Min / target SDK | 24 / 37 |
 | Size | 13.99 MiB (14.67 MB) |
