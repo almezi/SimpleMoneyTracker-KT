@@ -1,107 +1,100 @@
 package id.almezi.simplemoneytracker_kt.ui.tambah
 
-import android.app.DatePickerDialog
-import android.icu.util.Calendar
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.viewmodel.compose.viewModel
+import id.almezi.simplemoneytracker_kt.R
+import id.almezi.simplemoneytracker_kt.SimpleMoneyTrackerApp
 import id.almezi.simplemoneytracker_kt.TestTags
+import id.almezi.simplemoneytracker_kt.ui.components.SakuToast
+import id.almezi.simplemoneytracker_kt.ui.components.SakuToastHost
+import id.almezi.simplemoneytracker_kt.ui.components.PrimaryButtonTone
+import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuSize
+import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuSpace
+import id.almezi.simplemoneytracker_kt.ui.designsystem.TransactionType
+import id.almezi.simplemoneytracker_kt.ui.transaction.TransactionForm
+import id.almezi.simplemoneytracker_kt.ui.transaction.TransactionFormActions
+import id.almezi.simplemoneytracker_kt.ui.transaction.TransactionFormState
 
 @Composable
-fun TambahScreen() {
-    var type by remember { mutableStateOf("pemasukan") }
-    var amount by remember { mutableStateOf("") }
-    var note by remember { mutableStateOf("") }
+fun TambahScreen(
+    modifier: Modifier = Modifier,
+    onOpenKelolaKategori: () -> Unit = {},
+    viewModel: TambahViewModel = viewModel(
+        factory = TambahViewModel.Factory(
+            (LocalContext.current.applicationContext as SimpleMoneyTrackerApp).container.transactionRepository,
+            (LocalContext.current.applicationContext as SimpleMoneyTrackerApp).container.clock
+        )
+    )
+) {
+    val uiState by viewModel.uiState.collectAsState()
+    val categories by viewModel.categories.collectAsState()
+    val accounts by viewModel.accounts.collectAsState()
     val context = LocalContext.current
-    val calendar = Calendar.getInstance()
+    var toast by remember { mutableStateOf<SakuToast?>(null) }
 
-    Column(modifier = Modifier.padding(16.dp)) {
-        Text(
-            text = if (type == "pemasukan") "Tambah Pemasukan" else "Tambak Pengeluaran",
-            style = MaterialTheme.typography.headlineSmall
-        )
-
-        // Type toggle
-        Row(modifier = Modifier.padding(vertical = 8.dp)) {
-            FilterChip(
-                selected = type == "pemasukan",
-                onClick = { type = "pemasukan" },
-                label = { Text("Pemasukan") },
-                modifier = Modifier.testTag(TestTags.TAMBAH_TOGGLE_TYPE + "_pemasukan")
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            FilterChip(
-                selected = type == "pengeluaran",
-                onClick = { type = "pengeluaran" },
-                label = { Text("Pengeluaran") },
-                modifier = Modifier.testTag(TestTags.TAMBAH_TOGGLE_TYPE + "_pengeluaran")
-            )
-        }
-
-        // Amount
-        OutlinedTextField(
-            value = amount,
-            onValueChange = { amount = it.filter { c -> c.isDigit() || c == '.' } },
-            label = { Text("Jumlah") },
-            modifier = Modifier.fillMaxWidth().testTag(TestTags.TAMBAH_INPUT_AMOUNT)
-        )
-
-        // Category (grouped expense — placeholder for CATEGORIES.md groups)
-        Text(
-            text = "Kategori",
-            modifier = Modifier.padding(top = 16.dp, bottom = 4.dp)
-        )
-        Row(modifier = Modifier.horizontalScroll(rememberScrollState())) {
-            listOf("Makanan", "Transportasi", "Tagihan", "Hiburan").forEach { cat ->
-                FilterChip(
-                    selected = false,
-                    onClick = { /* TODO: bind CATEGORIES.md IDs */ },
-                    label = { Text(cat) },
-                    modifier = Modifier.padding(end = 4.dp).testTag(TestTags.TAMBAH_CATEGORY_ITEM + "_" + cat)
-                )
+    LaunchedEffect(Unit) {
+        viewModel.events.collect { event ->
+            toast = when (event) {
+                TambahEvent.Saved -> SakuToast(text = context.getString(R.string.toast_transaksi_disimpan))
+                TambahEvent.SaveFailed -> SakuToast(text = context.getString(R.string.toast_gagal_menyimpan))
             }
         }
+    }
 
-        // Date picker
-        OutlinedButton(
-            onClick = {
-                DatePickerDialog(context, { _, y, m, d ->
-                    calendar.set(y, m, d)
-                }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show()
-            },
-            modifier = Modifier.padding(vertical = 8.dp).testTag(TestTags.TAMBAH_DATE_PICKER)
-        ) {
-            Text(text = "Pilih Tanggal")
-        }
+    val isExpense = uiState.type == TransactionType.Expense
+    val helperText = when (TambahHelper.of(uiState)) {
+        TambahHelper.None -> null
+        TambahHelper.MissingAmount -> stringResource(R.string.tambah_helper_amount)
+        TambahHelper.MissingCategory -> stringResource(R.string.tambah_helper_category)
+        TambahHelper.MissingBoth -> stringResource(R.string.tambah_helper_both)
+    }
 
-        // Note
-        OutlinedTextField(
-            value = note,
-            onValueChange = { note = it },
-            label = { Text("Catatan") },
-            modifier = Modifier.fillMaxWidth().testTag(TestTags.TAMBAH_INPUT_NOTE)
+    Box(modifier = modifier) {
+        TransactionForm(
+            state = TransactionFormState(
+                type = uiState.type,
+                amountDigits = uiState.amountDigits,
+                categories = categories,
+                selectedCategoryId = uiState.selectedCategoryId,
+                accounts = accounts,
+                selectedAccountId = uiState.selectedAccountId,
+                dateMillis = uiState.dateMillis,
+                note = uiState.note
+            ),
+            actions = TransactionFormActions(
+                onTypeChange = viewModel::updateType,
+                onAmountChange = viewModel::updateAmount,
+                onCategoryChange = viewModel::updateCategory,
+                onAccountChange = viewModel::updateAccount,
+                onDateChange = viewModel::updateDate,
+                onNoteChange = viewModel::updateNote
+            ),
+            header = null,
+            saveLabel = stringResource(
+                if (isExpense) R.string.tambah_simpan_pengeluaran else R.string.tambah_simpan_transaksi
+            ),
+            saveEnabled = uiState.canSave,
+            saveTone = if (isExpense) PrimaryButtonTone.Expense else PrimaryButtonTone.Brand,
+            helperText = helperText,
+            showKelolaKategoriLink = true,
+            showQuickCategoryChips = false,
+            onOpenKelolaKategori = onOpenKelolaKategori,
+            maxDateMillis = viewModel.todayMillis(),
+            bottomReserve = SakuSize.navReserve + SakuSpace.screenBottom,
+            onSave = viewModel::save,
+            testTag = TestTags.TAMBAH_BUTTON_SAVE,
         )
 
-        // Save
-        Button(
-            onClick = { /* TODO: save to DB — MVVM slice next */ },
-            modifier = Modifier.padding(top = 16.dp).fillMaxWidth().testTag(TestTags.TAMBAH_BUTTON_SAVE)
-        ) {
-            Text("Simpan")
-        }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun TambahScreenPreview() {
-    MaterialTheme {
-        TambahScreen()
+        SakuToastHost(toast = toast, onDismiss = { toast = null })
     }
 }

@@ -10,37 +10,37 @@ Never locate by visible text. Locate only by test tag (accessibility ID).
 
 Screen prefixes: `nav`, `add`, `list`, `summary`, `dialog`.
 
-## Tag list (draft)
+## Current Test Tags Implementation
 
 ### Navigation
 - `nav_tab_add`, `nav_tab_list`, `nav_tab_summary`
 
 ### Tambah
-- `add_toggle_expense`, `add_toggle_income`
-- `add_input_amount`, `add_input_note`
-- `add_button_category`, `add_button_date`, `add_button_save`
-- `add_text_error_amount`, `add_text_error_category`, `add_text_error_date`
-- `add_item_category_<categoryId>` (picker rows, for example `add_item_category_inc_salary`)
-- `add_text_selected_category`
+- `tambah_toggle_type_pemasukan`, `tambah_toggle_type_pengeluaran`
+- `tambah_input_amount`, `tambah_input_note`
+- `tambah_button_category`, `tambah_button_date`, `tambah_button_save`
+- `tambah_error_amount`, `tambah_error_category`
+- `tambah_category_item_<categoryId>` (picker rows, for example `tambah_category_item_inc_salary`)
+- `tambah_selected_category`
 
 ### Daftar
-- `list_button_month_prev`, `list_button_month_next`, `list_text_month`
-- `list_item_transaction_<transactionId>`
-- `list_text_amount_<transactionId>`, `list_text_category_<transactionId>`, `list_text_date_<transactionId>`
-- `list_button_delete_<transactionId>`
-- `list_text_excluded_<transactionId>` (the "Tidak dihitung" label)
-- `list_text_empty`
+- `daftar_button_month_prev`, `daftar_button_month_next`, `daftar_text_month`
+- `daftar_item_transaction_<transactionId>`
+- `daftar_text_amount_<transactionId>`, `daftar_text_category_<transactionId>`, `daftar_text_date_<transactionId>`
+- `daftar_button_delete_<transactionId>`
+- `daftar_text_excluded_<transactionId>` (the "Tidak dihitung" label)
+- `daftar_text_empty`
 
 ### Delete dialog
 - `dialog_button_delete_confirm`, `dialog_button_delete_cancel`
 
 ### Ringkasan
-- `summary_button_month_prev`, `summary_button_month_next`, `summary_text_month`
-- `summary_tile_income`, `summary_tile_expense`, `summary_tile_balance`, `summary_tile_count`
-- `summary_item_group_<groupId>`
-- `summary_text_empty`
+- `ringkasan_button_month_prev`, `ringkasan_button_month_next`, `ringkasan_text_month`
+- `ringkasan_tile_income`, `ringkasan_tile_expense`, `ringkasan_tile_balance`, `ringkasan_tile_count`
+- `ringkasan_item_group_<groupId>`
+- `ringkasan_text_empty`
 
-Tile and amount tags must expose a machine-readable value (raw number, not only the formatted "Rp" string) so tests can assert without parsing text. Decide how (content description vs a separate tag) during the spike.
+All tags follow the format `<screen>_<type>_<name>` and are defined in `TestTags.kt`. Tags for amounts expose raw values for easy assertion.
 
 ## Verified on
 - Android: __ (Stage 0)
