@@ -140,6 +140,17 @@ internal fun Transaction.toBackup() = BackupTransaction(
     createdAt = createdAt,
 )
 
+internal fun BackupTransaction.toTransaction(currentTime: Long) = Transaction(
+    id = 0,
+    type = type,
+    amount = amount,
+    categoryId = categoryId,
+    accountId = accountId.orDefaultAccount(),
+    dateEpochMillis = dateEpochMillis,
+    note = note,
+    createdAt = if (createdAt > 0L) createdAt else currentTime,
+)
+
 internal fun Account.toBackup() = BackupAccount(
     id = id,
     name = name,

@@ -3,6 +3,7 @@ package id.almezi.simplemoneytracker_kt.data
 import androidx.room3.Room
 import android.content.Context
 import androidx.room3.RoomDatabase
+import id.almezi.simplemoneytracker_kt.data.backup.createBackupPreferences
 import kotlinx.coroutines.Dispatchers
 
 /**
@@ -21,5 +22,8 @@ fun createAppContainer(context: Context): AppContainer {
         context = appContext,
         name = dbFile.absolutePath
     )
-    return AppContainer(buildDatabase(builder, Dispatchers.IO))
+    return AppContainer(
+        database = buildDatabase(builder, Dispatchers.IO),
+        backupPreferences = createBackupPreferences(appContext),
+    )
 }

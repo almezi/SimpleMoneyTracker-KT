@@ -2,7 +2,17 @@ package id.almezi.simplemoneytracker_kt.data.backup
 
 import android.content.Context
 import android.content.Intent
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.FileProvider
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.nio.charset.StandardCharsets
 
@@ -64,4 +74,77 @@ class AndroidBackupPreferences(
     override fun putLong(key: String, value: Long) {
         prefs.edit().putLong(key, value).apply()
     }
+}
+
+/**
+ * Android's factory takes a `Context`; iOS's takes none. Deliberately not
+ * expect/actual for the same reason as `createAppContainer`, see
+ * `AppContainerFactory.kt`.
+ */
+fun createBackupPreferences(context: Context): BackupPreferences =
+    AndroidBackupPreferences(context.applicationContext)
+
+fun createBackupFileStore(context: Context): BackupFileStore =
+    AndroidBackupFileStore(context.applicationContext)
+
+/** Storage Access Framework picker (`OpenDocument`) for import. */
+class AndroidFilePicker : FilePicker {
+
+    private var onPicked: ((String?) -> Unit)? = null
+    private var launch: ((Array<String>) -> Unit)? = null
+
+    fun bind(launch: (Array<String>) -> Unit) {
+        this.launch = launch
+    }
+
+    override fun present(onPicked: (String?) -> Unit) {
+        this.onPicked = onPicked
+        launch?.invoke(arrayOf("application/json", "text/csv", "*/*"))
+    }
+
+    fun onUriText(text: String?) {
+        val callback = onPicked
+        onPicked = null
+        callback?.invoke(text)
+    }
+}
+
+@Composable
+actual fun rememberFilePicker(): FilePicker {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val picker = remember { AndroidFilePicker() }
+
+    val launcher = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        if (uri == null) {
+            picker.onUriText(null)
+        } else {
+            scope.launch {
+                val text = try {
+                    withContext(Dispatchers.IO) {
+                        context.contentResolver.openInputStream(uri)?.use { stream ->
+                            stream.bufferedReader(StandardCharsets.UTF_8).readText()
+                        }
+                    }
+                } catch (_: Exception) {
+                    null
+                }
+                picker.onUriText(text)
+            }
+        }
+    }
+
+    SideEffect {
+        picker.bind { mimeTypes -> launcher.launch(mimeTypes) }
+    }
+
+    return picker
+}
+
+@Composable
+actual fun rememberBackupFileStore(): BackupFileStore {
+    val context = LocalContext.current
+    return remember(context) { AndroidBackupFileStore(context) }
 }

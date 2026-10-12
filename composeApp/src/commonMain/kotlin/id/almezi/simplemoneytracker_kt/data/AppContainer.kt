@@ -1,5 +1,8 @@
 package id.almezi.simplemoneytracker_kt.data
 
+import id.almezi.simplemoneytracker_kt.data.backup.BackupPreferences
+import id.almezi.simplemoneytracker_kt.data.backup.BackupSerializer
+
 /**
  * Manual DI root, shared by every platform.
  *
@@ -12,6 +15,7 @@ package id.almezi.simplemoneytracker_kt.data
  */
 class AppContainer(
     database: AppDatabase,
+    val backupPreferences: BackupPreferences,
     val clock: Clock = RealClock
 ) {
     val transactionDao: TransactionDao = database.transactionDao()
@@ -36,5 +40,12 @@ class AppContainer(
         database,
         budgetDao,
         clock
+    )
+
+    val backupSerializer: BackupSerializer = BackupSerializer(
+        transactionRepository,
+        categoryRepository,
+        accountDao,
+        budgetRepository,
     )
 }

@@ -14,6 +14,8 @@ import platform.Foundation.NSUserDomainMask
  *
  * Takes no arguments — there is no `Context` on iOS.
  */
+import id.almezi.simplemoneytracker_kt.data.backup.createBackupPreferences
+
 @OptIn(ExperimentalForeignApi::class)
 fun createAppContainer(): AppContainer {
     val documentDirectory: NSURL = requireNotNull(
@@ -30,5 +32,8 @@ fun createAppContainer(): AppContainer {
     val builder: RoomDatabase.Builder<AppDatabase> =
         Room.databaseBuilder<AppDatabase>(name = dbFilePath)
     // Dispatchers.IO is JVM-only and does not exist on Kotlin/Native.
-    return AppContainer(buildDatabase(builder, Dispatchers.Default))
+    return AppContainer(
+        database = buildDatabase(builder, Dispatchers.Default),
+        backupPreferences = createBackupPreferences(),
+    )
 }

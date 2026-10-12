@@ -1,3 +1,5 @@
+@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class)
+
 package id.almezi.simplemoneytracker_kt.navigation
 
 import kotlin.test.Test

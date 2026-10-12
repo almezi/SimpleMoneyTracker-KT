@@ -6,7 +6,6 @@ import androidx.activity.compose.setContent
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
-import id.almezi.simplemoneytracker_kt.ui.cadangan.CadanganScreen
 import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuTheme
 
 /**
@@ -14,8 +13,7 @@ import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuTheme
  *
  * Deliberately thin: everything the user sees lives in the shared `SakuApp` in
  * :composeApp, so iOS runs the identical shell. This class only supplies the
- * Android-specific pieces — the Application container, the ready flag, and the
- * Android-only backup screen.
+ * container and the ready flag.
  */
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,15 +27,7 @@ class MainActivity : ComponentActivity() {
             // compile in commonMain.
             ProvideSakuContainer(container = app.container) {
                 SakuTheme {
-                    SakuApp(
-                        ready = isReady,
-                        cadanganContent = { onBack, onAddTransaction ->
-                            CadanganScreen(
-                                onBack = onBack,
-                                onAddTransaction = onAddTransaction,
-                            )
-                        },
-                    )
+                    SakuApp(ready = isReady)
                 }
             }
         }

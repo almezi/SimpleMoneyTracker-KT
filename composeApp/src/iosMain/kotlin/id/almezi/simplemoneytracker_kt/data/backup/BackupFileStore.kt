@@ -1,5 +1,6 @@
 package id.almezi.simplemoneytracker_kt.data.backup
 
+import androidx.compose.runtime.Composable
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.addressOf
@@ -141,6 +142,17 @@ class IosBackupPreferences : BackupPreferences {
         NSUserDefaults.standardUserDefaults.setInteger(value, forKey = key)
     }
 }
+
+/** iOS needs no arguments; Android's counterpart takes a `Context`. */
+fun createBackupPreferences(): BackupPreferences = IosBackupPreferences()
+
+fun createBackupFileStore(): BackupFileStore = IosBackupFileStore()
+
+@Composable
+actual fun rememberFilePicker(): FilePicker = androidx.compose.runtime.remember { IosFilePicker() }
+
+@Composable
+actual fun rememberBackupFileStore(): BackupFileStore = androidx.compose.runtime.remember { IosBackupFileStore() }
 
 /**
  * UTF-8 bytes as `NSData`, which is what Foundation's file APIs expect.

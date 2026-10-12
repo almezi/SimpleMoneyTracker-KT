@@ -21,6 +21,7 @@ import id.almezi.simplemoneytracker_kt.ui.kategori.TambahKategoriScreen
 import id.almezi.simplemoneytracker_kt.ui.ringkasan.RingkasanScreen
 import id.almezi.simplemoneytracker_kt.ui.tambah.TambahScreen
 import id.almezi.simplemoneytracker_kt.ui.ubah.UbahTransaksiScreen
+import id.almezi.simplemoneytracker_kt.ui.cadangan.CadanganScreen
 import id.almezi.simplemoneytracker_kt.SakuStrings
 
 /**
@@ -108,18 +109,14 @@ private fun Screen.routeSerializer(): KSerializer<*> =
 private fun Screen.routeName(): String = routeSerializer().descriptor.serialName
 
 /**
- * @param cadanganContent the Cadangan (backup) destination.
- *
- * Backup is still Android-only: it uses the Storage Access Framework, `Uri`,
- * and `java.io` (see docs/09 section 5.3). Rather than force those into
- * commonMain, the shared graph accepts the destination as a slot and each
- * platform supplies its own. iOS supplies a placeholder until Stage 5 ports
- * export/import to `UIDocumentPickerViewController`.
+ * The graph connects all screens from the shared `:composeApp` module.
+ * Backup (`Cadangan`) is now fully shared — the platform-specific file
+ * picker (`FilePicker`) and the export mechanism (`BackupFileStore`) are
+ * provided through `AppContainer`, so no slot is needed (docs/09 §5.3).
  */
 @Composable
 fun NavGraph(
     navController: NavHostController,
-    cadanganContent: @Composable (() -> Unit, () -> Unit) -> Unit,
     startScreen: Screen = Screen.Tambah,
 ) {
     NavHost(navController = navController, startDestination = startScreen) {
@@ -174,10 +171,7 @@ fun NavGraph(
         }
 
         composable<Screen.Cadangan> {
-            cadanganContent(
-                { navController.popBackStack() },
-                { navController.navigate(Screen.Tambah) },
-            )
+            CadanganScreen(onBack = { navController.popBackStack() })
         }
 
         composable<Screen.UbahTransaksi> { entry ->

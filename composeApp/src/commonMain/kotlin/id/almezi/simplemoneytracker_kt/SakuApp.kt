@@ -28,20 +28,15 @@ import kotlin.time.TimeSource
  * The shared application shell: loading gate, navigation graph, bottom bar.
  *
  * This is the only place that decides what the user sees, so Android and iOS
- * cannot drift apart. Each platform supplies three things and nothing else:
- * the container, the ready flag, and the backup screen.
+ * cannot drift apart. Each platform supplies two things and nothing else: the
+ * container and the ready flag.
  *
  * @param ready whether the database has opened and seeding has finished.
- * @param cadanganContent the Cadangan (backup) destination. Backup is still
- *   Android-only — it uses the Storage Access Framework, `Uri` and `java.io` —
- *   so it arrives as a slot rather than living in this module. See docs/09
- *   section 5.3.
  */
 @Composable
 fun SakuApp(
     ready: Boolean,
     modifier: Modifier = Modifier,
-    cadanganContent: @Composable (() -> Unit, () -> Unit) -> Unit,
 ) {
     var showLoading by remember { mutableStateOf(true) }
     val startedAt = remember { TimeSource.Monotonic.markNow() }
@@ -69,10 +64,7 @@ fun SakuApp(
         if (showLoading) {
             SakuLoadingScreen()
         } else {
-            NavGraph(
-                navController = navController,
-                cadanganContent = cadanganContent,
-            )
+            NavGraph(navController = navController)
 
             if (currentTab != null) {
                 SakuBottomNav(

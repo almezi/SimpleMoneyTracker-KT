@@ -1,5 +1,7 @@
 package id.almezi.simplemoneytracker_kt.data.backup
 
+import androidx.compose.runtime.Composable
+
 /**
  * The platform capabilities backup needs, reduced to what Saku actually uses
  * (docs/09 Stage 5).
@@ -22,7 +24,7 @@ interface BackupFileStore {
      *
      * This is the path that actually works for a user. The old Android code
      * wrote exports to `getExternalFilesDir`, which Android 11+ hides from the
-     * file picker, so a backup could be created but never retrieved. Android
+     * file picker, so a user could create a backup and never retrieved. Android
      * now goes through `FileProvider` + `ACTION_SEND`; iOS uses
      * `UIActivityViewController`.
      */
@@ -54,5 +56,8 @@ interface BackupPreferences {
     fun putLong(key: String, value: Long)
 }
 
-/** The key the last successful backup is stored under. */
-const val KEY_LAST_BACKUP = "last_backup_millis"
+@Composable
+expect fun rememberFilePicker(): FilePicker
+
+@Composable
+expect fun rememberBackupFileStore(): BackupFileStore
