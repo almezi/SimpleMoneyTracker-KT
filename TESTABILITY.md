@@ -44,7 +44,7 @@ All tags follow the format `<screen>_<type>_<name>` and are defined in `TestTags
 
 ## Verified on
 - Android: YES — tags resolve as Compose semantics. Manual QA only; no instrumented tests exist.
-- iOS: YES — verified 2026-10-12 via spike (see `ios-spike/`).
+- iOS: YES — verified 2026-10-12 via spike (see `iosApp/`).
 
 ### iOS Stage 0 result
 
@@ -115,7 +115,7 @@ as an `accessibilityIdentifier`:
 `component_card_transaction_edit_<categoryId>`,
 `component_card_transaction_delete_<categoryId>`, `avatar_<categoryId>`.
 
-Screenshot: `docs/screenshots/saku-ios-real.png`. Spike: `ios-spike/`.
+Screenshot: `docs/screenshots/saku-ios-real.png`. App: `iosApp/`.
 
 ### Also noted (not blocking)
 

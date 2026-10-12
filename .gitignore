@@ -18,5 +18,8 @@ build/
 local.properties
 /.idea/
 
-# Stage 1 iOS migration spike (throwaway, independent Gradle build)
-/ios-spike/
+# iOS host app build outputs
+/iosApp/.gradle/
+/iosApp/build/
+/iosApp/composeApp/build/
+/iosApp/iosApp/build/
