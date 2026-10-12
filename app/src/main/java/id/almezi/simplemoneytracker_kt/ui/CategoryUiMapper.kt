@@ -1,6 +1,10 @@
 package id.almezi.simplemoneytracker_kt.ui
 
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import id.almezi.simplemoneytracker_kt.R
+import id.almezi.simplemoneytracker_kt.data.Category
+import id.almezi.simplemoneytracker_kt.ui.components.SakuPickerOptionGroup
 
 fun getCategoryNameRes(id: String): Int {
     return when (id) {
@@ -42,5 +46,40 @@ fun getCategoryNameRes(id: String): Int {
         "exp_education_other" -> R.string.cat_exp_education_other
         "exp_other" -> R.string.cat_exp_other
         else -> R.string.tambah_category_label
+    }
+}
+
+fun getCategoryGroupNameRes(groupId: String?): Int {
+    return when (groupId) {
+        "grp_daily" -> R.string.cat_group_daily
+        "grp_transport" -> R.string.cat_group_transport
+        "grp_finance" -> R.string.cat_group_finance
+        "grp_health" -> R.string.cat_group_health
+        "grp_lifestyle" -> R.string.cat_group_lifestyle
+        "grp_education" -> R.string.cat_group_education
+        "grp_other" -> R.string.cat_group_other
+        else -> R.string.cat_group_income
+    }
+}
+
+@Composable
+fun categoryDisplayName(category: Category): String =
+    category.customName ?: stringResource(getCategoryNameRes(category.id))
+
+fun matchesCategoryQuery(label: String, query: String): Boolean {
+    val needle = query.trim().lowercase()
+    if (needle.isEmpty()) return true
+    return label.lowercase().contains(needle)
+}
+
+fun filterCategoryGroups(
+    groups: List<SakuPickerOptionGroup>,
+    query: String
+): List<SakuPickerOptionGroup> {
+    val needle = query.trim()
+    if (needle.isEmpty()) return groups
+    return groups.mapNotNull { group ->
+        val matches = group.options.filter { matchesCategoryQuery(it.label, needle) }
+        if (matches.isEmpty()) null else group.copy(options = matches)
     }
 }

@@ -9,5 +9,9 @@ data class Category(
     val nameRes: String,
     val groupId: String?,
     val countsInTotals: Boolean,
-    val type: String
+    val type: String,
+    val colorHex: String? = null,
+    val isDefault: Boolean = true,
+    val isHidden: Boolean = false,
+    val customName: String? = null
 )

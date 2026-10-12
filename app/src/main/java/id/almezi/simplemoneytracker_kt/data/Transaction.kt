@@ -9,6 +9,7 @@ data class Transaction(
     val type: String,
     val amount: Long,
     val categoryId: String,
+    val accountId: String = AccountSeed.DEFAULT_ACCOUNT_ID,
     val dateEpochMillis: Long,
     val note: String?,
     val createdAt: Long

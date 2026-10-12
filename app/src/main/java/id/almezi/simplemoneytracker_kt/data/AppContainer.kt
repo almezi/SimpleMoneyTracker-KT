@@ -8,15 +8,39 @@ class AppContainer(context: Context) {
         context,
         AppDatabase::class.java,
         "simplemoneytracker.db"
-    ).build()
+    ).addMigrations(*AppDatabase.ALL_MIGRATIONS).build()
 
     val transactionDao: TransactionDao = database.transactionDao()
     val categoryDao: CategoryDao = database.categoryDao()
+    val accountDao: AccountDao = database.accountDao()
     val clock: Clock = RealClock()
 
+    val budgetDao: BudgetDao = database.budgetDao()
+
     val transactionRepository: TransactionRepository = TransactionRepository(
+        database,
         transactionDao,
-        categoryDao
+        categoryDao,
+        accountDao
+    )
+
+    val categoryRepository: CategoryRepository = CategoryRepository(
+        database,
+        categoryDao,
+        transactionDao
+    )
+
+    val budgetRepository: BudgetRepository = BudgetRepository(
+        database,
+        budgetDao,
+        clock
+    )
+
+    val backupRepository: BackupRepository = BackupRepository(
+        transactionRepository,
+        categoryRepository,
+        budgetRepository,
+        accountDao
     )
 }
 
