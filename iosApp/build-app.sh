@@ -21,6 +21,7 @@ set -euo pipefail
 # xcrun exit code 72. Remove this line once you run:
 #   sudo xcode-select --switch /Applications/Xcode.app
 export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
+unset ANDROID_PREFS_ROOT
 
 CONFIG="${1:-Debug}"
 DEVICE="${2:-iPhone 18 Pro}"

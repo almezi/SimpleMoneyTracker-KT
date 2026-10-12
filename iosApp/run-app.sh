@@ -11,6 +11,7 @@ set -uo pipefail
 
 # See build-app.sh: CommandLineTools has no iOS SDK.
 export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
+unset ANDROID_PREFS_ROOT
 
 SIMCTL="$DEVELOPER_DIR/usr/bin/simctl"
 BUNDLE_ID="id.almezi.saku"

@@ -1,18 +1,19 @@
 package id.almezi.simplemoneytracker_kt.data.backup
 
+import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.usePinned
-import kotlinx.coroutines.suspendCancellableCoroutine
+import platform.posix.memcpy
 import platform.Foundation.NSData
+import platform.Foundation.create
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
-import platform.Foundation.NSString
 import platform.Foundation.NSURL
-import platform.Foundation.NSUTF8StringEncoding
 import platform.Foundation.NSUserDefaults
 import platform.Foundation.NSUserDomainMask
 import platform.UIKit.UIActivityViewController
+import platform.UIKit.popoverPresentationController
 import platform.UIKit.UIApplication
 import platform.UIKit.UIDocumentPickerDelegateProtocol
 import platform.UIKit.UIDocumentPickerViewController
@@ -89,7 +90,7 @@ class IosFilePicker : FilePicker {
             return
         }
         val picker = UIDocumentPickerViewController(
-            listOf(UTTypeJSON, UTTypeCommaSeparatedText, UTTypePlainText),
+            forOpeningContentTypes = listOf(UTTypeJSON, UTTypeCommaSeparatedText, UTTypePlainText),
         )
         picker.delegate = PickerDelegate(onPicked)
         presenter.presentViewController(picker, animated = true, completion = null)
@@ -116,7 +117,7 @@ class IosFilePicker : FilePicker {
             delivered = true
             val url = didPickDocumentsAtURLs.firstOrNull() as? NSURL
             val path = url?.path
-            onPicked(path?.let { readTextAtPath(it) })
+            onPicked(path?.let { readUtf8File(it) })
         }
 
         override fun documentPickerWasCancelled(controller: UIDocumentPickerViewController) {
@@ -125,8 +126,6 @@ class IosFilePicker : FilePicker {
             onPicked(null)
         }
 
-        private fun readTextAtPath(path: String): String =
-            NSString.stringWithContentsOfFile(path, NSUTF8StringEncoding, null)?.toString() ?: ""
     }
 }
 
@@ -143,12 +142,37 @@ class IosBackupPreferences : BackupPreferences {
     }
 }
 
-/** UTF-8 bytes as `NSData`, which is what Foundation's file APIs expect. */
-@OptIn(ExperimentalForeignApi::class)
-internal fun String.toNSData(): NSData =
-    encodeToByteArray().usePinned { pinned ->
-        NSData.create(bytes = pinned.addressOf(0), length = pinned.size.toULong())
+/**
+ * UTF-8 bytes as `NSData`, which is what Foundation's file APIs expect.
+ *
+ * Goes via `NSString` rather than `NSData.create(bytes = …, length = …)`: that
+ * factory needs a pinned C pointer, which adds unsafe pointer arithmetic for no
+ * benefit when the source is already a Kotlin `String`.
+ */
+@OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
+internal fun String.toNSData(): NSData {
+    val bytes = this.encodeToByteArray()
+    return bytes.usePinned { pinned ->
+        NSData.create(bytes = pinned.addressOf(0), length = bytes.size.toULong())
     }
+}
+
+@OptIn(ExperimentalForeignApi::class)
+internal fun NSData.toByteArray(): ByteArray {
+    val result = ByteArray(this.length.toInt())
+    if (result.isNotEmpty()) {
+        result.usePinned { pinned ->
+            memcpy(pinned.addressOf(0), this.bytes, this.length)
+        }
+    }
+    return result
+}
+
+/** Reads a UTF-8 file, or an empty string if it is missing or not valid UTF-8. */
+internal fun readUtf8File(path: String): String {
+    val data = NSFileManager.defaultManager.contentsAtPath(path) ?: return ""
+    return data.toByteArray().decodeToString()
+}
 
 /**
  * The scene's key window's root view controller, needed to present any UIKit
