@@ -1,5 +1,9 @@
 package id.almezi.simplemoneytracker_kt.ui.cadangan
 
+import id.almezi.simplemoneytracker_kt.SakuContainer
+
+import id.almezi.simplemoneytracker_kt.SakuStrings
+
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -23,11 +27,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.lifecycle.viewmodel.compose.viewModel
-import id.almezi.simplemoneytracker_kt.R
 import id.almezi.simplemoneytracker_kt.SimpleMoneyTrackerApp
 import id.almezi.simplemoneytracker_kt.TestTags
 import id.almezi.simplemoneytracker_kt.ui.components.HelperText
@@ -49,32 +52,39 @@ fun CadanganScreen(
     onBack: () -> Unit,
     onAddTransaction: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: CadanganViewModel = viewModel(
-        factory = CadanganViewModel.Factory(
-            LocalContext.current.applicationContext,
-            (LocalContext.current.applicationContext as SimpleMoneyTrackerApp).container.backupRepository,
-            (LocalContext.current.applicationContext as SimpleMoneyTrackerApp).container.transactionRepository,
-            (LocalContext.current.applicationContext as SimpleMoneyTrackerApp).container.categoryRepository,
-            (LocalContext.current.applicationContext as SimpleMoneyTrackerApp).container.clock
-        )
-    )
 ) {
+    // BackupRepository still lives on the Application: it depends on Android
+    // Context, Uri and java.io, so it is not in the shared :composeApp module yet.
+    // Its multiplatform port is Stage 5 of the iOS plan.
+    val app = androidx.compose.ui.platform.LocalContext.current.applicationContext as SimpleMoneyTrackerApp
+    val container = SakuContainer
+    val viewModel: CadanganViewModel = viewModel(
+        factory = viewModelFactory {
+            initializer {
+                CadanganViewModel(
+                    app,
+                    app.backupRepository,
+                    container.transactionRepository,
+                    container.categoryRepository,
+                    container.clock,
+                )
+            }
+        },
+    )
     val uiState by viewModel.uiState.collectAsState()
-    val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val container = (LocalContext.current.applicationContext as SimpleMoneyTrackerApp).container
 
     val importLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument()
     ) { uri ->
         if (uri != null) {
-            val raw = container.backupRepository.readText(context, uri)
+            val raw = app.backupRepository.readText(app, uri)
             viewModel.import(raw)
         }
     }
 
     val toastText = uiState.toast?.let { path ->
-        context.getString(R.string.cadangan_export_saved, path)
+        SakuStrings.cadangan_export_saved.format(path)
     }
 
     Box(
@@ -92,30 +102,28 @@ fun CadanganScreen(
                 .padding(top = SakuSpace.screenHorizontal, bottom = SakuSpace.screenBottom),
             verticalArrangement = Arrangement.spacedBy(SakuSpace.screenHorizontal),
         ) {
-            ScreenHeader(title = stringResource(R.string.cadangan_title), onBack = onBack)
+            ScreenHeader(title = SakuStrings.cadangan_title, onBack = onBack)
 
             SakuCard(
                 modifier = Modifier.fillMaxWidth().testTag(TestTags.CADANGAN_STATUS_CARD)
             ) {
                 Column {
                     Text(
-                        text = stringResource(R.string.cadangan_status_title),
+                        text = SakuStrings.cadangan_status_title,
                         style = SakuTheme.text.bodyStrong,
                         color = SakuTheme.colors.text,
                     )
                     Spacer(modifier = Modifier.height(SakuSpace.tight))
                     Text(
-                        text = stringResource(R.string.cadangan_transaction_count, uiState.transactionCount),
+                        text = SakuStrings.cadangan_transaction_count.format(uiState.transactionCount),
                         style = SakuTheme.text.caption,
                         color = SakuTheme.colors.textMuted,
                     )
                     Text(
                         text = uiState.lastBackupMillis?.let {
-                            stringResource(
-                                R.string.cadangan_last_backup,
-                                formatShortDate(context, it)
+                            SakuStrings.cadangan_last_backup.format(formatShortDate(it)
                             )
-                        } ?: stringResource(R.string.cadangan_never),
+                        } ?: SakuStrings.cadangan_never,
                         style = SakuTheme.text.caption,
                         color = SakuTheme.colors.textMuted,
                     )
@@ -123,19 +131,19 @@ fun CadanganScreen(
             }
 
             Column {
-                SectionLabel(text = stringResource(R.string.cadangan_export))
+                SectionLabel(text = SakuStrings.cadangan_export)
                 Spacer(modifier = Modifier.height(SakuSpace.cardInner))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(SakuSpace.chipGap),
                 ) {
                     SecondaryButton(
-                        text = stringResource(R.string.cadangan_export_csv),
+                        text = SakuStrings.cadangan_export_csv,
                         onClick = {
                             scope.launch {
                                 val csv = viewModel.buildCsv()
-                                val file = container.backupRepository.writeFile(
-                                    context, "saku-cadangan.csv", csv, "text/csv"
+                                val file = app.backupRepository.writeFile(
+                                    app, "saku-cadangan.csv", csv, "text/csv"
                                 )
                                 viewModel.markBackupDone(file.name)
                             }
@@ -144,12 +152,12 @@ fun CadanganScreen(
                         testTag = TestTags.CADANGAN_EXPORT_CSV,
                     )
                     SecondaryButton(
-                        text = stringResource(R.string.cadangan_export_json),
+                        text = SakuStrings.cadangan_export_json,
                         onClick = {
                             scope.launch {
                                 val json = viewModel.buildJson()
-                                val file = container.backupRepository.writeFile(
-                                    context, "saku-cadangan.json", json, "application/json"
+                                val file = app.backupRepository.writeFile(
+                                    app, "saku-cadangan.json", json, "application/json"
                                 )
                                 viewModel.markBackupDone(file.name)
                             }
@@ -161,13 +169,13 @@ fun CadanganScreen(
             }
 
             Column {
-                SectionLabel(text = stringResource(R.string.cadangan_import))
+                SectionLabel(text = SakuStrings.cadangan_import)
                 Spacer(modifier = Modifier.height(SakuSpace.cardInner))
                 PrimaryButton(
                     text = if (uiState.importing) {
-                        stringResource(R.string.cadangan_importing)
+                        SakuStrings.cadangan_importing
                     } else {
-                        stringResource(R.string.cadangan_import_button)
+                        SakuStrings.cadangan_import_button
                     },
                     onClick = {
                         importLauncher.launch(arrayOf("application/json", "text/csv", "*/*"))
@@ -176,15 +184,12 @@ fun CadanganScreen(
                     testTag = TestTags.CADANGAN_IMPORT_BUTTON,
                 )
                 Spacer(modifier = Modifier.height(SakuSpace.chipGap))
-                HelperText(text = stringResource(R.string.cadangan_import_note))
+                HelperText(text = SakuStrings.cadangan_import_note)
                 if (uiState.importResult != null) {
                     Spacer(modifier = Modifier.height(SakuSpace.chipGap))
                     HelperText(
-                        text = stringResource(
-                            R.string.cadangan_import_result,
-                            uiState.importResult!!.added,
-                            uiState.importResult!!.skipped
-                        ),
+                        text = SakuStrings.cadangan_import_result.format(uiState.importResult!!.added,
+                            uiState.importResult!!.skipped),
                         color = SakuTheme.colors.income,
                         modifier = Modifier.testTag(TestTags.CADANGAN_IMPORT_RESULT),
                     )
@@ -192,7 +197,7 @@ fun CadanganScreen(
                 if (uiState.importError) {
                     Spacer(modifier = Modifier.height(SakuSpace.chipGap))
                     HelperText(
-                        text = stringResource(R.string.cadangan_import_error),
+                        text = SakuStrings.cadangan_import_error,
                         color = SakuTheme.colors.danger,
                         modifier = Modifier.testTag(TestTags.CADANGAN_IMPORT_ERROR),
                     )
@@ -206,7 +211,7 @@ fun CadanganScreen(
                 contentColor = SakuTheme.colors.text,
             ) {
                 Text(
-                    text = stringResource(R.string.cadangan_warning),
+                    text = SakuStrings.cadangan_warning,
                     style = SakuTheme.text.caption,
                     color = SakuTheme.colors.textSecondary,
                     modifier = Modifier.padding(SakuSpace.cardInner + SakuSpace.tight),

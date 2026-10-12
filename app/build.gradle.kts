@@ -1,7 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.ksp)
 }
 
 android {
@@ -35,6 +34,10 @@ android {
 }
 
 dependencies {
+    // Shared Kotlin: entities, DAOs, repositories, Clock, seeds, AppContainer.
+    // Room and KSP now live in :composeApp.
+    implementation(project(":composeApp"))
+
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.core.ktx)
     implementation(libs.material)
@@ -43,15 +46,14 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.activity:activity-compose:1.9.0")
-    implementation("androidx.navigation:navigation-compose:2.7.7")
+    implementation(libs.androidx.activity.compose)
+    // Navigation comes from :composeApp, which uses the multiplatform
+    // org.jetbrains.androidx.navigation build. AndroidX's navigation-compose is
+    // Android-only and shadows the typed-route API the shared NavGraph needs.
     debugImplementation("androidx.compose.ui:ui-tooling")
-    implementation(libs.room.runtime)
-    implementation(libs.room.ktx)
     implementation(libs.kotlinx.datetime)
     implementation(libs.lifecycle.viewmodel.compose)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
-    ksp(libs.room.compiler)
 }

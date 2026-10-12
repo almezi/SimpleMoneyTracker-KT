@@ -14,3 +14,6 @@
 .cxx
 local.properties
 /.idea/
+
+# Stage 1 iOS migration spike (throwaway, independent Gradle build)
+/ios-spike/
