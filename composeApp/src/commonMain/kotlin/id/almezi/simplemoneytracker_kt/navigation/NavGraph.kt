@@ -10,6 +10,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import id.almezi.simplemoneytracker_kt.ui.anggaran.AnggaranFormScreen
 import id.almezi.simplemoneytracker_kt.ui.anggaran.AnggaranScreen
@@ -85,19 +86,26 @@ val bottomNavItems: List<SakuNavItem<Screen>> = listOf(
  */
 fun bottomTabFor(destination: NavDestination?): Screen? {
     val route = destination?.route ?: return null
-    return bottomNavItems.firstOrNull { it.route.serialName() == route }?.route
+    return bottomNavItems.firstOrNull { it.route.routeName() == route }?.route
 }
 
-/** The serialised name navigation records for a typed route. */
-private fun Any.serializer(): kotlinx.serialization.KSerializer<*> =
+/**
+ * The serialised route name navigation records for a typed route.
+ *
+ * Named `routeName` rather than `serialName`, and the serializer lookup
+ * `routeSerializer` rather than `serializer`. A helper called `Any.serializer()`
+ * shadows `kotlinx.serialization.serializer()` for every file in this package —
+ * including tests — which is exactly the kind of trap that costs an hour.
+ */
+private fun Screen.routeSerializer(): KSerializer<*> =
     when (this) {
         is Screen.Tambah -> Screen.Tambah.serializer()
         is Screen.Daftar -> Screen.Daftar.serializer()
         is Screen.Ringkasan -> Screen.Ringkasan.serializer()
-        else -> error("serialName() is only defined for the three bottom tabs")
+        else -> error("routeName() is only defined for the three bottom tabs")
     }
 
-private fun Any.serialName(): String = serializer().descriptor.serialName
+private fun Screen.routeName(): String = routeSerializer().descriptor.serialName
 
 /**
  * @param cadanganContent the Cadangan (backup) destination.

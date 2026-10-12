@@ -47,6 +47,11 @@ androidx-navigation-compose = { group = "org.jetbrains.androidx.navigation", nam
 # :composeApp need kotlinx-serialization on their compile classpath.
 kotlinx-serialization-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-core", version.ref = "serialization" }
 
+# Backup JSON. The Android-only implementation used org.json plus
+# SimpleDateFormat/Calendar, all JVM-only, so backups could not be
+# produced on iOS at all. See docs/09 Stage 5 item 5.6.
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serialization" }
+
 # Android-only. Backs the Android NavHost inside the multiplatform navigation.
 androidx-savedstate = { group = "androidx.savedstate", name = "savedstate", version.ref = "savedstate" }
 

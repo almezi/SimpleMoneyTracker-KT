@@ -22,7 +22,12 @@ import kotlinx.serialization.serializer
 class BottomNavRouteTest {
 
     private fun routeNameOf(route: Screen): String =
-        route.serializer().descriptor.serialName
+        when (route) {
+            is Screen.Tambah -> Screen.Tambah.serializer().descriptor.serialName
+            is Screen.Daftar -> Screen.Daftar.serializer().descriptor.serialName
+            is Screen.Ringkasan -> Screen.Ringkasan.serializer().descriptor.serialName
+            else -> error("unexpected tab route: $route")
+        }
 
     @Test
     fun `each tab serialises to a distinct route name`() {

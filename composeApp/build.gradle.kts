@@ -98,6 +98,7 @@ kotlin {
             api(libs.androidx.navigation.compose)
             // `api` for the same reason: Screen routes are @Serializable.
             api(libs.kotlinx.serialization.core)
+            implementation(libs.kotlinx.serialization.json)
         }
 
         androidMain.dependencies {
