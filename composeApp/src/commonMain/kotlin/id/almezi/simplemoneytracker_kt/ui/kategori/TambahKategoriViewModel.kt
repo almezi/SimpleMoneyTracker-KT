@@ -1,7 +1,6 @@
 package id.almezi.simplemoneytracker_kt.ui.kategori
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import id.almezi.simplemoneytracker_kt.data.Category
 import id.almezi.simplemoneytracker_kt.data.CategoryRepository

@@ -2,7 +2,6 @@ package id.almezi.simplemoneytracker_kt.ui
 
 import id.almezi.simplemoneytracker_kt.SakuStrings
 
-import androidx.compose.runtime.Composable
 import id.almezi.simplemoneytracker_kt.data.Category
 import id.almezi.simplemoneytracker_kt.ui.components.SakuPickerOptionGroup
 

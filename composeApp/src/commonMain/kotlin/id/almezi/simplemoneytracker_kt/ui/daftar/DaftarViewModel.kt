@@ -1,7 +1,6 @@
 package id.almezi.simplemoneytracker_kt.ui.daftar
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import id.almezi.simplemoneytracker_kt.data.Clock
 import id.almezi.simplemoneytracker_kt.data.Transaction

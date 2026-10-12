@@ -311,16 +311,6 @@ fun TransactionForm(
 }
 
 @Composable
-fun TransactionFormHeader(
-    text: String,
-    style: androidx.compose.ui.text.TextStyle,
-    color: androidx.compose.ui.graphics.Color,
-    testTag: String
-) {
-    Text(text = text, style = style, color = color, modifier = Modifier.testTag(testTag))
-}
-
-@Composable
 fun KelolaKategoriLink(onClick: () -> Unit) {
     Surface(
         onClick = onClick,
