@@ -13,11 +13,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		SAKU0000000000000000PROD01 /* Saku.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Saku.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		SAKU0000000000000000FILE01 /* SakuApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SakuApp.swift; sourceTree = "<group>"; };
 		SAKU0000000000000000FILE02 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		SAKU0000000000000000FILE03 /* ComposeApp.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ComposeApp.framework; path = ComposeApp.framework; sourceTree = SDKROOT; };
+		SAKU0000000000000000FILE03 /* ComposeApp.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ComposeApp.framework; sourceTree = SDKROOT; };
 		SAKU0000000000000000FILE04 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		SAKU0000000000000000PROD01 /* Saku.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Saku.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -32,11 +32,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		FCBE14F4307DFC53007525D2 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				SAKU0000000000000000FILE03 /* ComposeApp.framework */,
+			);
+			name = "Recovered References";
+			sourceTree = "<group>";
+		};
 		SAKU0000000000000000GRP00 = {
 			isa = PBXGroup;
 			children = (
 				SAKU0000000000000000GRP01 /* iosApp */,
 				SAKU0000000000000000GRP02 /* Products */,
+				FCBE14F4307DFC53007525D2 /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -94,7 +103,7 @@
 					};
 				};
 			};
-			buildConfigurationList = SAKU0000000000000000CLIST01 /* Build configuration list for PBXProject "Saku" */;
+			buildConfigurationList = SAKU0000000000000000CLIST01 /* Build configuration list for PBXProject "$" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -137,7 +146,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\n\n# Compose Multiplatform direct framework integration (no CocoaPods).\n#\n# embedAndSignAppleFrameworkForXcode reads its configuration from the Xcode\n# environment, which is why this must run from a real Xcode build rather than\n# from a plain shell: hand-set variables make it fail with\n#   \"Could not infer iOS target platform\".\n#\n# It links :composeApp and copies the static framework plus compose-resources\n# into BUILT_PRODUCTS_DIR/Frameworks.\ncd \"$SRCROOT/..\"\n./gradlew :composeApp:embedAndSignAppleFrameworkForXcode\n";
+			shellScript = "if [ \"YES\" = \"$OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED\" ]; then\n  echo \"Skipping Gradle build task invocation due to OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED environment variable set to \\\"YES\\\"\"\n  exit 0\nfi\nset -e\n\n# Compose Multiplatform direct framework integration (no CocoaPods).\n#\n# embedAndSignAppleFrameworkForXcode reads its configuration from the Xcode\n# environment, which is why this must run from a real Xcode build rather than\n# from a plain shell: hand-set variables make it fail with\n#   \"Could not infer iOS target platform\".\n#\n# It links :composeApp and copies the static framework plus compose-resources\n# into BUILT_PRODUCTS_DIR/Frameworks.\ncd \"$SRCROOT/..\"\n./gradlew :composeApp:embedAndSignAppleFrameworkForXcode";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -277,7 +286,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		SAKU0000000000000000CLIST01 /* Build configuration list for PBXProject "Saku" */ = {
+		SAKU0000000000000000CLIST01 /* Build configuration list for PBXProject "$" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				SAKU0000000000000000CONF01 /* Debug */,

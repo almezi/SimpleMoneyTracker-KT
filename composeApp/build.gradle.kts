@@ -88,7 +88,7 @@ kotlin {
             // its own src/androidMain/res/font. Compose Multiplatform does not
             // generate working accessors for the Android target, so Android must
             // not consume this. See docs/09 section 6.5.
-            implementation(compose.components.resources)
+            implementation("org.jetbrains.compose.components:components-resources:1.12.1")
             // JetBrains multiplatform navigation. androidx.navigation's
             // navigation-compose is Android-only.
             //
@@ -111,6 +111,18 @@ kotlin {
         // tests and the iOS simulator test tasks.
         commonTest.dependencies {
             implementation(kotlin("test"))
+        }
+
+        // Compose UI tests only for the iOS simulator tree. Android host tests
+        // cannot run `runComposeUiTest` without Robolectric, so keeping this
+        // out of commonTest leaves `:composeApp:allTests` green.
+        //
+        // Coordinates spelled out rather than `compose.uiTest`: that accessor is
+        // deprecated AND requires opting into ExperimentalComposeLibrary at the
+        // build-script level, which then makes every source set carry the
+        // opt-in. Same 1.12.1 as the `org.jetbrains.compose` plugin above.
+        iosTest.dependencies {
+            implementation("org.jetbrains.compose.ui:ui-test:1.12.1")
         }
     }
 }
