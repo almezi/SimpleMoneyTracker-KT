@@ -99,6 +99,7 @@ class TambahViewModel(
         _uiState.update {
             it.copy(
                 type = type,
+                amountDigits = "",
                 selectedCategoryId = if (keepCategory) it.selectedCategoryId else null
             )
         }
