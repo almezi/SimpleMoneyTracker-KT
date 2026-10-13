@@ -23,6 +23,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,6 +35,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.lifecycle.viewmodel.compose.viewModel
 import id.almezi.simplemoneytracker_kt.TestTags
 import id.almezi.simplemoneytracker_kt.ui.components.EmptyState
+import id.almezi.simplemoneytracker_kt.ui.components.MonthPickerSheet
 import id.almezi.simplemoneytracker_kt.ui.components.MonthSwitcher
 import id.almezi.simplemoneytracker_kt.ui.components.PrimaryButton
 import id.almezi.simplemoneytracker_kt.ui.components.SakuCard
@@ -68,6 +72,8 @@ fun RingkasanScreen(
     )
 
     val uiState by viewModel.uiState.collectAsState()
+    var monthPickerOpen by remember { mutableStateOf(false) }
+    val today = monthOf(viewModel.currentMonthMillis())
 
     Box(
         modifier = modifier
@@ -88,7 +94,8 @@ fun RingkasanScreen(
                 label = formatMonthLabel(uiState.month),
                 onPrevious = viewModel::previousMonth,
                 onNext = viewModel::nextMonth,
-                nextEnabled = uiState.month < monthOf(viewModel.currentMonthMillis()),
+                nextEnabled = uiState.month < today,
+                onLabelClick = { monthPickerOpen = true },
                 testTag = TestTags.RINGKASAN_MONTH_SWITCHER,
             )
 
@@ -147,6 +154,16 @@ fun RingkasanScreen(
                     testTag = TestTags.RINGKASAN_BREAKDOWN_EXPENSE,
                 )
             }
+        }
+        if (monthPickerOpen) {
+            MonthPickerSheet(
+                current = uiState.month,
+                maxMonth = today,
+                minYear = today.year - 10,
+                onMonthSelected = viewModel::selectMonth,
+                onDismissRequest = { monthPickerOpen = false },
+                testTag = TestTags.RINGKASAN_MONTH_PICKER,
+            )
         }
     }
 }

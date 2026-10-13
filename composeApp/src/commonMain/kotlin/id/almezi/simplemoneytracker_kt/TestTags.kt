@@ -34,6 +34,7 @@ object TestTags {
     const val DAFTAR_BACKUP_BUTTON = "daftar_backup_button"
     const val DAFTAR_DAY_HEADER = "daftar_day_header"
     const val DAFTAR_EMPTY_STATE = "daftar_empty_state"
+    const val DAFTAR_MONTH_PICKER = "daftar_month_picker"
 
     // Anggaran (steps 7 and 8)
     const val ANGGARAN_SCREEN = "anggaran_screen"
@@ -100,6 +101,7 @@ object TestTags {
     const val RINGKASAN_BREAKDOWN_EXPENSE = "ringkasan_breakdown_expense"
     const val RINGKASAN_EMPTY_STATE = "ringkasan_empty_state"
     const val RINGKASAN_EMPTY_ACTION = "ringkasan_empty_action"
+    const val RINGKASAN_MONTH_PICKER = "ringkasan_month_picker"
 
     // Shared design system components
     const val COMPONENT_BUTTON_PRIMARY = "component_button_primary"
@@ -126,4 +128,5 @@ object TestTags {
     const val COMPONENT_CARD_TRANSACTION = "component_card_transaction"
     const val COMPONENT_ROW_BUDGET = "component_row_budget"
     const val COMPONENT_PICKER_SHEET = "component_sheet_picker"
+    const val COMPONENT_MONTH_PICKER_SHEET = "component_sheet_month_picker"
 }

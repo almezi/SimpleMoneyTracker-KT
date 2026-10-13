@@ -57,6 +57,11 @@ class RingkasanViewModel(
         refresh(next)
     }
 
+    fun selectMonth(month: SakuMonth) {
+        if (month > currentMonth) return
+        refresh(month)
+    }
+
     private fun refresh(month: SakuMonth) {
         _uiState.update { it.copy(month = month, loading = true) }
         viewModelScope.launch {

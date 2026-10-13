@@ -3,6 +3,7 @@ package id.almezi.simplemoneytracker_kt.ui.components
 import id.almezi.simplemoneytracker_kt.SakuStrings
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,7 +17,9 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -119,6 +122,7 @@ fun MonthSwitcher(
     onNext: () -> Unit,
     modifier: Modifier = Modifier,
     nextEnabled: Boolean = true,
+    onLabelClick: (() -> Unit)? = null,
     previousContentDescription: String = SakuStrings.cd_previous_month,
     nextContentDescription: String = SakuStrings.cd_next_month,
     testTag: String = TestTags.COMPONENT_SWITCHER_MONTH,
@@ -137,13 +141,25 @@ fun MonthSwitcher(
             onClick = onPrevious,
             testTag = testTag + "_prev",
         )
+        val labelModifier = Modifier
+            .weight(1f)
+            .testTag(testTag + "_label")
+        val labelNode = if (onLabelClick != null) {
+            labelModifier.clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = onLabelClick,
+            )
+        } else {
+            labelModifier
+        }
         Text(
             text = label.uppercase(),
             style = SakuTheme.text.monthLabel,
             color = SakuTheme.colors.accentText,
             textAlign = TextAlign.Center,
             maxLines = 1,
-            modifier = Modifier.weight(1f),
+            modifier = labelNode,
         )
         MonthArrowButton(
             icon = Icons.AutoMirrored.Filled.KeyboardArrowRight,
@@ -156,7 +172,7 @@ fun MonthSwitcher(
 }
 
 @Composable
-private fun MonthArrowButton(
+internal fun MonthArrowButton(
     icon: ImageVector,
     contentDescription: String,
     enabled: Boolean,

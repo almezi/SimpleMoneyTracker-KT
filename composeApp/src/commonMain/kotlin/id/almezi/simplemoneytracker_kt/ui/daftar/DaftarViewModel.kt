@@ -64,6 +64,13 @@ class DaftarViewModel(
         }
     }
 
+    fun selectMonth(month: SakuMonth) {
+        if (month > currentMonth) return
+        viewModelScope.launch {
+            rebuild(month, repository.getAllTransactionsOnce())
+        }
+    }
+
     fun requestDelete(transaction: Transaction) {
         _uiState.update { it.copy(pendingDelete = transaction) }
     }

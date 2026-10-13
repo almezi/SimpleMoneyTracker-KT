@@ -23,6 +23,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,6 +37,7 @@ import id.almezi.simplemoneytracker_kt.TestTags
 import id.almezi.simplemoneytracker_kt.data.Transaction
 import id.almezi.simplemoneytracker_kt.ui.components.ConfirmDeleteSheet
 import id.almezi.simplemoneytracker_kt.ui.components.EmptyState
+import id.almezi.simplemoneytracker_kt.ui.components.MonthPickerSheet
 import id.almezi.simplemoneytracker_kt.ui.components.MonthSwitcher
 import id.almezi.simplemoneytracker_kt.ui.components.PrimaryButton
 import id.almezi.simplemoneytracker_kt.ui.components.SakuCard
@@ -74,6 +78,8 @@ fun DaftarScreen(
     )
 
     val uiState by viewModel.uiState.collectAsState()
+    var monthPickerOpen by remember { mutableStateOf(false) }
+    val today = monthOf(viewModel.currentMonthMillis())
     val undoToast = uiState.undoCandidate?.let {
         SakuToast(
             text = SakuStrings.toast_transaksi_dihapus,
@@ -92,9 +98,10 @@ fun DaftarScreen(
         if (uiState.isEmpty) {
             DaftarEmptyState(
                 monthLabel = formatMonthLabel(uiState.month),
-                nextEnabled = uiState.month < monthOf(viewModel.currentMonthMillis()),
+                nextEnabled = uiState.month < today,
                 onPrevious = viewModel::previousMonth,
                 onNext = viewModel::nextMonth,
+                onLabelClick = { monthPickerOpen = true },
                 onAddTransaction = onAddTransaction,
                 onOpenBackup = onOpenBackup,
                 modifier = Modifier.fillMaxSize(),
@@ -111,9 +118,10 @@ fun DaftarScreen(
                 item(key = "header") {
                     DaftarHeader(
                         monthLabel = formatMonthLabel(uiState.month),
-                        nextEnabled = uiState.month < monthOf(viewModel.currentMonthMillis()),
+                        nextEnabled = uiState.month < today,
                         onPrevious = viewModel::previousMonth,
                         onNext = viewModel::nextMonth,
+                        onLabelClick = { monthPickerOpen = true },
                         incomeTotal = uiState.incomeTotal,
                         expenseTotal = uiState.expenseTotal,
                         onOpenBackup = onOpenBackup,
@@ -130,6 +138,17 @@ fun DaftarScreen(
             toast = undoToast,
             onDismiss = viewModel::clearUndo,
         )
+
+        if (monthPickerOpen) {
+            MonthPickerSheet(
+                current = uiState.month,
+                maxMonth = today,
+                minYear = today.year - 10,
+                onMonthSelected = viewModel::selectMonth,
+                onDismissRequest = { monthPickerOpen = false },
+                testTag = TestTags.DAFTAR_MONTH_PICKER,
+            )
+        }
 
         val pending = uiState.pendingDelete
         if (pending != null) {
@@ -152,6 +171,7 @@ private fun DaftarHeader(
     nextEnabled: Boolean,
     onPrevious: () -> Unit,
     onNext: () -> Unit,
+    onLabelClick: () -> Unit = {},
     incomeTotal: Long,
     expenseTotal: Long,
     onOpenBackup: () -> Unit,
@@ -163,6 +183,7 @@ private fun DaftarHeader(
             onPrevious = onPrevious,
             onNext = onNext,
             nextEnabled = nextEnabled,
+            onLabelClick = onLabelClick,
             testTag = TestTags.DAFTAR_MONTH_SWITCHER,
         )
         Spacer(modifier = Modifier.height(SakuSpace.screenHorizontal))
@@ -277,6 +298,7 @@ private fun DaftarEmptyState(
     nextEnabled: Boolean,
     onPrevious: () -> Unit,
     onNext: () -> Unit,
+    onLabelClick: () -> Unit = {},
     onAddTransaction: () -> Unit,
     onOpenBackup: () -> Unit,
     modifier: Modifier = Modifier
@@ -293,6 +315,7 @@ private fun DaftarEmptyState(
             onPrevious = onPrevious,
             onNext = onNext,
             nextEnabled = nextEnabled,
+            onLabelClick = onLabelClick,
             testTag = TestTags.DAFTAR_MONTH_SWITCHER,
         )
         Spacer(modifier = Modifier.height(SakuSpace.section))
