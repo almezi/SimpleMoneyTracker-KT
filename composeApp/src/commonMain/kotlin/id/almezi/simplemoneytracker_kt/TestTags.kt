@@ -37,6 +37,7 @@ object TestTags {
     const val DAFTAR_DAY_HEADER = "daftar_day_header"
     const val DAFTAR_EMPTY_STATE = "daftar_empty_state"
     const val DAFTAR_MONTH_PICKER = "daftar_month_picker"
+    const val DAFTAR_DELETE_SHEET = "daftar_delete_sheet"
 
     // Anggaran (steps 7 and 8)
     const val ANGGARAN_SCREEN = "anggaran_screen"
@@ -53,6 +54,7 @@ object TestTags {
     const val ANGGARAN_FORM_SAVE = "anggaran_form_save"
     const val ANGGARAN_FORM_DELETE = "anggaran_form_delete"
     const val ANGGARAN_DELETE_SHEET = "anggaran_delete_sheet"
+    const val ANGGARAN_FORM_DELETE_SHEET = "anggaran_form_delete_sheet"
 
     // Kelola kategori (step 9)
     const val KATEGORI_SCREEN = "kategori_screen"
@@ -111,6 +113,12 @@ object TestTags {
     const val COMPONENT_BUTTON_SECONDARY = "component_button_secondary"
     const val COMPONENT_BUTTON_DESTRUCTIVE = "component_button_destructive"
     const val COMPONENT_BUTTON_TEXT_DANGER = "component_button_text_danger"
+    const val COMPONENT_BUTTON_BACK = "component_button_back"
+    // Per-item dynamic tag prefixes, suffixed with the category id at call sites
+    // (for example `mark_inc_salary`, `avatar_inc_salary`). Centralized here per
+    // the one-file rule in AGENTS.md.
+    const val CATEGORY_MARK_PREFIX = "mark_"
+    const val CATEGORY_AVATAR_PREFIX = "avatar_"
     const val COMPONENT_TOGGLE_SEGMENTED = "component_toggle_segmented"
     const val COMPONENT_INPUT_AMOUNT = "component_input_amount"
     const val COMPONENT_GRID_CATEGORY_CHIP = "component_grid_category_chip"

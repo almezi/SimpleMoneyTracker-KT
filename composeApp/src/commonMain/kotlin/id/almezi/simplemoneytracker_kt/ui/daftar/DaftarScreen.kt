@@ -160,6 +160,7 @@ fun DaftarScreen(
                 ),
                 onConfirm = viewModel::confirmDelete,
                 onDismissRequest = viewModel::cancelDelete,
+                testTag = TestTags.DAFTAR_DELETE_SHEET,
             )
         }
     }
