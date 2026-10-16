@@ -13,6 +13,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -65,7 +66,7 @@ fun TambahScreen(
         TambahHelper.MissingBoth -> SakuStrings.tambah_helper_both
     }
 
-    Box(modifier = modifier) {
+    Box(modifier = modifier.testTag(TestTags.TAMBAH_SCREEN)) {
         TransactionForm(
             state = TransactionFormState(
                 type = uiState.type,
@@ -97,6 +98,7 @@ fun TambahScreen(
             bottomReserve = SakuSize.navReserve + SakuSpace.screenBottom,
             onSave = viewModel::save,
             testTag = TestTags.TAMBAH_BUTTON_SAVE,
+            toggleTestTag = TestTags.TAMBAH_TOGGLE_TYPE,
         )
 
         SakuToastHost(toast = toast, onDismiss = { toast = null })

@@ -12,33 +12,113 @@ Screen prefixes: `nav`, `add`, `list`, `summary`, `dialog`.
 
 ## Current Test Tags Implementation
 
-### Navigation
-- `nav_tab_add`, `nav_tab_list`, `nav_tab_summary`
+Tags follow `<screen>_<type>_<name>` and are defined in `TestTags.kt`. Repeated
+list items are suffixed with the item id (for example `daftar_item_<transactionId>`).
+Dynamic prefixes like `mark_` and `avatar_` are suffixed with the category id.
+
+### Navigation (bottom bar)
+- Root container: `component_nav_bottom`
+- Items: `component_nav_bottom_tambah`, `component_nav_bottom_daftar`, `component_nav_bottom_ringkasan`
+
+### Loading
+- `loading_screen`
 
 ### Tambah
-- `tambah_toggle_type_pemasukan`, `tambah_toggle_type_pengeluaran`
-- `tambah_input_amount`, `tambah_input_note`
-- `tambah_button_category`, `tambah_button_date`, `tambah_button_save`
-- `tambah_error_amount`, `tambah_error_category`
-- `tambah_category_item_<categoryId>` (picker rows, for example `tambah_category_item_inc_salary`)
-- `tambah_selected_category`
+- Screen: `tambah_screen`
+- Toggle type: `tambah_toggle_type` (children `_0`/`_1`)
+- Amount input: `tambah_input_amount`
+- Category pager: `tambah_category_pager`
+- Category item: `tambah_category_item_<categoryId>`
+- Category search: `tambah_category_search` / `tambah_category_search_empty`
+- Date picker dialog: `tambah_date_picker` (OK: `tambah_date_picker_ok`, Cancel: `tambah_date_picker_cancel`)
+- Note input: `tambah_input_note`
+- Save button: `tambah_button_save`
+- Select account: `tambah_select_account`
+- Select date: `tambah_select_date`
+- Helper text: `tambah_helper`
+- Kelola kategori link: `tambah_link_kelola_kategori`
+- Account sheet: `tambah_sheet_account`
+- Account item: `tambah_account_item_<accountId>`
 
-### Daftar
-- `daftar_button_month_prev`, `daftar_button_month_next`, `daftar_text_month`
-- `daftar_item_transaction_<transactionId>`
-- `daftar_text_amount_<transactionId>`, `daftar_text_category_<transactionId>`, `daftar_text_date_<transactionId>`
-- `daftar_button_delete_<transactionId>`
-- `daftar_text_excluded_<transactionId>` (the "Tidak dihitung" label)
-- `daftar_text_empty`
+### Daftar (list)
+- Screen: `daftar_screen`
+- Month switcher: `daftar_month_switcher` (children `_prev`/`_label`/`_next`)
+- Backup button: `daftar_backup_button`
+- Summary: `daftar_summary_masuk`, `daftar_summary_keluar`
+- Transaction item: `daftar_item_<transactionId>`
+- Day header: `daftar_day_header_<dateMillis>`
+- Empty state: `daftar_empty_state` (primary/secondary actions)
+- Month picker: `daftar_month_picker`
 
-### Delete dialog
-- `dialog_button_delete_confirm`, `dialog_button_delete_cancel`
+### Anggaran
+- Screen: `anggaran_screen`
+- Total card: `anggaran_total_card`
+- List: `anggaran_list`
+- Row: `anggaran_row_<categoryId>`
+- Add button: `anggaran_add_button`
+- Empty state: `anggaran_empty_state`
+- Form category: `anggaran_form_category`
+- Delete sheet: `anggaran_delete_sheet`
 
-### Ringkasan
-- `ringkasan_button_month_prev`, `ringkasan_button_month_next`, `ringkasan_text_month`
-- `ringkasan_tile_income`, `ringkasan_tile_expense`, `ringkasan_tile_balance`, `ringkasan_tile_count`
-- `ringkasan_item_group_<groupId>`
-- `ringkasan_text_empty`
+### Kelola kategori
+- Screen: `kategori_screen`
+- Toggle type: `kategori_toggle_type`
+- Row: `kategori_row_<categoryId>` (edit / hide / delete suffixed)
+- Add button: `kategori_add_button`
+- Delete sheet: `kategori_delete_sheet`
+
+### Ubah transaksi
+- Screen: `ubah_screen`
+- Header: `ubah_header`
+- Save: `ubah_button_save`
+- Delete: `ubah_button_delete`
+- Delete sheet: `ubah_delete_sheet`
+
+### Ringkasan (summary)
+- Screen: `ringkasan_screen`
+- Month switcher: `ringkasan_month_switcher` (children `_prev`/`_label`/`_next`)
+- Totals card: `ringkasan_totals_card_income`, `ringkasan_totals_card_expense`
+- Balance card: `ringkasan_balance_card`, value `ringkasan_balance_value`
+- Savings row: `ringkasan_savings_row`, value `ringkasan_savings_value`
+- Buttons: `ringkasan_anggaran_button`, `ringkasan_kelola_button`
+- Comparison: `ringkasan_comparison`
+- Breakdown: `ringkasan_breakdown_income`, `ringkasan_breakdown_expense`
+- Category item: `ringkasan_category_item_<categoryId>`
+- Empty state: `ringkasan_empty_state`, action `ringkasan_empty_action`
+- Month picker: `ringkasan_month_picker`
+
+### Cadangan
+- Screen: `cadangan_screen`
+- Status card: `cadangan_status_card`
+- Export: `cadangan_export_csv`, `cadangan_export_json`
+- Import: `cadangan_import_button`, `cadangan_import_result`, `cadangan_import_error`
+- Warning: `cadangan_warning`
+
+### Delete sheet (shared)
+- Root: `component_sheet_bottom`
+- Confirm: `component_sheet_button_confirm`
+- Cancel: `component_sheet_button_cancel`
+
+### Shared design system components
+- Buttons: `component_button_primary`, `component_button_secondary`,
+  `component_button_destructive`, `component_button_text_danger`,
+  `component_button_back`
+- Toggle segmented: `component_toggle_segmented` (children `_0`/`_1`)
+- Input amount: `component_input_amount`
+- Fields: `component_field_select`, `component_field_date`, `component_field_note`,
+  `component_field_search`
+- Month switcher: `component_switcher_month` (children `_prev`/`_label`/`_next`)
+- Switch: `component_switch`
+- Toast: `component_toast`
+- Card transaction: `component_card_transaction` (children `_edit_<categoryId>` /
+  `_delete_<categoryId>`)
+- Row budget: `component_row_budget`
+- Row category chip: `component_row_category_chip_<categoryId>`
+- Mark: `mark_<categoryId>`
+- Avatar: `avatar_<categoryId>`
+- Sheet picker: `component_sheet_picker`
+- Month picker sheet: `component_sheet_month_picker`
+- Empty state: `component_state_empty`
 
 All tags follow the format `<screen>_<type>_<name>` and are defined in `TestTags.kt`. Tags for amounts expose raw values for easy assertion.
 

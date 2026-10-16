@@ -8,7 +8,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import id.almezi.simplemoneytracker_kt.SakuStrings
+import id.almezi.simplemoneytracker_kt.TestTags
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
@@ -37,6 +40,7 @@ fun SakuDatePickerDialog(
     maxMillis: Long,
     onDismiss: () -> Unit,
     onDateSelected: (Long) -> Unit,
+    testTag: String = TestTags.TAMBAH_DATE_PICKER,
 ) {
     val state = rememberDatePickerState(
         initialSelectedDateMillis = initialMillis,
@@ -48,6 +52,7 @@ fun SakuDatePickerDialog(
 
     DatePickerDialog(
         onDismissRequest = onDismiss,
+        modifier = Modifier.testTag(testTag),
         confirmButton = {
             TextButton(
                 onClick = {
@@ -55,11 +60,15 @@ fun SakuDatePickerDialog(
                         onDateSelected(jakartaMidnightOf(selected))
                     }
                     onDismiss()
-                }
+                },
+                modifier = Modifier.testTag(TestTags.TAMBAH_DATE_PICKER_OK),
             ) { Text(SakuStrings.ok) }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text(SakuStrings.cancel) }
+            TextButton(
+                onClick = onDismiss,
+                modifier = Modifier.testTag(TestTags.TAMBAH_DATE_PICKER_CANCEL),
+            ) { Text(SakuStrings.cancel) }
         },
     ) {
         DatePicker(state = state)

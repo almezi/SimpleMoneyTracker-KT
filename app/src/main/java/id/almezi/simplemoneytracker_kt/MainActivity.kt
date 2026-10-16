@@ -3,9 +3,13 @@ package id.almezi.simplemoneytracker_kt
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuTheme
 
 /**
@@ -27,7 +31,14 @@ class MainActivity : ComponentActivity() {
             // compile in commonMain.
             ProvideSakuContainer(container = app.container) {
                 SakuTheme {
-                    SakuApp(ready = isReady)
+                    // Compose exposes testTag as an Android resource-id only when
+                    // this flag is on, which is what lets the automation suite
+                    // resolve the tags as accessibility IDs on Android. iOS maps
+                    // testTag to accessibilityIdentifier without any help, so this
+                    // exists purely to keep the two platforms on one locator rule.
+                    Box(modifier = Modifier.semantics { testTagsAsResourceId = true }) {
+                        SakuApp(ready = isReady)
+                    }
                 }
             }
         }

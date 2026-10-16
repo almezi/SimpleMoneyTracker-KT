@@ -96,7 +96,8 @@ fun TransactionForm(
     maxDateMillis: Long,
     bottomReserve: Dp,
     footer: (@Composable () -> Unit)? = null,
-    testTag: String
+    testTag: String,
+    toggleTestTag: String = TestTags.COMPONENT_TOGGLE_SEGMENTED,
 ) {
     var showAccountSheet by remember { mutableStateOf(false) }
     var showCategorySheet by remember { mutableStateOf(false) }
@@ -148,6 +149,7 @@ fun TransactionForm(
                         if (index == 1) TransactionType.Expense else TransactionType.Income
                     )
                 },
+                testTag = toggleTestTag,
             )
 
             Spacer(modifier = Modifier.height(SakuSpace.screenHorizontal))
@@ -295,6 +297,7 @@ fun TransactionForm(
                 onSelect = actions.onAccountChange,
                 onDismissRequest = { showAccountSheet = false },
                 testTag = TestTags.TAMBAH_ACCOUNT_SHEET,
+                itemTag = TestTags.TAMBAH_ACCOUNT_ITEM,
             )
         }
     }

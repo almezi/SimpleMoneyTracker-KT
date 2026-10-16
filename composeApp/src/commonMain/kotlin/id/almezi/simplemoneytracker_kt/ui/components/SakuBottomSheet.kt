@@ -88,8 +88,10 @@ fun ConfirmDeleteSheet(
     body: String,
     onConfirm: () -> Unit,
     onDismissRequest: () -> Unit,
+    modifier: Modifier = Modifier,
+    testTag: String = TestTags.COMPONENT_SHEET_BOTTOM,
 ) {
-    SakuBottomSheet(onDismissRequest = onDismissRequest) {
+    SakuBottomSheet(onDismissRequest = onDismissRequest, modifier = modifier.testTag(testTag)) {
         Text(text = title, style = SakuTheme.text.bodyStrong, color = SakuTheme.colors.text)
         Spacer(modifier = Modifier.height(SakuSpace.chipGap))
         Text(text = body, style = SakuTheme.text.bodySmall, color = SakuTheme.colors.textSecondary)
