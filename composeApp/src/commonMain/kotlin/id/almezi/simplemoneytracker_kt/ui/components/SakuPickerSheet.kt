@@ -56,6 +56,7 @@ fun SakuPickerSheet(
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
     testTag: String = TestTags.COMPONENT_PICKER_SHEET,
+    itemTag: String = testTag + "_option",
 ) {
     SakuBottomSheet(onDismissRequest = onDismissRequest, modifier = modifier.testTag(testTag)) {
         Text(
@@ -76,7 +77,7 @@ fun SakuPickerSheet(
                         onSelect(option.id)
                         onDismissRequest()
                     },
-                    testTag = testTag + "_option_" + option.id,
+                    testTag = itemTag + "_" + option.id,
                 )
             }
         }

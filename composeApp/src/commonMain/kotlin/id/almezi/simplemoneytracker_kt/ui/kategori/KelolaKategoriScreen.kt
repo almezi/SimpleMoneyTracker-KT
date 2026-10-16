@@ -196,6 +196,7 @@ fun KelolaKategoriScreen(
                 },
                 onConfirm = viewModel::confirmDelete,
                 onDismissRequest = viewModel::cancelDelete,
+                testTag = TestTags.KATEGORI_DELETE_SHEET,
             )
         }
     }
@@ -316,7 +317,10 @@ private fun RenameCategoryDialog(
             ) { Text(SakuStrings.action_ubah) }
         },
         dismissButton = {
-            androidx.compose.material3.TextButton(onClick = onDismiss) {
+            androidx.compose.material3.TextButton(
+                onClick = onDismiss,
+                modifier = Modifier.testTag(TestTags.KATEGORI_FORM_CANCEL),
+            ) {
                 Text(SakuStrings.cancel)
             }
         },

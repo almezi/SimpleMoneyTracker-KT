@@ -13,6 +13,8 @@ object TestTags {
     const val TAMBAH_CATEGORY_SEARCH = "tambah_category_search"
     const val TAMBAH_CATEGORY_SEARCH_EMPTY = "tambah_category_search_empty"
     const val TAMBAH_DATE_PICKER = "tambah_date_picker"
+    const val TAMBAH_DATE_PICKER_OK = "tambah_date_picker_ok"
+    const val TAMBAH_DATE_PICKER_CANCEL = "tambah_date_picker_cancel"
     const val TAMBAH_INPUT_NOTE = "tambah_input_note"
     const val TAMBAH_BUTTON_SAVE = "tambah_button_save"
     const val TAMBAH_ERROR_AMOUNT = "tambah_error_amount"
@@ -67,6 +69,7 @@ object TestTags {
     const val KATEGORI_FORM_SWATCH = "kategori_form_swatch"
     const val KATEGORI_FORM_PREVIEW = "kategori_form_preview"
     const val KATEGORI_FORM_SAVE = "kategori_form_save"
+    const val KATEGORI_FORM_CANCEL = "kategori_form_cancel"
 
     // Cadangan (step 10)
     const val CADANGAN_SCREEN = "cadangan_screen"

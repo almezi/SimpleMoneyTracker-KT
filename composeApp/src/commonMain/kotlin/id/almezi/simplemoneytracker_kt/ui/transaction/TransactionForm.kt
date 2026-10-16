@@ -148,6 +148,7 @@ fun TransactionForm(
                         if (index == 1) TransactionType.Expense else TransactionType.Income
                     )
                 },
+                testTag = TestTags.TAMBAH_TOGGLE_TYPE,
             )
 
             Spacer(modifier = Modifier.height(SakuSpace.screenHorizontal))
@@ -295,6 +296,7 @@ fun TransactionForm(
                 onSelect = actions.onAccountChange,
                 onDismissRequest = { showAccountSheet = false },
                 testTag = TestTags.TAMBAH_ACCOUNT_SHEET,
+                itemTag = TestTags.TAMBAH_ACCOUNT_ITEM,
             )
         }
     }

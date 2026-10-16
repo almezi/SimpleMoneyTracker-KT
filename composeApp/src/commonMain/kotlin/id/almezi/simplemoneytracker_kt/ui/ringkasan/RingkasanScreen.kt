@@ -315,6 +315,7 @@ private fun BreakdownCard(
                     amount = row.total,
                     accent = accent,
                     trailing = formatCategoryShare(row.total, typeTotal),
+                    testTag = TestTags.RINGKASAN_CATEGORY_ITEM + "_" + row.categoryId,
                 )
                 Spacer(modifier = Modifier.height(SakuSpace.cardInner))
             }
@@ -328,9 +329,16 @@ private fun BarRow(
     fraction: Float,
     amount: Long,
     accent: Color,
-    trailing: String? = null
+    trailing: String? = null,
+    testTag: String? = null,
 ) {
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(
+        modifier = if (testTag != null) {
+            Modifier.fillMaxWidth().testTag(testTag)
+        } else {
+            Modifier.fillMaxWidth()
+        },
+    ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = label,
