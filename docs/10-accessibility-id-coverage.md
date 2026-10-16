@@ -187,9 +187,77 @@ with full Xcode to exercise `TransactionFormTypeSwitchTest`.
 
 - `SakuPickerSheet.itemTag` defaults to `testTag + "_option"`, so its row tags
   are byte-for-byte identical to before. Only the account sheet opts in to
-  `TAMBAH_ACCOUNT_ITEM`.
+  `TAMBAH_ACCOUNT_ITEM`. `CategoryPickerSheet` is unaffected: it calls
+  `PickerRow` directly, not through `itemTag`.
 - `BarRow.testTag` is `String? = null` and only applied when non-null, because
   `ComparisonCard` also calls `BarRow` and has no constant of its own. Inventing
   one would violate `AGENTS.md`.
 - `ConfirmDeleteSheet.testTag` defaults to `COMPONENT_SHEET_BOTTOM`, so any
   future caller stays tagged even if it passes nothing.
+- `TransactionForm.toggleTestTag` defaults to `COMPONENT_TOGGLE_SEGMENTED` and
+  only `TambahScreen` overrides it. See section 9.
+
+---
+
+## 9. Post-implementation review
+
+A follow-up self-review found one regression introduced by the first
+implementation pass, now fixed, plus findings that need owner decisions.
+
+### Fixed: shared form broke the existing iOS test
+
+`TransactionForm` is shared by **both** `TambahScreen` and
+`UbahTransaksiScreen`. The first pass hardcoded `TAMBAH_TOGGLE_TYPE` inside it,
+which had two consequences:
+
+1. It **broke `TransactionFormTypeSwitchTest`**, which locates
+   `COMPONENT_TOGGLE_SEGMENTED + "_1"`. The tag silently became
+   `tambah_toggle_type_1`. The test compiles fine either way, because both sides
+   are string concatenation — it only fails at runtime.
+2. It would have mislabelled the **Ubah** screen's toggle with a `tambah_` prefix.
+
+Fix: `TransactionForm` now takes `toggleTestTag`, defaulting to
+`COMPONENT_TOGGLE_SEGMENTED`. Only `TambahScreen` passes `TAMBAH_TOGGLE_TYPE`, so
+the iOS test resolves as before and Ubah keeps the generic tag.
+
+**Lesson for future tag work:** any tag applied inside a shared component must be
+a parameter with a safe default, never a hardcoded constant. `TestTags.kt` screen
+prefixes are not proof of which screen a shared component renders on.
+
+### Verified safe
+
+- `DatePickerDialog`'s `modifier` reaches a real semantics node — the Android
+  `actual` applies it to `BasicAlertDialog` as `modifier.wrapContentHeight()`.
+  The dialog-root tag is live, not dropped.
+- No duplicate tag values exist across the 114 constants, so no two constants
+  collide into one ambiguous identifier.
+- No `ConfirmDeleteSheet` caller passes arguments positionally, so the two
+  appended optional params cannot break call sites.
+- Both `SakuPickerSheet` callers behave correctly: `TransactionForm` opts into
+  `TAMBAH_ACCOUNT_ITEM`, while `AnggaranFormScreen` keeps its distinct
+  `ANGGARAN_FORM_CATEGORY + "_sheet"` rows via the default.
+
+### Needs owner decision: pre-existing gaps (not introduced here)
+
+- **Two delete sheets still fall back to the generic default.** `DaftarScreen`
+  and `AnggaranFormScreen` call `ConfirmDeleteSheet` without a `testTag`, so both
+  emit `component_sheet_bottom`. There are no `DAFTAR_DELETE_SHEET` or
+  `ANGGARAN_FORM_DELETE_SHEET` constants, and `AGENTS.md` forbids inventing
+  them. Consequence: those two sheets are indistinguishable from each other by
+  tag. `TESTABILITY.md` asks for `dialog_button_delete_confirm` /
+  `dialog_button_delete_cancel`, which do not exist in `TestTags.kt`.
+- **`TESTABILITY.md` has drifted badly from `TestTags.kt`.** 13 tags the spec
+  names do not exist at all: `nav_tab_add`, `nav_tab_list`, `nav_tab_summary`,
+  `tambah_toggle_type_pemasukan`, `tambah_toggle_type_pengeluaran`,
+  `tambah_button_category`, `tambah_button_date`, `tambah_selected_category`,
+  `dialog_button_delete_confirm`, `dialog_button_delete_cancel`,
+  `daftar_button_month_prev`, `ringkasan_tile_income`, `ringkasan_tile_balance`.
+  The spec also expects the toggle children to be `_pemasukan`/`_pengeluaran`,
+  while `SegmentedToggle` emits `_0`/`_1`. `AGENTS.md` tells the AI to implement
+  `TESTABILITY.md` exactly, but that is impossible without inventing tags.
+  **The spec and `TestTags.kt` must be reconciled by the owner.**
+- **Three tag literals live outside `TestTags.kt`**, which the one-file rule
+  prohibits: `BackButton`'s default `"component_button_back"`
+  (`SakuNavigation.kt:206`), and `"mark_"`/`"avatar_"` in `CategoryChips.kt:53,68`.
+  All predate this work. `avatar_<categoryId>` is at least documented in
+  `TESTABILITY.md`; `component_button_back` and `mark_` are not.

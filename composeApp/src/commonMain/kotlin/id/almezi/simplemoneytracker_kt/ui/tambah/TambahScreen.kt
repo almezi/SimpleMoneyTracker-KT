@@ -98,6 +98,7 @@ fun TambahScreen(
             bottomReserve = SakuSize.navReserve + SakuSpace.screenBottom,
             onSave = viewModel::save,
             testTag = TestTags.TAMBAH_BUTTON_SAVE,
+            toggleTestTag = TestTags.TAMBAH_TOGGLE_TYPE,
         )
 
         SakuToastHost(toast = toast, onDismiss = { toast = null })
