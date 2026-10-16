@@ -14,3 +14,11 @@
 .cxx
 local.properties
 /.idea/
+
+# Kotlin/Gradle build state
+.kotlin/
+
+# KMP / iOS experiment — ignore build output only, keep sources trackable
+composeApp/build/
+iosApp/build/
+xcuserdata/
