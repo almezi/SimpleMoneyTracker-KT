@@ -32,6 +32,7 @@ in the docs. Those sections say so explicitly instead of inventing content.
 | 6 | [06-functional-spec.md](06-functional-spec.md) | User stories, business rules, edge cases, RBAC |
 | 7 | [07-api-integration.md](07-api-integration.md) | The backup file formats (CSV/JSON) — the app's only "interface" |
 | 8 | [08-design-system.md](08-design-system.md) | Tokens, typography, spacing, components, motion, test tags |
+| 9 | [09-ios-migration-plan.md](09-ios-migration-plan.md) | **Plan (not implemented).** 48-step to-do list to release on iOS via KMP + Compose Multiplatform |
 
 ## Source-of-truth files already in the repo
 
@@ -61,4 +62,5 @@ test scope. Do not duplicate their content in new places without a reason.
 
 Last verified against the working tree on the `feature/improve-design-2.0`
 branch (HEAD `8c7dc3a`). No CI configuration, signing configuration, or backend
-exists in the repository as of this writing; see documents 4, 5 and 7.
+exists in the repository as of this writing; see documents 4, 5 and 7. The app
+is Android-only; document 9 is a plan for adding iOS.

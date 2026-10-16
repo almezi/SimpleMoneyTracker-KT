@@ -24,3 +24,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "SimpleMoneyTracker-KT"
 include(":app")
+include(":composeApp")

@@ -1,0 +1,225 @@
+<resources>
+    <string name="app_name">Saku</string>
+    <string name="saku_tagline">Kelola keuangan harian kamu dengan mudah dan teratur</string>
+    <string name="saku_loading_status">Memuat data dari perangkat…</string>
+    <string name="tambah_category_label">Kategori</string>
+    <string name="delete">Hapus</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Batal</string>
+
+    <!-- Design system: shared components -->
+    <string name="nav_tambah">Tambah</string>
+    <string name="nav_transaksi">Transaksi</string>
+    <string name="nav_ringkasan">Ringkasan</string>
+    <string name="action_ubah">Ubah</string>
+    <string name="action_ya_hapus">Ya, hapus</string>
+    <string name="action_urungkan">Urungkan</string>
+    <string name="cd_back">Kembali</string>
+    <string name="cd_previous_month">Bulan sebelumnya</string>
+    <string name="cd_next_month">Bulan berikutnya</string>
+    <string name="cd_open_picker">Buka pilihan</string>
+    <string name="pilih_bulan_title">Pilih Bulan &amp; Tahun</string>
+    <string name="cd_ubah_kategori">Ubah kategori</string>
+    <string name="cd_sembunyikan_kategori">Sembunyikan kategori</string>
+    <string name="cd_tampilkan_kategori">Tampilkan kategori</string>
+    <string name="cd_hapus_kategori">Hapus kategori</string>
+    <string name="type_pemasukan">Pemasukan</string>
+    <string name="type_pengeluaran">Pengeluaran</string>
+    <string name="status_aman">Aman</string>
+    <string name="status_hampir_habis">Hampir habis</string>
+    <string name="status_lewat_batas">Lewat batas</string>
+    <string name="budget_remaining">Sisa %1$s</string>
+    <string name="budget_over">Lebih %1$s</string>
+    <string name="budget_spent_of">%1$s dari %2$s</string>
+    <string name="label_jumlah">JUMLAH</string>
+
+    <!-- Tambah screen (step 3) -->
+    <string name="tambah_simpan_transaksi">Simpan transaksi</string>
+    <string name="tambah_simpan_pengeluaran">Simpan Pengeluaran</string>
+    <string name="tambah_helper_amount">Isi jumlah dulu</string>
+    <string name="tambah_helper_category">Pilih kategori dulu</string>
+    <string name="tambah_helper_both">Isi jumlah dan kategori dulu</string>
+    <string name="label_kategori">KATEGORI</string>
+    <string name="label_akun">AKUN</string>
+    <string name="label_tanggal">TANGGAL</string>
+    <string name="note_placeholder">Tambah catatan (opsional)</string>
+    <string name="kelola_kategori">Kelola kategori</string>
+    <string name="pilih_akun_title">Pilih akun</string>
+    <string name="toast_transaksi_disimpan">Transaksi disimpan</string>
+    <string name="toast_gagal_menyimpan">Gagal menyimpan. Coba lagi.</string>
+
+    <!-- Transaksi list (step 4) -->
+    <string name="daftar_masuk">Masuk</string>
+    <string name="daftar_keluar">Keluar</string>
+    <string name="daftar_backup_button">Cadangan &amp; ekspor data</string>
+    <string name="daftar_empty_title">Belum ada transaksi bulan ini</string>
+    <string name="daftar_empty_body">Catat pemasukan atau pengeluaran pertamamu. Semua tersimpan di perangkat ini.</string>
+    <string name="daftar_empty_primary">Tambah transaksi</string>
+    <string name="daftar_empty_secondary">Impor dari cadangan</string>
+    <string name="delete_sheet_title">Hapus transaksi?</string>
+    <string name="delete_sheet_body">%1$s sebesar %2$s pada %3$s akan dihapus permanen. Tindakan ini tidak bisa dibatalkan.</string>
+    <string name="toast_transaksi_dihapus">Transaksi dihapus</string>
+
+    <!-- Ubah transaksi (step 5) -->
+    <string name="ubah_header">Ubah transaksi</string>
+    <string name="ubah_save">Simpan perubahan</string>
+    <string name="ubah_delete">Hapus transaksi</string>
+
+    <!-- Ringkasan (step 6) -->
+    <string name="ringkasan_saldo">SALDO BERSIH</string>
+    <string name="ringkasan_pemasukan">Pemasukan</string>
+    <string name="ringkasan_pengeluaran">Pengeluaran</string>
+    <string name="ringkasan_tingkat_tabungan">Tingkat tabungan</string>
+    <string name="ringkasan_saving_hint">Tambah pemasukan untuk melihat tingkat tabungan</string>
+    <string name="ringkasan_anggaran">Anggaran</string>
+    <string name="ringkasan_breakdown_vs">Pemasukan vs pengeluaran</string>
+    <string name="ringkasan_breakdown_income">Pemasukan per kategori</string>
+    <string name="ringkasan_breakdown_expense">Pengeluaran per kategori</string>
+    <string name="ringkasan_empty_title">Belum ada data untuk diringkas</string>
+    <string name="ringkasan_empty_body">Ringkasan akan muncul setelah kamu mencatat transaksi pertama bulan ini.</string>
+    <string name="ringkasan_empty_action">Tambah transaksi</string>
+
+    <!-- Anggaran (steps 7 and 8) -->
+    <string name="anggaran_title">Anggaran</string>
+    <string name="anggaran_total_spent">%1$s dari %2$s</string>
+    <string name="anggaran_baru">Atur anggaran baru</string>
+    <string name="anggaran_empty_body">Belum ada batas bulanan yang aktif.</string>
+    <string name="anggaran_empty_title">Belum ada anggaran</string>
+    <string name="anggaran_form_new">Anggaran baru</string>
+    <string name="anggaran_form_edit">Ubah anggaran</string>
+    <string name="anggaran_form_category">KATEGORI</string>
+    <string name="anggaran_form_limit">Batas bulanan</string>
+    <string name="anggaran_form_note_new">Batas berlaku mulai %1$s. Bulan berikutnya mengikuti batas ini.</string>
+    <string name="anggaran_form_note_edit">Batas berlaku untuk %1$s saja.</string>
+    <string name="anggaran_form_switch">Ingatkan saat 80% terpakai</string>
+    <string name="anggaran_form_save">Simpan anggaran</string>
+    <string name="anggaran_form_delete">Hapus anggaran</string>
+    <string name="anggaran_delete_title">Hapus anggaran %1$s?</string>
+    <string name="anggaran_delete_body">Batas %1$s untuk %2$s akan dihapus. Pengeluaran yang sudah dicatat tetap ada di daftar transaksi.</string>
+    <string name="anggaran_pilih_kategori">Pilih kategori</string>
+
+    <!-- Kelola kategori (step 9) -->
+    <string name="kategori_title">Kelola kategori</string>
+    <string name="kategori_bawaan">Bawaan</string>
+    <string name="kategori_buatan_sendiri">Buatan sendiri</string>
+    <string name="kategori_dipakai">%1$d transaksi</string>
+    <string name="kategori_sembunyikan">Sembunyikan</string>
+    <string name="kategori_tampilkan">Tampilkan</string>
+    <string name="kategori_hint">Kategori bawaan tidak bisa dihapus, hanya disembunyikan</string>
+    <string name="kategori_rename_title">Ubah kategori</string>
+    <string name="kategori_rename_hint">1–20 karakter</string>
+    <string name="kategori_duplicate">Nama kategori sudah dipakai</string>
+    <string name="kategori_delete_unused">Kategori ini belum dipakai. Tindakan ini tidak bisa dibatalkan.</string>
+    <string name="kategori_delete_used">Kategori ini dipakai di %1$d transaksi. Transaksi tersebut akan dipindah ke %2$s. Tindakan ini tidak bisa dibatalkan.</string>
+    <string name="kategori_delete_title">Hapus kategori %1$s?</string>
+    <string name="kategori_form_new">Tambah kategori</string>
+    <string name="kategori_form_name">NAMA KATEGORI</string>
+    <string name="kategori_form_save">Simpan kategori</string>
+    <string name="daftar_kategori_label">WARNA</string>
+
+    <!-- Cadangan (step 10) -->
+    <!-- Shown on iOS until backup is ported to UIDocumentPickerViewController -->
+    <string name="cadangan_ios_unavailable">Cadangan belum tersedia di iOS</string>
+    <string name="cadangan_title">Cadangan data</string>
+    <string name="cadangan_status_title">Data tersimpan di perangkat ini</string>
+    <string name="cadangan_transaction_count">%1$d transaksi tersimpan</string>
+    <string name="cadangan_last_backup">Cadangan terakhir: %1$s</string>
+    <string name="cadangan_never">Cadangan terakhir: belum pernah</string>
+    <string name="cadangan_export">Ekspor</string>
+    <string name="cadangan_export_csv">Ekspor CSV</string>
+    <string name="cadangan_export_json">Ekspor JSON</string>
+    <string name="cadangan_import">Impor</string>
+    <string name="cadangan_import_button">Impor dari cadangan</string>
+    <string name="cadangan_import_note">Transaksi yang sama persis akan dilewati. Data yang ada tidak pernah dihapus.</string>
+    <string name="cadangan_import_result">%1$d transaksi ditambahkan, %2$d dilewati karena sudah ada.</string>
+    <string name="cadangan_import_error">File tidak valid. Pilih file CSV atau JSON dari Saku.</string>
+    <string name="cadangan_importing">Mengimpor…</string>
+    <string name="cadangan_warning">Data hanya tersimpan di perangkat ini. Jika data dihapus atau ganti perangkat, buat cadangan dulu.</string>
+    <string name="cadangan_export_saved">Cadangan tersimpan di %1$s</string>
+
+    <!-- Design system: formatting -->
+    <string name="date_short_format">%1$d %2$s %3$d</string>
+    <string name="month_year_format">%1$s %2$d</string>
+    <string-array name="days_short">
+        <item>Senin</item>
+        <item>Selasa</item>
+        <item>Rabu</item>
+        <item>Kamis</item>
+        <item>Jumat</item>
+        <item>Sabtu</item>
+        <item>Minggu</item>
+    </string-array>
+    <string-array name="months_short">
+        <item>Jan</item>
+        <item>Feb</item>
+        <item>Mar</item>
+        <item>Apr</item>
+        <item>Mei</item>
+        <item>Jun</item>
+        <item>Jul</item>
+        <item>Agu</item>
+        <item>Sep</item>
+        <item>Okt</item>
+        <item>Nov</item>
+        <item>Des</item>
+    </string-array>
+    <string-array name="months_long">
+        <item>Januari</item>
+        <item>Februari</item>
+        <item>Maret</item>
+        <item>April</item>
+        <item>Mei</item>
+        <item>Juni</item>
+        <item>Juli</item>
+        <item>Agustus</item>
+        <item>September</item>
+        <item>Oktober</item>
+        <item>November</item>
+        <item>Desember</item>
+    </string-array>
+
+    <!-- Category Names -->
+    <string name="cat_inc_salary">Gaji</string>
+    <string name="cat_inc_freelance">Freelance</string>
+    <string name="cat_inc_bonus_thr">Bonus &amp; THR</string>
+    <string name="cat_inc_investment">Investasi</string>
+    <string name="cat_inc_sales">Penjualan</string>
+    <string name="cat_inc_refund">Refund</string>
+    <string name="cat_inc_transfer_in">Transfer Masuk</string>
+    <string name="cat_inc_gift">Hadiah</string>
+    <string name="cat_inc_other">Lainnya</string>
+
+    <string name="cat_exp_finance_investment">Investasi</string>
+    <string name="cat_exp_finance_savings">Tabungan</string>
+    <string name="cat_exp_daily_food">Makanan &amp; Minuman</string>
+    <string name="cat_exp_daily_groceries">Belanja Bulanan</string>
+    <string name="cat_exp_daily_household">Kebutuhan Rumah Tangga</string>
+    <string name="cat_exp_daily_other">Lainnya (Harian)</string>
+    <string name="cat_exp_health_doctor">Dokter</string>
+    <string name="cat_exp_health_medicine">Obat-obatan</string>
+    <string name="cat_exp_health_gym">Olahraga / Gym</string>
+    <string name="cat_exp_health_other">Lainnya (Kesehatan)</string>
+    <string name="cat_exp_lifestyle_clothing">Pakaian</string>
+    <string name="cat_exp_lifestyle_electronics">Elektronik</string>
+    <string name="cat_exp_lifestyle_grooming">Perawatan Diri</string>
+    <string name="cat_exp_lifestyle_other">Lainnya (Gaya Hidup)</string>
+    <string name="cat_exp_transport_fuel">Bahan Bakar</string>
+    <string name="cat_exp_transport_parking">Parkir</string>
+    <string name="cat_exp_transport_public">Transportasi Umum</string>
+    <string name="cat_exp_transport_travel">Perjalanan / Travel</string>
+    <string name="cat_exp_transport_other">Lainnya (Transportasi)</string>
+    <string name="cat_exp_finance_transfer_out">Transfer Keluar</string>
+    <string name="cat_exp_finance_insurance">Asuransi</string>
+    <string name="cat_exp_finance_tax">Pajak</string>
+    <string name="cat_exp_finance_other">Lainnya (Keuangan)</string>
+    <string name="cat_exp_education_course">Kursus / Pelatihan</string>
+    <string name="cat_exp_education_books">Buku / Edukasi</string>
+    <string name="cat_exp_education_other">Lainnya (Pendidikan)</string>
+    <string name="cat_exp_other">Lainnya</string>
+
+    <!-- Category Picker -->
+    <string name="pilih_kategori_title">Pilih Kategori</string>
+    <string name="cari_kategori_placeholder">Cari kategori…</string>
+    <string name="kategori_tidak_ditemukan">Kategori tidak ditemukan</string>
+    <string name="cd_cari_kategori">Cari kategori</string>
+</resources>

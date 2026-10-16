@@ -6,7 +6,9 @@ Standing instructions for any AI coding tool working on this repo. Read UI_SPEC.
 A small, local-only personal money tracker, built purely as a test target for mobile automation. Not a product. Keep it small.
 
 ## Stack
-- Kotlin Multiplatform + Compose Multiplatform (official template)
+- Kotlin Multiplatform + Compose Multiplatform. The shared code lives in the
+  `:composeApp` module (`commonMain`); `:app` is the Android application and
+  depends on it.
 - Room KMP or SQLDelight, `kotlinx-datetime`
 - Android first; iOS comes later
 
@@ -15,7 +17,11 @@ A small, local-only personal money tracker, built purely as a test target for mo
 - Manual DI. No Hilt, no Koin
 - No network layer, no login, no analytics
 - Injectable clock; never call the system clock directly
-- Strings in resource files (Indonesian first); no hard-coded UI text
+- Strings live in `composeApp/shared-strings/strings.xml` (Indonesian first); no
+  hard-coded UI text. Read them in code as `SakuStrings.<name>`, which is
+  GENERATED into `composeApp` commonMain by the `:composeApp:generateSakuStrings`
+  Gradle task. Never edit the generated `SakuStrings.kt`. Never write a string
+  literal in UI code.
 
 ## Testability rules (strict)
 - Only use tags defined in `TestTags.kt`. Never rename, remove or invent tags
