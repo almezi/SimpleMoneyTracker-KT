@@ -118,6 +118,7 @@ fun UbahTransaksiScreen(
                     ),
                     onConfirm = viewModel::confirmDelete,
                     onDismissRequest = viewModel::cancelDelete,
+                    testTag = TestTags.UBAH_DELETE_SHEET,
                 )
             }
         }

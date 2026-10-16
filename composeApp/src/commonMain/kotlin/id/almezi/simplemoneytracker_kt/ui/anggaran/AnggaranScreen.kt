@@ -121,7 +121,8 @@ fun AnggaranScreen(
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(horizontal = SakuSpace.screenHorizontal),
+                        .padding(horizontal = SakuSpace.screenHorizontal)
+                        .testTag(TestTags.ANGGARAN_LIST),
                     verticalArrangement = Arrangement.spacedBy(SakuSpace.cardInner),
                 ) {
                     item(key = "total") {
@@ -207,6 +208,7 @@ fun AnggaranScreen(
                 ),
                 onConfirm = viewModel::confirmDelete,
                 onDismissRequest = viewModel::cancelDelete,
+                testTag = TestTags.ANGGARAN_DELETE_SHEET,
             )
         }
     }

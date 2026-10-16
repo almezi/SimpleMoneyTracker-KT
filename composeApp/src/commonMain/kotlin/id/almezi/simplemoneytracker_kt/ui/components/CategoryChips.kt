@@ -50,7 +50,7 @@ fun CategoryMark(
     Surface(
         modifier = modifier
             .size(size)
-            .testTag("mark_" + categoryId),
+            .testTag(TestTags.CATEGORY_MARK_PREFIX + categoryId),
         shape = RoundedCornerShape(SakuRadius.mark),
         color = SakuCategoryPalette.colorFor(categoryId),
         content = {},
@@ -65,7 +65,7 @@ fun CategoryAvatar(
 ) {
     val color = SakuCategoryPalette.colorFor(categoryId)
     Box(
-        modifier = modifier.size(SakuSize.avatar).testTag("avatar_" + categoryId),
+        modifier = modifier.size(SakuSize.avatar).testTag(TestTags.CATEGORY_AVATAR_PREFIX + categoryId),
         contentAlignment = Alignment.Center,
     ) {
         Surface(

@@ -181,6 +181,7 @@ fun AnggaranFormScreen(
                 ),
                 onConfirm = viewModel::confirmDelete,
                 onDismissRequest = viewModel::cancelDelete,
+                testTag = TestTags.ANGGARAN_FORM_DELETE_SHEET,
             )
         }
     }

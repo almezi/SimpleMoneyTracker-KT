@@ -203,7 +203,7 @@ fun BackButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     contentDescription: String = SakuStrings.cd_back,
-    testTag: String = "component_button_back",
+    testTag: String = TestTags.COMPONENT_BUTTON_BACK,
 ) {
     Surface(
         onClick = onClick,
