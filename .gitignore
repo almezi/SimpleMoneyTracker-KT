@@ -8,9 +8,19 @@
 /.idea/navEditor.xml
 /.idea/assetWizardSettings.xml
 .DS_Store
-/build
+# Build output. `/build` only matched the root directory; after the KMP split
+# both `app/build` and `composeApp/build` exist and `app/.gitignore` no longer
+# covers the shared module, so match at any depth.
+build/
 /captures
 .externalNativeBuild
 .cxx
 local.properties
 /.idea/
+
+# iOS host app build outputs
+/iosApp/.gradle/
+/iosApp/build/
+/iosApp/composeApp/build/
+/iosApp/iosApp/build/
+/.kotlin/
