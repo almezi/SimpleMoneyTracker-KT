@@ -115,7 +115,7 @@ fun TransactionForm(
     val quickItems = if (showQuickCategoryChips) {
         state.categories
             .filter { it.id in quickCategoryIds }
-            .map { CategoryChipItem(id = it.id, label = categoryDisplayName(it)) }
+            .map { CategoryChipItem(id = it.id, label = categoryDisplayName(it), colorHex = it.colorHex) }
     } else {
         emptyList()
     }
@@ -182,7 +182,7 @@ fun TransactionForm(
                 onClick = { showCategorySheet = true },
                 placeholder = SakuStrings.pilih_kategori_title,
                 leadingIcon = selectedCategory?.let { cat ->
-                    { CategoryMark(categoryId = cat.id, size = SakuSize.markSmall) }
+                    { CategoryMark(categoryId = cat.id, colorHex = cat.colorHex, size = SakuSize.markSmall) }
                 },
                 trailingIcon = { FieldChevron() },
                 modifier = Modifier.fillMaxWidth(),
@@ -273,7 +273,7 @@ fun TransactionForm(
                         SakuPickerOption(
                             id = category.id,
                             label = categoryDisplayName(category),
-                            mark = { CategoryMark(categoryId = category.id, size = SakuSize.markSmall) }
+                            mark = { CategoryMark(categoryId = category.id, colorHex = category.colorHex, size = SakuSize.markSmall) }
                         )
                     }
                 )

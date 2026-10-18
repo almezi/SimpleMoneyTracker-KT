@@ -80,6 +80,7 @@ fun DaftarScreen(
 
     val uiState by viewModel.uiState.collectAsState()
     val categoryNames by viewModel.categoryNames.collectAsState()
+    val categoryColors by viewModel.categoryColors.collectAsState()
     var monthPickerOpen by remember { mutableStateOf(false) }
     val today = monthOf(viewModel.currentMonthMillis())
     val undoToast = uiState.undoCandidate?.let {
@@ -134,6 +135,7 @@ fun DaftarScreen(
                     DayGroup(
                         day = day,
                         categoryNames = categoryNames,
+                        categoryColors = categoryColors,
                         onEdit = onEditTransaction,
                         onDelete = viewModel::requestDelete,
                     )
@@ -259,6 +261,7 @@ private fun SummaryTile(
 private fun DayGroup(
     day: TransactionDay,
     categoryNames: Map<String, String>,
+    categoryColors: Map<String, String>,
     onEdit: (Long) -> Unit,
     onDelete: (Transaction) -> Unit,
 ) {
@@ -290,6 +293,7 @@ private fun DayGroup(
             TransactionCard(
                 categoryId = transaction.categoryId,
                 categoryName = categoryDisplayName(categoryNames, transaction.categoryId),
+                categoryColorHex = categoryColors[transaction.categoryId],
                 typeLabel = if (transaction.type == "pemasukan") SakuStrings.type_pemasukan else SakuStrings.type_pengeluaran,
                 amount = transaction.amount,
                 type = TransactionType.fromStorage(transaction.type),

@@ -23,7 +23,7 @@ data class TambahKategoriUiState(
     val saved: Boolean = false
 ) {
     val trimmedName: String get() = name.trim()
-    val nameValid: Boolean get() = trimmedName.length in 1..CATEGORY_NAME_MAX
+    val nameValid: Boolean get() = isValidCategoryName(name)
     val canSave: Boolean get() = nameValid && !nameError
 }
 
@@ -80,3 +80,10 @@ const val NEW_CATEGORY_SENTINEL = "__new__"
 
 fun Category.displayLabel(defaultResId: Int, fallback: String): String =
     customName ?: fallback
+
+/**
+ * Category names are 1-20 characters (`CATEGORIES.md:25`). Rename used to write
+ * whatever it was given, so clearing the dialog produced a blank row that
+ * `categoryDisplayName` could not name.
+ */
+fun isValidCategoryName(name: String): Boolean = name.trim().length in 1..CATEGORY_NAME_MAX

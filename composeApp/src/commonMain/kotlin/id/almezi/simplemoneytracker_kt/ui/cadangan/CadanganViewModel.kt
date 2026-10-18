@@ -91,18 +91,12 @@ class CadanganViewModel(
                 return@launch
             }
             val existing = transactionRepository.getAllTransactionsOnce()
-            val existingKeys = existing.map { duplicateKey(it) }.toSet()
-            var skipped = 0
-            val fresh = ArrayList<Transaction>()
             val currentTime = clock.currentTimeMillis()
-            parsed.transactions.forEach { backupTx ->
-                val tx = backupTx.toTransaction(currentTime)
-                if (duplicateKey(tx) in existingKeys) {
-                    skipped++
-                } else {
-                    fresh.add(tx)
-                }
-            }
+            val (fresh, skipped) = splitOnDuplicates(
+                parsed.transactions,
+                existing.map { duplicateKey(it) }.toSet(),
+                currentTime,
+            )
             // The file carries four lists. Importing only the transactions left
             // the custom category names and budgets behind on restore.
             runCatching {
@@ -134,12 +128,37 @@ class CadanganViewModel(
      * identically on both platforms, which it now does because there is exactly
      * one implementation.
      */
-    private fun duplicateKey(tx: Transaction): String = listOf(
-        tx.dateEpochMillis,
-        tx.type,
-        tx.amount,
-        tx.categoryId,
-        tx.accountId,
-        tx.note.orEmpty()
-    ).joinToString("|")
+    private fun duplicateKey(tx: Transaction): String = duplicateKeyOf(tx)
 }
+
+/**
+ * Splits a backup's transactions into the ones to insert and the count to skip.
+ *
+ * A row repeats when it matches a stored row *or* an earlier row of the same
+ * file: checking only the database let a hand-merged file insert every copy.
+ *
+ * @return the fresh transactions and how many were skipped.
+ */
+internal fun splitOnDuplicates(
+    backupTransactions: List<id.almezi.simplemoneytracker_kt.data.backup.BackupTransaction>,
+    existingKeys: Set<String>,
+    currentTime: Long
+): Pair<List<Transaction>, Int> {
+    val seen = HashSet<String>(existingKeys)
+    val fresh = ArrayList<Transaction>()
+    var skipped = 0
+    backupTransactions.forEach { backupTx ->
+        val tx = backupTx.toTransaction(currentTime)
+        if (seen.add(duplicateKeyOf(tx))) fresh.add(tx) else skipped++
+    }
+    return fresh to skipped
+}
+
+internal fun duplicateKeyOf(tx: Transaction): String = listOf(
+    tx.dateEpochMillis,
+    tx.type,
+    tx.amount,
+    tx.categoryId,
+    tx.accountId,
+    tx.note.orEmpty()
+).joinToString("|")

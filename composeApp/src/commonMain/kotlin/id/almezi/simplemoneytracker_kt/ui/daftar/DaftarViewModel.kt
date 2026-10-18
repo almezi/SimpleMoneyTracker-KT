@@ -11,6 +11,7 @@ import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuMonth
 import id.almezi.simplemoneytracker_kt.ui.designsystem.TransactionType
 import id.almezi.simplemoneytracker_kt.ui.designsystem.dateOf
 import id.almezi.simplemoneytracker_kt.ui.designsystem.monthOf
+import id.almezi.simplemoneytracker_kt.ui.displayColorFlow
 import id.almezi.simplemoneytracker_kt.ui.displayNameFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -52,6 +53,10 @@ class DaftarViewModel(
 
     /** Category id to the name the user gave it, for the row and the delete sheet. */
     val categoryNames: StateFlow<Map<String, String>> = categoryRepository.displayNameFlow()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS), emptyMap())
+
+    /** Category id to the colour the user picked, for the row's avatar. */
+    val categoryColors: StateFlow<Map<String, String>> = categoryRepository.displayColorFlow()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS), emptyMap())
 
     init {
@@ -101,7 +106,10 @@ class DaftarViewModel(
     fun undoDelete() {
         val transaction = _uiState.value.undoCandidate ?: return
         _uiState.update { it.copy(undoCandidate = null) }
-        viewModelScope.launch { repository.restoreTransaction(transaction) }
+        viewModelScope.launch {
+            // runCatching so a failed undo cannot take the screen down with it.
+            runCatching { repository.restoreTransaction(transaction) }
+        }
     }
 
     fun clearUndo() {

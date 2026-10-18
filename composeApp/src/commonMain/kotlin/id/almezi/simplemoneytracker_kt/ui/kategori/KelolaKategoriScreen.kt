@@ -57,6 +57,7 @@ import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuTheme
 import id.almezi.simplemoneytracker_kt.ui.designsystem.TransactionType
 import id.almezi.simplemoneytracker_kt.ui.designsystem.safeAreaTop
 import id.almezi.simplemoneytracker_kt.ui.categoryDisplayName
+import id.almezi.simplemoneytracker_kt.data.RenameResult
 
 @Composable
 fun KelolaKategoriScreen(
@@ -175,10 +176,18 @@ fun KelolaKategoriScreen(
         if (renaming != null) {
             RenameCategoryDialog(
                 initialName = renameText,
-                onDismiss = { renaming = null },
+                errorText = when (uiState.renameError) {
+                    RenameResult.DuplicateName -> SakuStrings.kategori_duplicate
+                    RenameResult.EmptyName -> SakuStrings.kategori_name_required
+                    else -> null
+                },
+                onDismiss = { viewModel.clearRenameError(); renaming = null },
                 onConfirm = { name ->
-                    renaming?.let { viewModel.rename(it.category.id, name) }
-                    renaming = null
+                    renaming?.let {
+                        viewModel.rename(it.category.id, name) { result ->
+                            if (result == RenameResult.Renamed) renaming = null
+                        }
+                    }
                 },
             )
         }
@@ -192,7 +201,7 @@ fun KelolaKategoriScreen(
                     SakuStrings.kategori_delete_unused
                 } else {
                     SakuStrings.kategori_delete_used.format(pending.usageCount,
-                        pending.fallbackName.ifBlank { categoryName })
+                        pending.fallbackName)
                 },
                 onConfirm = viewModel::confirmDelete,
                 onDismissRequest = viewModel::cancelDelete,
@@ -219,7 +228,7 @@ private fun CategoryRowCard(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            CategoryMark(categoryId = row.category.id, size = SakuSize.mark)
+            CategoryMark(categoryId = row.category.id, colorHex = row.category.colorHex, size = SakuSize.mark)
             Spacer(modifier = Modifier.width(SakuSpace.tight * 2))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
@@ -275,6 +284,7 @@ private fun CategoryRowCard(
 @Composable
 private fun RenameCategoryDialog(
     initialName: String,
+    errorText: String?,
     onDismiss: () -> Unit,
     onConfirm: (String) -> Unit
 ) {
@@ -309,6 +319,13 @@ private fun RenameCategoryDialog(
                     }
                 },
             )
+            if (errorText != null) {
+                Text(
+                    text = errorText,
+                    style = SakuTheme.text.body,
+                    color = SakuTheme.colors.danger,
+                )
+            }
         },
         confirmButton = {
             androidx.compose.material3.TextButton(

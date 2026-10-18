@@ -30,6 +30,7 @@ import id.almezi.simplemoneytracker_kt.ui.designsystem.typeSelectedSurface
 data class CategoryChipItem(
     val id: String,
     val label: String,
+    val colorHex: String? = null,
 )
 
 fun categoryInitials(label: String): String {
@@ -44,6 +45,7 @@ fun categoryInitials(label: String): String {
 @Composable
 fun CategoryMark(
     categoryId: String,
+    colorHex: String? = null,
     modifier: Modifier = Modifier,
     size: Dp = SakuSize.mark,
 ) {
@@ -52,7 +54,7 @@ fun CategoryMark(
             .size(size)
             .testTag(TestTags.CATEGORY_MARK_PREFIX + categoryId),
         shape = RoundedCornerShape(SakuRadius.mark),
-        color = SakuCategoryPalette.colorFor(categoryId),
+        color = SakuCategoryPalette.colorFor(categoryId, colorHex),
         content = {},
     )
 }
@@ -61,9 +63,10 @@ fun CategoryMark(
 fun CategoryAvatar(
     categoryId: String,
     label: String,
+    colorHex: String? = null,
     modifier: Modifier = Modifier,
 ) {
-    val color = SakuCategoryPalette.colorFor(categoryId)
+    val color = SakuCategoryPalette.colorFor(categoryId, colorHex)
     Box(
         modifier = modifier.size(SakuSize.avatar).testTag(TestTags.CATEGORY_AVATAR_PREFIX + categoryId),
         contentAlignment = Alignment.Center,
@@ -150,7 +153,7 @@ private fun CategoryChip(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(SakuSpace.chipMarkGap),
         ) {
-            CategoryMark(categoryId = item.id, size = SakuSize.markSmall)
+            CategoryMark(categoryId = item.id, colorHex = item.colorHex, size = SakuSize.markSmall)
             Text(
                 text = item.label,
                 style = SakuTheme.text.chip,

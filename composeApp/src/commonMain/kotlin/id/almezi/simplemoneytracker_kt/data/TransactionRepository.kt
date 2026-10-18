@@ -22,7 +22,9 @@ class TransactionRepository(
 
     suspend fun insertTransaction(tx: Transaction): Long = transactionDao.insert(tx)
 
-    suspend fun restoreTransaction(tx: Transaction): Long = transactionDao.insert(tx)
+    /** @return false when the id was taken while the row was deleted; nothing was restored. */
+    suspend fun restoreTransaction(tx: Transaction): Boolean =
+        transactionDao.insertIfAbsent(tx) != -1L
 
     suspend fun updateTransaction(tx: Transaction) = transactionDao.update(tx)
 

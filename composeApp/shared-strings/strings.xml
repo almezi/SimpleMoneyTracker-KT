@@ -109,6 +109,7 @@
     <string name="kategori_rename_title">Ubah kategori</string>
     <string name="kategori_rename_hint">1–20 karakter</string>
     <string name="kategori_duplicate">Nama kategori sudah dipakai</string>
+    <string name="kategori_name_required">Nama kategori tidak boleh kosong</string>
     <string name="kategori_delete_unused">Kategori ini belum dipakai. Tindakan ini tidak bisa dibatalkan.</string>
     <string name="kategori_delete_used">Kategori ini dipakai di %1$d transaksi. Transaksi tersebut akan dipindah ke %2$s. Tindakan ini tidak bisa dibatalkan.</string>
     <string name="kategori_delete_title">Hapus kategori %1$s?</string>

@@ -99,4 +99,27 @@ object SakuCategoryPalette {
 
     fun colorFor(categoryId: String): Color =
         swatches[(categoryId.hashCode() and Int.MAX_VALUE) % swatches.size]
+
+    /**
+     * The colour a category is drawn in: the one the user picked, else the id
+     * hash. `colorHex` was stored since the first release and read by nothing,
+     * so choosing a swatch changed no mark anywhere.
+     */
+    fun colorFor(categoryId: String, colorHex: String?): Color =
+        colorHex?.takeIf { it.isNotBlank() }?.let { parseColor(it) } ?: colorFor(categoryId)
+
+    /**
+     * Parses `#RRGGBB` or `#AARRGGBB` without android.graphics.Color, which is
+     * JVM-only. Junk falls back to the default swatch instead of throwing: a
+     * bad value must not take a screen down.
+     */
+    fun parseColor(hex: String): Color {
+        val digits = hex.removePrefix("#")
+        val argb = when (digits.length) {
+            6 -> 0xFF000000L or digits.toLong(16)
+            8 -> digits.toLong(16)
+            else -> return parseColor(defaultHex)
+        }
+        return Color(argb.toInt())
+    }
 }

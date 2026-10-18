@@ -146,15 +146,32 @@ class UbahTransaksiViewModel(
         categoryJob?.cancel()
         categoryJob = viewModelScope.launch {
             repository.getVisibleCategoriesByType(type.storageValue).collect { categories ->
-                _uiState.update { state ->
-                    state.copy(
-                        categories = categories,
-                        selectedCategoryId = state.selectedCategoryId
-                            ?.takeIf { id -> categories.any { it.id == id } }
-                    )
-                }
+                _uiState.update { it.withCategories(categories, type) }
             }
         }
     }
 
+}
+
+/**
+ * Applies the loaded category list to the form.
+ *
+ * A hidden category keeps its transactions by design (`CATEGORIES.md:24`), so a
+ * transaction whose category is no longer offered keeps it as long as it still
+ * belongs to the current type. The picker only lists visible categories, so the
+ * row shows a placeholder while the id is preserved.
+ */
+fun UbahUiState.withCategories(
+    categories: List<Category>,
+    type: TransactionType
+): UbahUiState {
+    val stillFits = selectedCategoryId != null && (
+        categories.any { it.id == selectedCategoryId } ||
+            (selectedCategoryId == original?.categoryId &&
+                TransactionType.fromStorage(original.type) == type)
+        )
+    return copy(
+        categories = categories,
+        selectedCategoryId = selectedCategoryId.takeIf { stillFits }
+    )
 }

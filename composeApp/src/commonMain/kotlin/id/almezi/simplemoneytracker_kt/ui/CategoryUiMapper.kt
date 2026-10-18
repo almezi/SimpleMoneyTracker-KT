@@ -69,6 +69,19 @@ fun displayNames(categories: List<Category>): Map<String, String> =
 fun categoryDisplayName(names: Map<String, String>, id: String): String =
     names[id] ?: getCategoryName(id)
 
+/**
+ * Every category id mapped to the colour the user picked.
+ *
+ * Same pairing as [displayNames] and for the same reason: the row shows the
+ * category, so the row has to be able to draw it in that category's colour.
+ */
+fun displayColors(categories: List<Category>): Map<String, String> =
+    categories.mapNotNull { category -> category.colorHex?.let { category.id to it } }.toMap()
+
+/** [CategoryRepository.displayNameFlow] for colours. */
+fun CategoryRepository.displayColorFlow(): Flow<Map<String, String>> =
+    getAll().map { displayColors(it) }
+
 /** [displayNames] as a flow, for ViewModels that expose it as screen state. */
 fun CategoryRepository.displayNameFlow(): Flow<Map<String, String>> =
     getAll().map { displayNames(it) }

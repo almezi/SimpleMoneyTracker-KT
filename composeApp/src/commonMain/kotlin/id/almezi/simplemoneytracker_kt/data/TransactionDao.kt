@@ -2,6 +2,7 @@ package id.almezi.simplemoneytracker_kt.data
 
 import androidx.room3.Dao
 import androidx.room3.Insert
+import androidx.room3.OnConflictStrategy
 import androidx.room3.Query
 import androidx.room3.Update
 import kotlinx.coroutines.flow.Flow
@@ -39,6 +40,15 @@ interface TransactionDao {
 
     @Insert
     suspend fun insert(transaction: Transaction): Long
+
+    /**
+     * Undo path. IGNORE, not ABORT: SQLite hands the deleted row's id straight
+     * to the next insert, so undoing a delete after adding a new transaction
+     * would raise a constraint violation inside `viewModelScope` and crash.
+     * Returns -1 when the row is gone for good, because its id was taken.
+     */
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertIfAbsent(transaction: Transaction): Long
 
     @Insert
     suspend fun insertAll(transactions: List<Transaction>)
