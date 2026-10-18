@@ -11,11 +11,16 @@ import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuMonth
 import id.almezi.simplemoneytracker_kt.ui.designsystem.TransactionType
 import id.almezi.simplemoneytracker_kt.ui.designsystem.dateOf
 import id.almezi.simplemoneytracker_kt.ui.designsystem.monthOf
+import id.almezi.simplemoneytracker_kt.ui.displayNameFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+
+private const val STOP_TIMEOUT_MILLIS = 5_000L
 
 data class TransactionDay(
     val dateMillis: Long,
@@ -44,6 +49,10 @@ class DaftarViewModel(
 
     private val _uiState = MutableStateFlow(DaftarUiState(month = currentMonth))
     val uiState: StateFlow<DaftarUiState> = _uiState.asStateFlow()
+
+    /** Category id to the name the user gave it, for the row and the delete sheet. */
+    val categoryNames: StateFlow<Map<String, String>> = categoryRepository.displayNameFlow()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS), emptyMap())
 
     init {
         viewModelScope.launch {

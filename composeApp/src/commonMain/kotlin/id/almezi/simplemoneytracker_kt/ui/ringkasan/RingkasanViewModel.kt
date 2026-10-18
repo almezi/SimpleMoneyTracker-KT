@@ -10,10 +10,15 @@ import id.almezi.simplemoneytracker_kt.data.monthTotals
 import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuMonth
 import id.almezi.simplemoneytracker_kt.ui.designsystem.monthOf
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import id.almezi.simplemoneytracker_kt.ui.displayNameFlow
+
+private const val STOP_TIMEOUT_MILLIS = 5_000L
 
 data class CategoryBreakdown(
     val categoryId: String,
@@ -44,6 +49,10 @@ class RingkasanViewModel(
 
     private val _uiState = MutableStateFlow(RingkasanUiState(month = currentMonth))
     val uiState: StateFlow<RingkasanUiState> = _uiState.asStateFlow()
+
+    /** Category id to the name the user gave it, for the breakdown rows. */
+    val categoryNames: StateFlow<Map<String, String>> = categoryRepository.displayNameFlow()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS), emptyMap())
 
     init {
         refresh(currentMonth)

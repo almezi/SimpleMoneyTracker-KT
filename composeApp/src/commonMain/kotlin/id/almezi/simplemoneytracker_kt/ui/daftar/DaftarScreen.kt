@@ -57,7 +57,7 @@ import id.almezi.simplemoneytracker_kt.ui.designsystem.formatRupiah
 import id.almezi.simplemoneytracker_kt.ui.designsystem.formatShortDate
 import id.almezi.simplemoneytracker_kt.ui.designsystem.monthOf
 import id.almezi.simplemoneytracker_kt.ui.designsystem.safeAreaTop
-import id.almezi.simplemoneytracker_kt.ui.getCategoryName
+import id.almezi.simplemoneytracker_kt.ui.categoryDisplayName
 
 @Composable
 fun DaftarScreen(
@@ -79,6 +79,7 @@ fun DaftarScreen(
     )
 
     val uiState by viewModel.uiState.collectAsState()
+    val categoryNames by viewModel.categoryNames.collectAsState()
     var monthPickerOpen by remember { mutableStateOf(false) }
     val today = monthOf(viewModel.currentMonthMillis())
     val undoToast = uiState.undoCandidate?.let {
@@ -130,7 +131,12 @@ fun DaftarScreen(
                     )
                 }
                 items(uiState.days, key = { it.dateMillis }) { day ->
-                    DayGroup(day = day, onEdit = onEditTransaction, onDelete = viewModel::requestDelete)
+                    DayGroup(
+                        day = day,
+                        categoryNames = categoryNames,
+                        onEdit = onEditTransaction,
+                        onDelete = viewModel::requestDelete,
+                    )
                 }
             }
         }
@@ -155,7 +161,7 @@ fun DaftarScreen(
         if (pending != null) {
             ConfirmDeleteSheet(
                 title = SakuStrings.delete_sheet_title,
-                body = SakuStrings.delete_sheet_body.format(getCategoryName(pending.categoryId),
+                body = SakuStrings.delete_sheet_body.format(categoryDisplayName(categoryNames, pending.categoryId),
                     formatRupiah(pending.amount),
                     formatShortDate(pending.dateEpochMillis)
                 ),
@@ -252,6 +258,7 @@ private fun SummaryTile(
 @Composable
 private fun DayGroup(
     day: TransactionDay,
+    categoryNames: Map<String, String>,
     onEdit: (Long) -> Unit,
     onDelete: (Transaction) -> Unit,
 ) {
@@ -282,7 +289,7 @@ private fun DayGroup(
         day.transactions.forEach { transaction ->
             TransactionCard(
                 categoryId = transaction.categoryId,
-                categoryName = getCategoryName(transaction.categoryId),
+                categoryName = categoryDisplayName(categoryNames, transaction.categoryId),
                 typeLabel = if (transaction.type == "pemasukan") SakuStrings.type_pemasukan else SakuStrings.type_pengeluaran,
                 amount = transaction.amount,
                 type = TransactionType.fromStorage(transaction.type),

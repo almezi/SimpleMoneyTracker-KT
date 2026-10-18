@@ -41,7 +41,7 @@ fun TransactionCard(
     testTag: String = TestTags.COMPONENT_CARD_TRANSACTION,
 ) {
     Surface(
-        modifier = modifier.fillMaxWidth().testTag(testTag + "_" + categoryId),
+        modifier = modifier.fillMaxWidth().testTag(testTag),
         shape = RoundedCornerShape(SakuRadius.card),
         color = SakuTheme.colors.surface,
         contentColor = SakuTheme.colors.text,

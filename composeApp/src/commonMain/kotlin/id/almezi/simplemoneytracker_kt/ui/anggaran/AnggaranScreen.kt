@@ -176,6 +176,7 @@ fun AnggaranScreen(
                     }
                     items(uiState.rows, key = { it.category.id }) { row ->
                         BudgetProgressRow(
+                            categoryId = row.category.id,
                             categoryName = categoryDisplayName(row.category),
                             spent = row.spent,
                             limit = row.limit,
