@@ -48,6 +48,10 @@ fun filterCategoryRows(rows: List<CategoryRow>, query: String): List<CategoryRow
 fun fallbackCategoryId(type: String): String =
     if (type == "pemasukan") "inc_other" else "exp_other"
 
+/** Every category with its usage count, from one grouped query instead of one per row. */
+fun categoryRows(categories: List<Category>, usageCounts: Map<String, Int>): List<CategoryRow> =
+    categories.map { category -> CategoryRow(category, usageCounts[category.id] ?: 0) }
+
 class KelolaKategoriViewModel(
     private val categoryRepository: CategoryRepository,
     private val clock: Clock
@@ -126,10 +130,11 @@ class KelolaKategoriViewModel(
 
     private fun reload(type: TransactionType) {
         viewModelScope.launch {
-            val categories = categoryRepository.getByTypeOnce(type.storageValue)
-            val rows = categories.map { category ->
-                CategoryRow(category, categoryRepository.usageCount(category.id))
-            }
+            // Two queries per reload, where this used to run one per row.
+            val rows = categoryRows(
+                categoryRepository.getByTypeOnce(type.storageValue),
+                categoryRepository.usageCounts()
+            )
             _uiState.update { it.copy(rows = rows) }
         }
     }

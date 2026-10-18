@@ -2,6 +2,7 @@ package id.almezi.simplemoneytracker_kt.ui.anggaran
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import id.almezi.simplemoneytracker_kt.data.Budget
 import id.almezi.simplemoneytracker_kt.data.BudgetRepository
 import id.almezi.simplemoneytracker_kt.data.Category
 import id.almezi.simplemoneytracker_kt.data.CategoryRepository
@@ -40,6 +41,27 @@ data class AnggaranUiState(
         get() = if (totalLimit <= 0L) 0f else (totalSpent.toFloat() / totalLimit.toFloat()).coerceIn(0f, 1f)
 }
 
+/**
+ * Assembles the budget rows from three lookups instead of two queries per budget.
+ *
+ * A budget whose category no longer exists is dropped, and one with no spend in
+ * the month shows zero. Rows are ordered by how much of the budget is used.
+ */
+fun budgetRows(
+    budgets: List<Budget>,
+    categoriesById: Map<String, Category>,
+    spentByCategory: Map<String, Long>
+): List<BudgetRow> = budgets.mapNotNull { budget ->
+    val category = categoriesById[budget.categoryId] ?: return@mapNotNull null
+    val spent = spentByCategory[budget.categoryId] ?: 0L
+    BudgetRow(
+        category = category,
+        limit = budget.limitAmount,
+        spent = spent,
+        status = BudgetStatus.of(spent, budget.limitAmount)
+    )
+}.sortedByDescending { it.fraction }
+
 class AnggaranViewModel(
     private val budgetRepository: BudgetRepository,
     private val transactionRepository: TransactionRepository,
@@ -52,26 +74,20 @@ class AnggaranViewModel(
     private val _uiState = MutableStateFlow(AnggaranUiState(month = currentMonth))
     val uiState: StateFlow<AnggaranUiState> = _uiState.asStateFlow()
 
-    init {
-        refresh()
-    }
-
     fun refresh() {
         val month = _uiState.value.month
         viewModelScope.launch {
+            // Three queries whatever the number of budgets, where this used to
+            // run two per budget row.
             val budgets = budgetRepository.getAllBudgets().first()
-            val start = month.startMillis()
-            val end = month.endMillisExclusive()
-            val rows = budgets.mapNotNull { budget ->
-                val category = categoryRepository.get(budget.categoryId) ?: return@mapNotNull null
-                val spent = transactionRepository.spentForCategory(budget.categoryId, start, end)
-                BudgetRow(
-                    category = category,
-                    limit = budget.limitAmount,
-                    spent = spent,
-                    status = BudgetStatus.of(spent, budget.limitAmount)
+            val rows = budgetRows(
+                budgets = budgets,
+                categoriesById = categoryRepository.getAllOnce().associateBy { it.id },
+                spentByCategory = transactionRepository.expenseSpentByCategory(
+                    month.startMillis(),
+                    month.endMillisExclusive(),
                 )
-            }.sortedByDescending { it.fraction }
+            )
             _uiState.update {
                 it.copy(
                     month = month,

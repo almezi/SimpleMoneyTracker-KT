@@ -2,7 +2,6 @@ package id.almezi.simplemoneytracker_kt
 
 import android.app.Application
 import id.almezi.simplemoneytracker_kt.data.AppContainer
-import id.almezi.simplemoneytracker_kt.data.BackupRepository
 import id.almezi.simplemoneytracker_kt.data.CategorySeed
 import id.almezi.simplemoneytracker_kt.data.createAppContainer
 import id.almezi.simplemoneytracker_kt.data.seedIfNeeded
@@ -19,21 +18,11 @@ class SimpleMoneyTrackerApp : Application() {
     private val applicationScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     /**
-     * The shared object graph now lives in the :composeApp KMP module.
-     *
-     * `backupRepository` is still Android-only (Context, Uri, java.io) and is
-     * wired up here. Its multiplatform port is Stage 5 of the iOS plan.
+     * The shared object graph now lives in the :composeApp KMP module, backup
+     * included: `BackupSerializer` and `CadanganViewModel` are the only backup
+     * path, and they are platform independent.
      */
     val container: AppContainer by lazy { createAppContainer(this) }
-
-    val backupRepository: BackupRepository by lazy {
-        BackupRepository(
-            container.transactionRepository,
-            container.categoryRepository,
-            container.budgetRepository,
-            container.accountDao
-        )
-    }
 
     private val _isReady = MutableStateFlow(false)
     val isReady: StateFlow<Boolean> = _isReady.asStateFlow()
