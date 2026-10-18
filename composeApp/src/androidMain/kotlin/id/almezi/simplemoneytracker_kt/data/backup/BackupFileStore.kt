@@ -52,13 +52,6 @@ class AndroidBackupFileStore(
         context.startActivity(chooser)
         return file.absolutePath
     }
-
-    override suspend fun writeText(fileName: String, content: String): String {
-        val dir = context.getExternalFilesDir(null) ?: context.filesDir
-        val file = File(dir, fileName)
-        file.writeText(content, StandardCharsets.UTF_8)
-        return file.absolutePath
-    }
 }
 
 /** Android preferences, using the same `saku_backup` store as before the migration. */

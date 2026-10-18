@@ -3,7 +3,6 @@ package id.almezi.simplemoneytracker_kt.data
 import kotlinx.coroutines.flow.Flow
 
 class BudgetRepository(
-    private val database: AppDatabase,
     private val budgetDao: BudgetDao,
     private val clock: Clock
 ) {

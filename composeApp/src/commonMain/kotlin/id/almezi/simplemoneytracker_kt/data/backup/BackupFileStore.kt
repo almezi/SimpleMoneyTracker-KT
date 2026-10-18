@@ -29,9 +29,6 @@ interface BackupFileStore {
      * `UIActivityViewController`.
      */
     suspend fun shareText(fileName: String, content: String, mimeType: String): String
-
-    /** Writes [content] somewhere durable, returning a displayable path. */
-    suspend fun writeText(fileName: String, content: String): String
 }
 
 /**
