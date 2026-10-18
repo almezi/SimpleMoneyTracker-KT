@@ -4,7 +4,6 @@ import androidx.room3.Dao
 import androidx.room3.Insert
 import androidx.room3.OnConflictStrategy
 import androidx.room3.Query
-import androidx.room3.Update
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -25,9 +24,6 @@ interface BudgetDao {
     // IGNORE strategy CategoryDao.insert and AccountDao.insert use.
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertIfAbsent(vararg budgets: Budget)
-
-    @Update
-    suspend fun update(budget: Budget)
 
     @Query("DELETE FROM budgets WHERE categoryId = :categoryId")
     suspend fun delete(categoryId: String)

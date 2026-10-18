@@ -49,7 +49,7 @@ class IosBackupFileStore : BackupFileStore {
         return path
     }
 
-    override suspend fun writeText(fileName: String, content: String): String {
+    private suspend fun writeText(fileName: String, content: String): String {
         val path = documentsDirectory() + "/" + fileName
         NSFileManager.defaultManager.createFileAtPath(
             path = path,

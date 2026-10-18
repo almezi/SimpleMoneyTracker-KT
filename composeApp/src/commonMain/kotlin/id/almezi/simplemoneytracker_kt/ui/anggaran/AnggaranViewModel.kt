@@ -33,8 +33,7 @@ data class AnggaranUiState(
     val rows: List<BudgetRow> = emptyList(),
     val totalLimit: Long = 0L,
     val totalSpent: Long = 0L,
-    val pendingDelete: BudgetRow? = null,
-    val toast: String? = null
+    val pendingDelete: BudgetRow? = null
 ) {
     val isEmpty: Boolean get() = rows.isEmpty()
     val totalFraction: Float

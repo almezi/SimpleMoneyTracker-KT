@@ -22,13 +22,11 @@ private const val STOP_TIMEOUT_MILLIS = 5_000L
 
 data class CategoryBreakdown(
     val categoryId: String,
-    val total: Long,
-    val sharePercent: Int
+    val total: Long
 )
 
 data class RingkasanUiState(
     val month: SakuMonth,
-    val loading: Boolean = true,
     val balance: Long = 0L,
     val income: Long = 0L,
     val expense: Long = 0L,
@@ -76,7 +74,7 @@ class RingkasanViewModel(
     }
 
     private fun refresh(month: SakuMonth) {
-        _uiState.update { it.copy(month = month, loading = true) }
+        _uiState.update { it.copy(month = month) }
         viewModelScope.launch {
             val totals = monthTotals(
                 transactions = repository.getAllTransactionsOnce(),
@@ -86,27 +84,22 @@ class RingkasanViewModel(
             )
             _uiState.update {
                 it.copy(
-                    loading = false,
                     balance = totals.balance,
                     income = totals.income,
                     expense = totals.expense,
-                    incomeByCategory = breakdown(totals.incomeByCategory, totals.income),
-                    expenseByCategory = breakdown(totals.expenseByCategory, totals.expense)
+                    incomeByCategory = breakdown(totals.incomeByCategory),
+                    expenseByCategory = breakdown(totals.expenseByCategory)
                 )
             }
         }
     }
 
-    private fun breakdown(rows: List<CategoryTotal>, typeTotal: Long) =
+    // The share of the total is rendered by formatCategoryShare, which rounds;
+    // a truncated copy here only ever disagreed with it.
+    private fun breakdown(rows: List<CategoryTotal>) =
         rows
             .filter { it.total > 0L }
-            .map { row ->
-                CategoryBreakdown(
-                    categoryId = row.categoryId,
-                    total = row.total,
-                    sharePercent = if (typeTotal <= 0L) 0 else ((row.total * 100.0) / typeTotal).toInt()
-                )
-            }
+            .map { row -> CategoryBreakdown(categoryId = row.categoryId, total = row.total) }
             .sortedByDescending { it.total }
 
 }
