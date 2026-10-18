@@ -2,18 +2,11 @@ package id.almezi.simplemoneytracker_kt.data
 
 import id.almezi.simplemoneytracker_kt.ui.designsystem.TransactionType
 
-/**
- * Month totals that honour `countsInTotals`.
- *
- * `UI_SPEC.md:16` says categories flagged `countsInTotals = false`
- * (Transfer Masuk, Investasi as expense, Tabungan) are excluded from every
- * total. The flag used to be written at seed time and never read, because the
- * totals were `SUM` queries nobody in this source set could execute; a month
- * holding nothing but a transfer reported a full balance on both screens.
- *
- * The rule now lives here, in plain Kotlin, so both screens share it and a test
- * can actually run it.
- */
+// Month totals that honour `countsInTotals` (`UI_SPEC.md:16`).
+//
+// The flag was written at seed time and never read, because the totals were
+// `SUM` queries no test in this source set could execute: a month holding
+// nothing but a transfer reported a full balance on both screens.
 
 /** One category's share of a month total. */
 data class CategoryTotal(
@@ -32,7 +25,7 @@ data class MonthTotals(
 }
 
 /** Ids of the categories that must not be counted in any total. */
-fun excludedCategoryIds(categories: List<Category>): Set<String> =
+private fun excludedCategoryIds(categories: List<Category>): Set<String> =
     categories.filterNot { it.countsInTotals }.mapTo(mutableSetOf()) { it.id }
 
 /**
@@ -62,13 +55,13 @@ fun monthTotals(
     categories: List<Category>
 ): MonthTotals {
     val counted = countedTransactions(transactions, startMillis, endMillis, categories)
-    val incomeType = TransactionType.Income.storageValue
-    val expenseType = TransactionType.Expense.storageValue
+    val incomeByCategory = counted.byCategory(TransactionType.Income.storageValue)
+    val expenseByCategory = counted.byCategory(TransactionType.Expense.storageValue)
     return MonthTotals(
-        income = counted.filter { it.type == incomeType }.sumOf { it.amount },
-        expense = counted.filter { it.type == expenseType }.sumOf { it.amount },
-        incomeByCategory = counted.byCategory(incomeType),
-        expenseByCategory = counted.byCategory(expenseType)
+        income = incomeByCategory.sumOf { it.total },
+        expense = expenseByCategory.sumOf { it.total },
+        incomeByCategory = incomeByCategory,
+        expenseByCategory = expenseByCategory
     )
 }
 

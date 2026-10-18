@@ -103,10 +103,8 @@ class CadanganViewModel(
                     fresh.add(tx)
                 }
             }
-            // The file carries four lists, not one. Importing only the
-            // transactions brought the money back and silently left the custom
-            // category names and the budgets behind, which is the data loss the
-            // Cadangan screen warns about (`UI_SPEC.md:119`).
+            // The file carries four lists. Importing only the transactions left
+            // the custom category names and budgets behind on restore.
             runCatching {
                 transactionRepository.restoreImport(
                     categories = parsed.categories.map { it.toCategory() },

@@ -44,10 +44,9 @@ class TransactionFormTypeSwitchTest {
 
     @Test
     fun switchingTypeKeepsTypedAmount() = runComposeUiTest {
-        // The state holder holds a real TambahUiState and switches it through
-        // the production `switchedTo` transition, so this test fails if the
-        // rule ever changes. It used to reimplement the rule locally, which is
-        // how it kept passing while TambahViewModel wiped the amount.
+        // Switches a real TambahUiState through the production `switchedTo`, so
+        // this test fails if the rule changes. It used to reimplement the rule
+        // locally, which is how it passed while TambahViewModel wiped the amount.
         var form by mutableStateOf(
             TambahUiState(dateMillis = 0L, selectedAccountId = AccountSeed.DEFAULT_ACCOUNT_ID)
         )

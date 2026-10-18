@@ -33,35 +33,24 @@ class TransactionRepository(
 
     fun getAccounts(): Flow<List<Account>> = accountDao.getAll()
 
-    // KMP: `withTransaction { }` is Android-only. The equivalent is
-    // useWriterConnection { it.immediateTransaction { } }.
-    suspend fun insertTransactions(transactions: List<Transaction>) {
-        database.useWriterConnection { transactor ->
-            transactor.immediateTransaction { transactionDao.insertAll(transactions) }
-        }
-    }
-
-    /**
-     * Writes one import: custom categories, accounts and budgets first, then the
-     * transactions that reference them, all in a single transaction.
-     *
-     * `UI_SPEC.md:119` says importing never deletes anything, so every insert is
-     * an IGNORE: rows already on the device win, and a category or budget that
-     * exists only in the file is added. Order matters, since a transaction whose
-     * category is missing would otherwise land in a list that cannot name it.
-     */
+    // One import: categories, accounts and budgets first, then the transactions
+    // that reference them. All IGNORE (`UI_SPEC.md:119`, import never deletes or
+    // overwrites); order matters, since a transaction whose category is missing
+    // would land in a list that cannot name it.
     suspend fun restoreImport(
         categories: List<Category>,
         accounts: List<Account>,
         budgets: List<Budget>,
         transactions: List<Transaction>
     ) {
+        // KMP: `withTransaction { }` is Android-only. The equivalent is
+        // useWriterConnection { it.immediateTransaction { } }.
         database.useWriterConnection { transactor ->
             transactor.immediateTransaction {
-                if (categories.isNotEmpty()) categoryDao.insert(*categories.toTypedArray())
-                if (accounts.isNotEmpty()) accountDao.insert(*accounts.toTypedArray())
-                if (budgets.isNotEmpty()) budgetDao.insertIfAbsent(*budgets.toTypedArray())
-                if (transactions.isNotEmpty()) transactionDao.insertAll(transactions)
+                categoryDao.insert(*categories.toTypedArray())
+                accountDao.insert(*accounts.toTypedArray())
+                budgetDao.insertIfAbsent(*budgets.toTypedArray())
+                transactionDao.insertAll(transactions)
             }
         }
     }

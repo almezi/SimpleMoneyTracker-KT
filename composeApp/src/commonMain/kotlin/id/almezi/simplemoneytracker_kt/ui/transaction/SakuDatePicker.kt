@@ -45,10 +45,8 @@ fun SakuDatePickerDialog(
     testTag: String = TestTags.TAMBAH_DATE_PICKER,
 ) {
     val state = rememberDatePickerState(
-        // Saku stores Jakarta midnight; the picker expects a UTC instant and
-        // reads the date out of it, so hand over the UTC midnight of the same
-        // calendar date. Passing the raw value would open the picker on the
-        // previous day for every Jakarta morning.
+        // Saku stores Jakarta midnight; the picker reads a UTC date out of this,
+        // so without the conversion it opened on the previous day every morning.
         initialSelectedDateMillis = utcMidnightOf(initialMillis),
         selectableDates = object : SelectableDates {
             override fun isSelectableDate(utcTimeMillis: Long): Boolean =
@@ -100,17 +98,10 @@ internal fun utcMidnightOf(jakartaMillis: Long): Long {
         .toEpochMilliseconds()
 }
 
-/**
- * No future dates (`UI_SPEC.md:13`), compared as calendar dates.
- *
- * The picker works in UTC midnights and the rule is stated in Jakarta days, so
- * both sides are reduced to a date before comparing. The previous bound was
- * `maxMillis + one day`, which — because the caller passes the current instant —
- * let tomorrow through for most of the Jakarta day.
- *
- * @param nowMillis the current instant, from the injectable clock.
- * @param utcTimeMillis the UTC midnight the picker is asking about.
- */
+// No future dates (`UI_SPEC.md:13`). The picker reports UTC midnights and the
+// rule is stated in Jakarta days, so both sides become a date first. The old
+// bound was `maxMillis + one day`, which let tomorrow through for most of the
+// Jakarta day.
 internal fun isSelectableUtcDate(nowMillis: Long, utcTimeMillis: Long): Boolean {
     val jakartaToday = Instant.fromEpochMilliseconds(nowMillis).toLocalDateTime(JAKARTA).date
     val utcDate = Instant.fromEpochMilliseconds(utcTimeMillis).toLocalDateTime(TimeZone.UTC).date

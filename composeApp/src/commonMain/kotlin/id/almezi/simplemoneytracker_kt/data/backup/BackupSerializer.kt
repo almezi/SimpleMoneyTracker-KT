@@ -159,14 +159,8 @@ internal fun Account.toBackup() = BackupAccount(
     sortOrder = sortOrder,
 )
 
-/**
- * An exported category back into a row.
- *
- * `countsInTotals` is `true` because only user categories are exported
- * (`build` filters `!it.isDefault`) and `CATEGORIES.md:21` gives the three
- * non-counting ids to the seeded categories alone. `isDefault` is `false` so
- * the restored category is managed like any other user category.
- */
+// `countsInTotals` is true: only user categories are exported (`build` filters
+// `!it.isDefault`) and the three non-counting ids are seeded ones (`CATEGORIES.md:21`).
 internal fun BackupCategory.toCategory() = Category(
     id = id,
     nameRes = "",

@@ -5,20 +5,14 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
-import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.toLocalDateTime
 
-/**
- * Guards `UI_SPEC.md:13`: no future dates.
- *
- * The Material date picker hands out **UTC** midnights while Saku works in
- * Asia/Jakarta, so the bound has to be a Jakarta date compared against a UTC
- * calendar date. The old code compared the picker against the current *instant*
- * plus a day of slack, which from 07:00 Jakarta onwards made tomorrow selectable.
- */
+// Guards `UI_SPEC.md:13`: no future dates. The picker reports UTC midnights
+// while Saku works in Asia/Jakarta; the old bound compared against the current
+// instant plus a day, which let tomorrow through for most of the Jakarta day.
 class SakuDatePickerBoundsTest {
 
     /** 2026-10-17 10:00 Asia/Jakarta, i.e. 03:00 UTC. */
@@ -77,8 +71,8 @@ class SakuDatePickerBoundsTest {
     }
 
     @Test
-    fun `the Jakarta date of an instant drives the bound`() {
-        val instant = Instant.fromEpochMilliseconds(lateMorning).toLocalDateTime(JAKARTA)
-        assertEquals(LocalDate(2026, 10, 17), instant.date)
+    fun `the picker opens on the same Jakarta date the form holds`() {
+        val jakartaMidnight = LocalDate(2026, 10, 17).atStartOfDayIn(JAKARTA).toEpochMilliseconds()
+        assertEquals(pickerMillis(2026, 10, 17), utcMidnightOf(jakartaMidnight))
     }
 }

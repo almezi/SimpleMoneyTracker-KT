@@ -35,17 +35,9 @@ data class TambahUiState(
     val canSave: Boolean get() = hasAmount && hasCategory && !isSaving
 }
 
-/**
- * Switches the transaction type.
- *
- * `UI_SPEC.md:14`: the amount and the note survive, and only a category that
- * does not belong to the new type is cleared.
- *
- * Extracted from [TambahViewModel.updateType] so the rule can be tested without
- * a database. The previous version reset `amountDigits`, so every mistap of the
- * toggle threw away the typed amount while a test that reimplemented the rule
- * locally kept passing.
- */
+// Switching type keeps the amount and the note, and clears only a category that
+// does not belong to the new type (`UI_SPEC.md:14`). Extracted from updateType so
+// the rule is testable without a database; it used to reset `amountDigits`.
 fun TambahUiState.switchedTo(
     type: TransactionType,
     categories: List<Category>
