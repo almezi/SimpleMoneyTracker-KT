@@ -5,6 +5,9 @@ import kotlinx.coroutines.flow.Flow
 /** Outcome of [CategoryRepository.rename]. */
 enum class RenameResult { Renamed, EmptyName, DuplicateName, Missing }
 
+/** How many transactions reference one category. */
+data class CategoryCount(val categoryId: String, val count: Int)
+
 class CategoryRepository(
     private val database: AppDatabase,
     private val categoryDao: CategoryDao,
@@ -19,6 +22,10 @@ class CategoryRepository(
     suspend fun get(id: String): Category? = categoryDao.getById(id)
 
     suspend fun usageCount(categoryId: String): Int = transactionDao.countForCategory(categoryId)
+
+    /** Every category's usage count in one query. Categories with none are absent. */
+    suspend fun usageCounts(): Map<String, Int> =
+        transactionDao.countsByCategory().associate { it.categoryId to it.count }
 
     suspend fun setHidden(id: String, hidden: Boolean) = categoryDao.setHidden(id, hidden)
 

@@ -57,6 +57,7 @@ class TransactionRepository(
         }
     }
 
-    suspend fun spentForCategory(categoryId: String, startMillis: Long, endMillis: Long): Long =
-        transactionDao.sumAmountForCategoryBetween(categoryId, startMillis, endMillis)
+    /** The month's expense spend for every category at once, for the budget rows. */
+    suspend fun expenseSpentByCategory(startMillis: Long, endMillis: Long): Map<String, Long> =
+        transactionDao.expenseTotalsByCategory(startMillis, endMillis).associate { it.categoryId to it.total }
 }
