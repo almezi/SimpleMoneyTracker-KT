@@ -51,7 +51,7 @@ import id.almezi.simplemoneytracker_kt.ui.designsystem.formatRupiah
 import id.almezi.simplemoneytracker_kt.ui.designsystem.formatSavingsRate
 import id.almezi.simplemoneytracker_kt.ui.designsystem.monthOf
 import id.almezi.simplemoneytracker_kt.ui.designsystem.safeAreaTop
-import id.almezi.simplemoneytracker_kt.ui.getCategoryName
+import id.almezi.simplemoneytracker_kt.ui.categoryDisplayName
 
 @Composable
 fun RingkasanScreen(
@@ -67,11 +67,13 @@ fun RingkasanScreen(
     val viewModel: RingkasanViewModel = viewModel(
         factory = viewModelFactory { initializer { RingkasanViewModel(
             container.transactionRepository,
+            container.categoryRepository,
             container.clock,
         ) } },
     )
 
     val uiState by viewModel.uiState.collectAsState()
+    val categoryNames by viewModel.categoryNames.collectAsState()
     var monthPickerOpen by remember { mutableStateOf(false) }
     val today = monthOf(viewModel.currentMonthMillis())
 
@@ -141,6 +143,7 @@ fun RingkasanScreen(
                 BreakdownCard(
                     title = SakuStrings.ringkasan_breakdown_income,
                     rows = uiState.incomeByCategory,
+                    categoryNames = categoryNames,
                     typeTotal = uiState.income,
                     accent = SakuTheme.colors.income,
                     testTag = TestTags.RINGKASAN_BREAKDOWN_INCOME,
@@ -149,6 +152,7 @@ fun RingkasanScreen(
                 BreakdownCard(
                     title = SakuStrings.ringkasan_breakdown_expense,
                     rows = uiState.expenseByCategory,
+                    categoryNames = categoryNames,
                     typeTotal = uiState.expense,
                     accent = SakuTheme.colors.expense,
                     testTag = TestTags.RINGKASAN_BREAKDOWN_EXPENSE,
@@ -299,6 +303,7 @@ private fun ComparisonCard(income: Long, expense: Long) {
 private fun BreakdownCard(
     title: String,
     rows: List<CategoryBreakdown>,
+    categoryNames: Map<String, String>,
     typeTotal: Long,
     accent: Color,
     testTag: String
@@ -310,7 +315,7 @@ private fun BreakdownCard(
             Spacer(modifier = Modifier.height(SakuSpace.cardInner))
             rows.forEach { row ->
                 BarRow(
-                    label = getCategoryName(row.categoryId),
+                    label = categoryDisplayName(categoryNames, row.categoryId),
                     fraction = if (typeTotal <= 0L) 0f else (row.total.toFloat() / typeTotal.toFloat()),
                     amount = row.total,
                     accent = accent,

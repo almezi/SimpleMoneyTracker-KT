@@ -2,12 +2,17 @@ package id.almezi.simplemoneytracker_kt.data
 
 import kotlinx.coroutines.flow.Flow
 
+/** Outcome of [CategoryRepository.rename]. */
+enum class RenameResult { Renamed, EmptyName, DuplicateName, Missing }
+
 class CategoryRepository(
     private val database: AppDatabase,
     private val categoryDao: CategoryDao,
     private val transactionDao: TransactionDao
 ) {
     fun getAll(): Flow<List<Category>> = categoryDao.getAll()
+
+    suspend fun getAllOnce(): List<Category> = categoryDao.getAllOnce()
 
     suspend fun getByTypeOnce(type: String): List<Category> = categoryDao.getByTypeOnce(type)
 
@@ -17,7 +22,21 @@ class CategoryRepository(
 
     suspend fun setHidden(id: String, hidden: Boolean) = categoryDao.setHidden(id, hidden)
 
-    suspend fun rename(id: String, name: String) = categoryDao.rename(id, name.trim())
+    /**
+     * Renames a category, or refuses and reports why.
+     *
+     * Refusing an empty name and a name already used in the same type is what
+     * keeps `categoryDisplayName` able to name every category and keeps the
+     * "referenced by ID" assumption readable.
+     */
+    suspend fun rename(id: String, name: String): RenameResult {
+        val trimmed = name.trim()
+        if (trimmed.isEmpty()) return RenameResult.EmptyName
+        val category = categoryDao.getById(id) ?: return RenameResult.Missing
+        if (countWithName(category.type, trimmed, id) > 0) return RenameResult.DuplicateName
+        categoryDao.rename(id, trimmed)
+        return RenameResult.Renamed
+    }
 
     suspend fun create(
         id: String,

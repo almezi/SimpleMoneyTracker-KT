@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import id.almezi.simplemoneytracker_kt.data.Category
 import id.almezi.simplemoneytracker_kt.data.CategoryRepository
+import id.almezi.simplemoneytracker_kt.data.RenameResult
 import id.almezi.simplemoneytracker_kt.data.Clock
 import id.almezi.simplemoneytracker_kt.ui.categoryDisplayName
 import id.almezi.simplemoneytracker_kt.ui.designsystem.TransactionType
@@ -33,6 +34,7 @@ data class KelolaKategoriUiState(
     val type: TransactionType = TransactionType.Income,
     val query: String = "",
     val rows: List<CategoryRow> = emptyList(),
+    val renameError: RenameResult? = null,
     val pendingDelete: DeleteCategoryRequest? = null
 ) {
     val visibleRows: List<CategoryRow> get() = filterCategoryRows(rows, query)
@@ -41,6 +43,10 @@ data class KelolaKategoriUiState(
 /** Keeps rows whose display name contains [query], case- and space-insensitive. */
 fun filterCategoryRows(rows: List<CategoryRow>, query: String): List<CategoryRow> =
     rows.filter { matchesCategoryQuery(categoryDisplayName(it.category), query) }
+
+/** The category deleted transactions are moved to. `CATEGORIES.md` names it "Lainnya". */
+fun fallbackCategoryId(type: String): String =
+    if (type == "pemasukan") "inc_other" else "exp_other"
 
 class KelolaKategoriViewModel(
     private val categoryRepository: CategoryRepository,
@@ -73,12 +79,16 @@ class KelolaKategoriViewModel(
         }
     }
 
-    fun rename(categoryId: String, name: String) {
+    fun rename(categoryId: String, name: String, onResult: (RenameResult) -> Unit = {}) {
         viewModelScope.launch {
-            categoryRepository.rename(categoryId, name)
-            reload(_uiState.value.type)
+            val result = categoryRepository.rename(categoryId, name)
+            _uiState.update { it.copy(renameError = result.takeIf { it != RenameResult.Renamed }) }
+            if (result == RenameResult.Renamed) reload(_uiState.value.type)
+            onResult(result)
         }
     }
+
+    fun clearRenameError() = _uiState.update { it.copy(renameError = null) }
 
     fun requestDelete(row: CategoryRow) {
         viewModelScope.launch {
@@ -86,7 +96,11 @@ class KelolaKategoriViewModel(
             val fallback = fallbackCategory(row.category.type)
             _uiState.update {
                 it.copy(
-                    pendingDelete = DeleteCategoryRequest(row, usage, fallback?.customName.orEmpty())
+                    pendingDelete = DeleteCategoryRequest(
+                        row,
+                        usage,
+                        fallback?.let { category -> categoryDisplayName(category) }.orEmpty()
+                    )
                 )
             }
         }
@@ -107,7 +121,7 @@ class KelolaKategoriViewModel(
 
     private suspend fun fallbackCategory(type: String): Category? =
         categoryRepository.getByTypeOnce(type)
-            .firstOrNull { it.id == "exp_other" || it.id == "inc_other" }
+            .firstOrNull { it.id == fallbackCategoryId(type) }
             ?: categoryRepository.getByTypeOnce(type).lastOrNull()
 
     private fun reload(type: TransactionType) {

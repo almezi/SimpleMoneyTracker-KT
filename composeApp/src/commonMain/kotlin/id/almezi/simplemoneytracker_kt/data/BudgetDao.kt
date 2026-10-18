@@ -21,6 +21,11 @@ interface BudgetDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(budget: Budget)
 
+    // Import path: a budget already on the device is never overwritten, the same
+    // IGNORE strategy CategoryDao.insert and AccountDao.insert use.
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertIfAbsent(vararg budgets: Budget)
+
     @Update
     suspend fun update(budget: Budget)
 

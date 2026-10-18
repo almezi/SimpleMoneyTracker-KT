@@ -27,7 +27,8 @@ class AppContainer(
         database,
         transactionDao,
         categoryDao,
-        accountDao
+        accountDao,
+        budgetDao
     )
 
     val categoryRepository: CategoryRepository = CategoryRepository(

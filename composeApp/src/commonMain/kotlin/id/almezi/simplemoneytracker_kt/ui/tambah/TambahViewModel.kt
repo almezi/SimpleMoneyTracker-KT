@@ -35,6 +35,22 @@ data class TambahUiState(
     val canSave: Boolean get() = hasAmount && hasCategory && !isSaving
 }
 
+// Switching type keeps the amount and the note, and clears only a category that
+// does not belong to the new type (`UI_SPEC.md:14`). Extracted from updateType so
+// the rule is testable without a database; it used to reset `amountDigits`.
+fun TambahUiState.switchedTo(
+    type: TransactionType,
+    categories: List<Category>
+): TambahUiState {
+    val keepCategory = categories
+        .firstOrNull { it.id == selectedCategoryId }
+        ?.type == type.storageValue
+    return copy(
+        type = type,
+        selectedCategoryId = if (keepCategory) selectedCategoryId else null
+    )
+}
+
 enum class TambahHelper {
     None,
     MissingAmount,
@@ -93,16 +109,7 @@ class TambahViewModel(
 
     fun updateType(type: TransactionType) {
         if (type == _uiState.value.type) return
-        val keepCategory = _categories.value
-            .firstOrNull { it.id == _uiState.value.selectedCategoryId }
-            ?.type == type.storageValue
-        _uiState.update {
-            it.copy(
-                type = type,
-                amountDigits = "",
-                selectedCategoryId = if (keepCategory) it.selectedCategoryId else null
-            )
-        }
+        _uiState.update { it.switchedTo(type, _categories.value) }
         observeCategories(type)
     }
 

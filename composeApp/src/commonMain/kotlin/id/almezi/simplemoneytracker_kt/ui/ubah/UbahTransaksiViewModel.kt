@@ -4,15 +4,19 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import id.almezi.simplemoneytracker_kt.data.Account
 import id.almezi.simplemoneytracker_kt.data.Category
+import id.almezi.simplemoneytracker_kt.data.CategoryRepository
 import id.almezi.simplemoneytracker_kt.data.Clock
 import id.almezi.simplemoneytracker_kt.data.Transaction
 import id.almezi.simplemoneytracker_kt.data.TransactionRepository
 import id.almezi.simplemoneytracker_kt.ui.designsystem.TransactionType
 import id.almezi.simplemoneytracker_kt.ui.designsystem.isAmountInRange
 import id.almezi.simplemoneytracker_kt.ui.designsystem.parseAmountDigits
+import id.almezi.simplemoneytracker_kt.ui.displayNameFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -50,12 +54,17 @@ data class UbahUiState(
 
 class UbahTransaksiViewModel(
     private val repository: TransactionRepository,
+    private val categoryRepository: CategoryRepository,
     private val clock: Clock,
     private val transactionId: Long
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(UbahUiState())
     val uiState: StateFlow<UbahUiState> = _uiState.asStateFlow()
+
+    /** Category id to the name the user gave it, for the delete sheet. */
+    val categoryNames: StateFlow<Map<String, String>> = categoryRepository.displayNameFlow()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000L), emptyMap())
 
     private var categoryJob: kotlinx.coroutines.Job? = null
 
@@ -137,15 +146,32 @@ class UbahTransaksiViewModel(
         categoryJob?.cancel()
         categoryJob = viewModelScope.launch {
             repository.getVisibleCategoriesByType(type.storageValue).collect { categories ->
-                _uiState.update { state ->
-                    state.copy(
-                        categories = categories,
-                        selectedCategoryId = state.selectedCategoryId
-                            ?.takeIf { id -> categories.any { it.id == id } }
-                    )
-                }
+                _uiState.update { it.withCategories(categories, type) }
             }
         }
     }
 
+}
+
+/**
+ * Applies the loaded category list to the form.
+ *
+ * A hidden category keeps its transactions by design (`CATEGORIES.md:24`), so a
+ * transaction whose category is no longer offered keeps it as long as it still
+ * belongs to the current type. The picker only lists visible categories, so the
+ * row shows a placeholder while the id is preserved.
+ */
+fun UbahUiState.withCategories(
+    categories: List<Category>,
+    type: TransactionType
+): UbahUiState {
+    val stillFits = selectedCategoryId != null && (
+        categories.any { it.id == selectedCategoryId } ||
+            (selectedCategoryId == original?.categoryId &&
+                TransactionType.fromStorage(original.type) == type)
+        )
+    return copy(
+        categories = categories,
+        selectedCategoryId = selectedCategoryId.takeIf { stillFits }
+    )
 }

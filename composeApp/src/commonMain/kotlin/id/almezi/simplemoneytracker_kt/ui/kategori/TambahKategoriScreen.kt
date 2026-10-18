@@ -171,7 +171,7 @@ fun TambahKategoriScreen(
             }
         }
 
-        PreviewChip(name = uiState.name, categoryId = uiState.colorHex)
+        PreviewChip(name = uiState.name, colorHex = uiState.colorHex)
 
         PrimaryButton(
             text = SakuStrings.kategori_form_save,
@@ -184,7 +184,7 @@ fun TambahKategoriScreen(
 
 @Composable
 private fun ColorSwatch(hex: String, selected: Boolean, onClick: () -> Unit) {
-    val color = runCatching { parseHexColor(hex) }.getOrDefault(SakuTheme.colors.primary)
+    val color = SakuCategoryPalette.parseColor(hex)
     Surface(
         onClick = onClick,
         modifier = Modifier
@@ -212,14 +212,14 @@ private fun ColorSwatch(hex: String, selected: Boolean, onClick: () -> Unit) {
 }
 
 @Composable
-private fun PreviewChip(name: String, categoryId: String) {
+private fun PreviewChip(name: String, colorHex: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .testTag(TestTags.KATEGORI_FORM_PREVIEW),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        CategoryMark(categoryId = categoryId.ifBlank { "preview" }, size = SakuSize.mark)
+        CategoryMark(categoryId = "preview", colorHex = colorHex, size = SakuSize.mark)
         Spacer(modifier = Modifier.size(SakuSpace.chipGap))
         Text(
             text = name.ifBlank { SakuStrings.kategori_form_new },
@@ -227,18 +227,4 @@ private fun PreviewChip(name: String, categoryId: String) {
             color = SakuTheme.colors.textSecondary,
         )
     }
-}
-
-/**
- * Parses `#RRGGBB` or `#AARRGGBB` without android.graphics.Color, which is
- * JVM-only.
- */
-private fun parseHexColor(hex: String): Color {
-    val digits = hex.removePrefix("#")
-    val argb = when (digits.length) {
-        6 -> 0xFF000000L or digits.toLong(16)
-        8 -> digits.toLong(16)
-        else -> throw IllegalArgumentException("Unsupported colour: $hex")
-    }
-    return Color(argb.toInt())
 }

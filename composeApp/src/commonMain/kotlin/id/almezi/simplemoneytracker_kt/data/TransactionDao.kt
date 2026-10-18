@@ -2,6 +2,7 @@ package id.almezi.simplemoneytracker_kt.data
 
 import androidx.room3.Dao
 import androidx.room3.Insert
+import androidx.room3.OnConflictStrategy
 import androidx.room3.Query
 import androidx.room3.Update
 import kotlinx.coroutines.flow.Flow
@@ -34,34 +35,20 @@ interface TransactionDao {
         endMillis: Long
     ): Long
 
-    @Query(
-        "SELECT COALESCE(SUM(CASE WHEN type = 'pemasukan' THEN amount ELSE 0 END), 0) " +
-            "FROM transactions WHERE dateEpochMillis >= :startMillis AND dateEpochMillis < :endMillis"
-    )
-    suspend fun sumIncomeBetween(startMillis: Long, endMillis: Long): Long
-
-    @Query(
-        "SELECT COALESCE(SUM(CASE WHEN type = 'pengeluaran' THEN amount ELSE 0 END), 0) " +
-            "FROM transactions WHERE dateEpochMillis >= :startMillis AND dateEpochMillis < :endMillis"
-    )
-    suspend fun sumExpenseBetween(startMillis: Long, endMillis: Long): Long
-
-    @Query(
-        "SELECT categoryId, COALESCE(SUM(amount), 0) AS total FROM transactions " +
-            "WHERE type = :type AND dateEpochMillis >= :startMillis AND dateEpochMillis < :endMillis " +
-            "GROUP BY categoryId"
-    )
-    suspend fun totalsByCategory(
-        type: String,
-        startMillis: Long,
-        endMillis: Long
-    ): List<CategoryTotal>
-
     @Query("UPDATE transactions SET categoryId = :toCategoryId WHERE categoryId = :fromCategoryId")
     suspend fun moveCategory(fromCategoryId: String, toCategoryId: String)
 
     @Insert
     suspend fun insert(transaction: Transaction): Long
+
+    /**
+     * Undo path. IGNORE, not ABORT: SQLite hands the deleted row's id straight
+     * to the next insert, so undoing a delete after adding a new transaction
+     * would raise a constraint violation inside `viewModelScope` and crash.
+     * Returns -1 when the row is gone for good, because its id was taken.
+     */
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertIfAbsent(transaction: Transaction): Long
 
     @Insert
     suspend fun insertAll(transactions: List<Transaction>)
@@ -72,8 +59,3 @@ interface TransactionDao {
     @Query("DELETE FROM transactions WHERE id = :id")
     suspend fun delete(id: Long)
 }
-
-data class CategoryTotal(
-    val categoryId: String,
-    val total: Long
-)

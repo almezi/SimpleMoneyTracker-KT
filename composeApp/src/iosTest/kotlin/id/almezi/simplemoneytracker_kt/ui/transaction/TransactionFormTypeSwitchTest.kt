@@ -18,9 +18,12 @@ import androidx.compose.ui.test.runComposeUiTest
 import androidx.compose.ui.unit.dp
 import id.almezi.simplemoneytracker_kt.SakuStrings
 import id.almezi.simplemoneytracker_kt.TestTags
+import id.almezi.simplemoneytracker_kt.data.AccountSeed
 import id.almezi.simplemoneytracker_kt.ui.components.PrimaryButtonTone
 import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuTheme
 import id.almezi.simplemoneytracker_kt.ui.designsystem.TransactionType
+import id.almezi.simplemoneytracker_kt.ui.tambah.TambahUiState
+import id.almezi.simplemoneytracker_kt.ui.tambah.switchedTo
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -32,41 +35,39 @@ import kotlin.test.assertEquals
  * switching type keeps the amount and the note, and only clears a category that
  * does not match the new type.
  *
- * This drives `TransactionForm` directly with a state holder that mirrors
- * `TambahViewModel.updateType` (amount preserved, category cleared on mismatch),
- * so the test isolates the UI layer where the reset was observed.
+ * This drives `TransactionForm` directly, switching the state through
+ * `TambahUiState.switchedTo` — the same transition `TambahViewModel.updateType`
+ * calls — so the test covers the real rule and only isolates the UI layer where
+ * the reset was observed.
  */
 class TransactionFormTypeSwitchTest {
 
     @Test
     fun switchingTypeKeepsTypedAmount() = runComposeUiTest {
-        var type by mutableStateOf(TransactionType.Income)
-        var amountDigits by mutableStateOf("")
-        var selectedCategoryId by mutableStateOf<String?>(null)
+        // Switches a real TambahUiState through the production `switchedTo`, so
+        // this test fails if the rule changes. It used to reimplement the rule
+        // locally, which is how it passed while TambahViewModel wiped the amount.
+        var form by mutableStateOf(
+            TambahUiState(dateMillis = 0L, selectedAccountId = AccountSeed.DEFAULT_ACCOUNT_ID)
+        )
 
         setContent {
             SakuTheme {
                 TransactionForm(
                     state = TransactionFormState(
-                        type = type,
-                        amountDigits = amountDigits,
+                        type = form.type,
+                        amountDigits = form.amountDigits,
                         categories = emptyList(),
-                        selectedCategoryId = selectedCategoryId,
+                        selectedCategoryId = form.selectedCategoryId,
                         accounts = emptyList(),
-                        selectedAccountId = "cash",
-                        dateMillis = 0L,
-                        note = "",
+                        selectedAccountId = form.selectedAccountId,
+                        dateMillis = form.dateMillis,
+                        note = form.note,
                     ),
                     actions = TransactionFormActions(
-                        // Mirrors TambahViewModel.updateType: amount and note
-                        // are untouched, the category is dropped when it does
-                        // not match the new type.
-                        onTypeChange = { newType ->
-                            type = newType
-                            selectedCategoryId = null
-                        },
-                        onAmountChange = { amountDigits = it },
-                        onCategoryChange = { selectedCategoryId = it },
+                        onTypeChange = { newType -> form = form.switchedTo(newType, emptyList()) },
+                        onAmountChange = { digits -> form = form.copy(amountDigits = digits) },
+                        onCategoryChange = { id -> form = form.copy(selectedCategoryId = id) },
                         onAccountChange = {},
                         onDateChange = {},
                         onNoteChange = {},
@@ -95,16 +96,16 @@ class TransactionFormTypeSwitchTest {
 
         amountField.performTextInput("5000")
 
-        assertEquals("5000", amountDigits, "typing should record the digits")
+        assertEquals("5000", form.amountDigits, "typing should record the digits")
         onNodeWithText("5.000", substring = true)
             .assertExists("amount should render as Rp 5.000 after typing")
 
         onNodeWithTag(TestTags.COMPONENT_TOGGLE_SEGMENTED + "_1").performClick()
 
-        assertEquals(TransactionType.Expense, type, "toggle should switch the type")
+        assertEquals(TransactionType.Expense, form.type, "toggle should switch the type")
         assertEquals(
             "5000",
-            amountDigits,
+            form.amountDigits,
             "switching type must keep the amount (UI_SPEC.md:14)",
         )
         onNodeWithText("5.000", substring = true)

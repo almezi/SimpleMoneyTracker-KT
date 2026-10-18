@@ -27,7 +27,7 @@ import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuSpace
 import id.almezi.simplemoneytracker_kt.ui.designsystem.TransactionType
 import id.almezi.simplemoneytracker_kt.ui.designsystem.formatRupiah
 import id.almezi.simplemoneytracker_kt.ui.designsystem.formatShortDate
-import id.almezi.simplemoneytracker_kt.ui.getCategoryName
+import id.almezi.simplemoneytracker_kt.ui.categoryDisplayName
 import id.almezi.simplemoneytracker_kt.ui.transaction.TransactionForm
 import id.almezi.simplemoneytracker_kt.ui.transaction.TransactionFormActions
 import id.almezi.simplemoneytracker_kt.ui.transaction.TransactionFormState
@@ -46,12 +46,14 @@ fun UbahTransaksiScreen(
     val viewModel: UbahTransaksiViewModel = viewModel(
         factory = viewModelFactory { initializer { UbahTransaksiViewModel(
             container.transactionRepository,
+            container.categoryRepository,
             container.clock,
             transactionId,
         ) } },
     )
 
     val uiState by viewModel.uiState.collectAsState()
+    val categoryNames by viewModel.categoryNames.collectAsState()
 
     LaunchedEffect(uiState.finished) {
         if (uiState.finished) onDone()
@@ -112,7 +114,7 @@ fun UbahTransaksiScreen(
             if (original != null) {
                 ConfirmDeleteSheet(
                     title = SakuStrings.delete_sheet_title,
-                    body = SakuStrings.delete_sheet_body.format(getCategoryName(original.categoryId),
+                    body = SakuStrings.delete_sheet_body.format(categoryDisplayName(categoryNames, original.categoryId),
                         formatRupiah(original.amount),
                         formatShortDate(original.dateEpochMillis)
                     ),

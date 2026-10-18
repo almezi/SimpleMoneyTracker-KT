@@ -31,6 +31,7 @@ import id.almezi.simplemoneytracker_kt.ui.designsystem.typeAccent
 fun TransactionCard(
     categoryId: String,
     categoryName: String,
+    categoryColorHex: String? = null,
     typeLabel: String,
     amount: Long,
     type: TransactionType,
@@ -41,7 +42,7 @@ fun TransactionCard(
     testTag: String = TestTags.COMPONENT_CARD_TRANSACTION,
 ) {
     Surface(
-        modifier = modifier.fillMaxWidth().testTag(testTag + "_" + categoryId),
+        modifier = modifier.fillMaxWidth().testTag(testTag),
         shape = RoundedCornerShape(SakuRadius.card),
         color = SakuTheme.colors.surface,
         contentColor = SakuTheme.colors.text,
@@ -53,7 +54,7 @@ fun TransactionCard(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(SakuSpace.cardInner),
             ) {
-                CategoryAvatar(categoryId = categoryId, label = categoryName)
+                CategoryAvatar(categoryId = categoryId, label = categoryName, colorHex = categoryColorHex)
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = categoryName,

@@ -35,6 +35,7 @@ import id.almezi.simplemoneytracker_kt.ui.designsystem.formatRupiah
 
 @Composable
 fun BudgetProgressRow(
+    categoryId: String,
     categoryName: String,
     spent: Long,
     limit: Long,
@@ -69,7 +70,9 @@ fun BudgetProgressRow(
     )
 
     Surface(
-        modifier = modifier.fillMaxWidth().testTag(testTag + "_" + categoryName),
+        // testTag already carries the category id: the caller suffixes it with the id,
+    // never with the display name, which changes when the category is renamed.
+    modifier = modifier.fillMaxWidth().testTag(testTag),
         shape = RoundedCornerShape(SakuRadius.card),
         color = SakuTheme.colors.surface,
         contentColor = SakuTheme.colors.text,
@@ -138,14 +141,14 @@ fun BudgetProgressRow(
                     onClick = onEdit,
                     modifier = Modifier.weight(1f),
                     height = buttonHeight,
-                    testTag = testTag + "_edit_" + categoryName,
+                    testTag = testTag + "_edit_" + categoryId,
                 )
                 DestructiveButton(
                     text = SakuStrings.delete,
                     onClick = onDelete,
                     modifier = Modifier.weight(1f),
                     height = buttonHeight,
-                    testTag = testTag + "_delete_" + categoryName,
+                    testTag = testTag + "_delete_" + categoryId,
                 )
             }
         }

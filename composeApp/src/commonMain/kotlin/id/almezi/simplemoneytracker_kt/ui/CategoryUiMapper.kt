@@ -3,7 +3,10 @@ package id.almezi.simplemoneytracker_kt.ui
 import id.almezi.simplemoneytracker_kt.SakuStrings
 
 import id.almezi.simplemoneytracker_kt.data.Category
+import id.almezi.simplemoneytracker_kt.data.CategoryRepository
 import id.almezi.simplemoneytracker_kt.ui.components.SakuPickerOptionGroup
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 fun getCategoryName(id: String): String {
     return when (id) {
@@ -50,6 +53,38 @@ fun getCategoryName(id: String): String {
 
 fun categoryDisplayName(category: Category): String =
     category.customName ?: getCategoryName(category.id)
+
+/**
+ * Every category id mapped to the name the user sees.
+ *
+ * Screens that only hold a `categoryId` — the Transaksi row, both delete sheets,
+ * the Ringkasan breakdown — used [getCategoryName], which knows the seeded ids
+ * only, so a custom "Kopi" rendered as the literal word "Kategori" and a rename
+ * never showed up.
+ */
+fun displayNames(categories: List<Category>): Map<String, String> =
+    categories.associate { it.id to categoryDisplayName(it) }
+
+/** [displayNames] lookup with the seeded name as the fallback. */
+fun categoryDisplayName(names: Map<String, String>, id: String): String =
+    names[id] ?: getCategoryName(id)
+
+/**
+ * Every category id mapped to the colour the user picked.
+ *
+ * Same pairing as [displayNames] and for the same reason: the row shows the
+ * category, so the row has to be able to draw it in that category's colour.
+ */
+fun displayColors(categories: List<Category>): Map<String, String> =
+    categories.mapNotNull { category -> category.colorHex?.let { category.id to it } }.toMap()
+
+/** [CategoryRepository.displayNameFlow] for colours. */
+fun CategoryRepository.displayColorFlow(): Flow<Map<String, String>> =
+    getAll().map { displayColors(it) }
+
+/** [displayNames] as a flow, for ViewModels that expose it as screen state. */
+fun CategoryRepository.displayNameFlow(): Flow<Map<String, String>> =
+    getAll().map { displayNames(it) }
 
 fun matchesCategoryQuery(label: String, query: String): Boolean {
     val needle = query.trim().lowercase()

@@ -2,17 +2,26 @@ package id.almezi.simplemoneytracker_kt.ui.daftar
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import id.almezi.simplemoneytracker_kt.data.CategoryRepository
 import id.almezi.simplemoneytracker_kt.data.Clock
 import id.almezi.simplemoneytracker_kt.data.Transaction
 import id.almezi.simplemoneytracker_kt.data.TransactionRepository
+import id.almezi.simplemoneytracker_kt.data.countedTransactions
 import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuMonth
+import id.almezi.simplemoneytracker_kt.ui.designsystem.TransactionType
 import id.almezi.simplemoneytracker_kt.ui.designsystem.dateOf
 import id.almezi.simplemoneytracker_kt.ui.designsystem.monthOf
+import id.almezi.simplemoneytracker_kt.ui.displayColorFlow
+import id.almezi.simplemoneytracker_kt.ui.displayNameFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+
+private const val STOP_TIMEOUT_MILLIS = 5_000L
 
 data class TransactionDay(
     val dateMillis: Long,
@@ -33,6 +42,7 @@ data class DaftarUiState(
 
 class DaftarViewModel(
     private val repository: TransactionRepository,
+    private val categoryRepository: CategoryRepository,
     private val clock: Clock
 ) : ViewModel() {
 
@@ -40,6 +50,14 @@ class DaftarViewModel(
 
     private val _uiState = MutableStateFlow(DaftarUiState(month = currentMonth))
     val uiState: StateFlow<DaftarUiState> = _uiState.asStateFlow()
+
+    /** Category id to the name the user gave it, for the row and the delete sheet. */
+    val categoryNames: StateFlow<Map<String, String>> = categoryRepository.displayNameFlow()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS), emptyMap())
+
+    /** Category id to the colour the user picked, for the row's avatar. */
+    val categoryColors: StateFlow<Map<String, String>> = categoryRepository.displayColorFlow()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS), emptyMap())
 
     init {
         viewModelScope.launch {
@@ -88,7 +106,10 @@ class DaftarViewModel(
     fun undoDelete() {
         val transaction = _uiState.value.undoCandidate ?: return
         _uiState.update { it.copy(undoCandidate = null) }
-        viewModelScope.launch { repository.restoreTransaction(transaction) }
+        viewModelScope.launch {
+            // runCatching so a failed undo cannot take the screen down with it.
+            runCatching { repository.restoreTransaction(transaction) }
+        }
     }
 
     fun clearUndo() {
@@ -98,14 +119,20 @@ class DaftarViewModel(
     private suspend fun rebuild(month: SakuMonth, all: List<Transaction>) {
         val start = month.startMillis()
         val end = month.endMillisExclusive()
+        val categories = categoryRepository.getAllOnce()
+        // Every row of the month is listed — the user recorded it, so it stays
+        // visible — but only counting categories move the numbers
+        // (`UI_SPEC.md:16`).
         val inMonth = all.filter { it.dateEpochMillis in start until end }
             .sortedByDescending { it.dateEpochMillis }
+        val counted = countedTransactions(all, start, end, categories)
+        val countedIds = counted.mapTo(mutableSetOf()) { it.id }
         val days = inMonth
             .groupBy { dateOf(it.dateEpochMillis) }
             .map { (_, txs) ->
                 TransactionDay(
                     dateMillis = txs.maxOf { it.dateEpochMillis },
-                    netTotal = txs.sumOf { signedAmount(it) },
+                    netTotal = txs.filter { it.id in countedIds }.sumOf { signedAmount(it) },
                     transactions = txs.sortedByDescending { it.createdAt }
                 )
             }
@@ -114,13 +141,17 @@ class DaftarViewModel(
             it.copy(
                 month = month,
                 days = days,
-                incomeTotal = inMonth.filter { tx -> tx.type == "pemasukan" }.sumOf { it.amount },
-                expenseTotal = inMonth.filter { tx -> tx.type == "pengeluaran" }.sumOf { it.amount }
+                incomeTotal = counted.filter { tx -> tx.type == TransactionType.Income.storageValue }.sumOf { it.amount },
+                expenseTotal = counted.filter { tx -> tx.type == TransactionType.Expense.storageValue }.sumOf { it.amount }
             )
         }
     }
 
     private fun signedAmount(transaction: Transaction): Long =
-        if (transaction.type == "pemasukan") transaction.amount else -transaction.amount
+        if (transaction.type == TransactionType.Income.storageValue) {
+            transaction.amount
+        } else {
+            -transaction.amount
+        }
 
 }
