@@ -2,6 +2,8 @@ package id.almezi.simplemoneytracker_kt.data.backup
 
 import id.almezi.simplemoneytracker_kt.data.Account
 import id.almezi.simplemoneytracker_kt.data.AccountSeed
+import id.almezi.simplemoneytracker_kt.data.Budget
+import id.almezi.simplemoneytracker_kt.data.Category
 import id.almezi.simplemoneytracker_kt.data.CategoryRepository
 import id.almezi.simplemoneytracker_kt.data.Transaction
 import id.almezi.simplemoneytracker_kt.data.TransactionRepository
@@ -156,6 +158,38 @@ internal fun Account.toBackup() = BackupAccount(
     name = name,
     sortOrder = sortOrder,
 )
+
+/**
+ * An exported category back into a row.
+ *
+ * `countsInTotals` is `true` because only user categories are exported
+ * (`build` filters `!it.isDefault`) and `CATEGORIES.md:21` gives the three
+ * non-counting ids to the seeded categories alone. `isDefault` is `false` so
+ * the restored category is managed like any other user category.
+ */
+internal fun BackupCategory.toCategory() = Category(
+    id = id,
+    nameRes = "",
+    groupId = null,
+    countsInTotals = true,
+    type = type,
+    colorHex = colorHex.takeIf { it.isNotBlank() },
+    isDefault = false,
+    isHidden = hidden,
+    customName = name.takeIf { it.isNotBlank() }
+)
+
+/** An exported budget back into a row. Missing timestamps become the import time. */
+internal fun BackupBudget.toBudget(currentTime: Long) = Budget(
+    categoryId = categoryId,
+    limitAmount = limit,
+    alertAt80 = alertAt80,
+    createdAt = if (createdAt > 0L) createdAt else currentTime,
+    updatedAt = if (updatedAt > 0L) updatedAt else currentTime
+)
+
+/** An exported account back into a row. */
+internal fun BackupAccount.toAccount() = Account(id = id, name = name, sortOrder = sortOrder)
 
 /** Missing accounts fall back to the seeded default rather than failing the import. */
 internal fun String.orDefaultAccount() = ifBlank { AccountSeed.DEFAULT_ACCOUNT_ID }

@@ -9,7 +9,8 @@ class TransactionRepository(
     private val database: AppDatabase,
     private val transactionDao: TransactionDao,
     private val categoryDao: CategoryDao,
-    private val accountDao: AccountDao
+    private val accountDao: AccountDao,
+    private val budgetDao: BudgetDao
 ) {
     fun getAllTransactions(): Flow<List<Transaction>> = transactionDao.getAll()
 
@@ -37,6 +38,31 @@ class TransactionRepository(
     suspend fun insertTransactions(transactions: List<Transaction>) {
         database.useWriterConnection { transactor ->
             transactor.immediateTransaction { transactionDao.insertAll(transactions) }
+        }
+    }
+
+    /**
+     * Writes one import: custom categories, accounts and budgets first, then the
+     * transactions that reference them, all in a single transaction.
+     *
+     * `UI_SPEC.md:119` says importing never deletes anything, so every insert is
+     * an IGNORE: rows already on the device win, and a category or budget that
+     * exists only in the file is added. Order matters, since a transaction whose
+     * category is missing would otherwise land in a list that cannot name it.
+     */
+    suspend fun restoreImport(
+        categories: List<Category>,
+        accounts: List<Account>,
+        budgets: List<Budget>,
+        transactions: List<Transaction>
+    ) {
+        database.useWriterConnection { transactor ->
+            transactor.immediateTransaction {
+                if (categories.isNotEmpty()) categoryDao.insert(*categories.toTypedArray())
+                if (accounts.isNotEmpty()) accountDao.insert(*accounts.toTypedArray())
+                if (budgets.isNotEmpty()) budgetDao.insertIfAbsent(*budgets.toTypedArray())
+                if (transactions.isNotEmpty()) transactionDao.insertAll(transactions)
+            }
         }
     }
 

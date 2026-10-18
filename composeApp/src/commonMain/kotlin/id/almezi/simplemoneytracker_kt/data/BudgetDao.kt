@@ -21,6 +21,14 @@ interface BudgetDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(budget: Budget)
 
+    /**
+     * Import path. A budget already on the device is left alone: `UI_SPEC.md`
+     * says importing never overwrites what the user has, and IGNORE is the same
+     * strategy [CategoryDao.insert] and [AccountDao.insert] use.
+     */
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertIfAbsent(vararg budgets: Budget)
+
     @Update
     suspend fun update(budget: Budget)
 

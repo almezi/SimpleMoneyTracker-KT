@@ -8,6 +8,9 @@ import id.almezi.simplemoneytracker_kt.data.TransactionRepository
 import id.almezi.simplemoneytracker_kt.data.backup.BackupPreferences
 import id.almezi.simplemoneytracker_kt.data.backup.BackupSerializer
 import id.almezi.simplemoneytracker_kt.data.backup.KEY_LAST_BACKUP
+import id.almezi.simplemoneytracker_kt.data.backup.toAccount
+import id.almezi.simplemoneytracker_kt.data.backup.toBudget
+import id.almezi.simplemoneytracker_kt.data.backup.toCategory
 import id.almezi.simplemoneytracker_kt.data.backup.toTransaction
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -100,7 +103,18 @@ class CadanganViewModel(
                     fresh.add(tx)
                 }
             }
-            runCatching { transactionRepository.insertTransactions(fresh) }
+            // The file carries four lists, not one. Importing only the
+            // transactions brought the money back and silently left the custom
+            // category names and the budgets behind, which is the data loss the
+            // Cadangan screen warns about (`UI_SPEC.md:119`).
+            runCatching {
+                transactionRepository.restoreImport(
+                    categories = parsed.categories.map { it.toCategory() },
+                    accounts = parsed.accounts.map { it.toAccount() },
+                    budgets = parsed.budgets.map { it.toBudget(currentTime) },
+                    transactions = fresh
+                )
+            }
                 .onSuccess {
                     _uiState.update {
                         it.copy(
