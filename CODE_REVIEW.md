@@ -4,6 +4,8 @@ Date: 2026-10-11
 Scope: `app/src/` (main, test, androidTest)
 Baseline commit: `ebe5de5`
 
+**Re-checked 2026-10-18** at `2acac55` on `feature/ios-migration`; see §8.
+
 Status: **fully applied.** Sections 1 and 3 landed in commit `1304841`.
 Section 2 is applied in the working tree (see §6).
 
@@ -110,7 +112,7 @@ for any of them in Kotlin or XML.
   `DimensPreview:157`) have no call sites by design. They are tooling entry points.
 - `SakuDarkColors`, `LocalSakuColors`, `SakuFontSans`, `SakuFontMono`,
   `SakuTypography` are referenced by name, not by dot access.
-- `BackupRepository.kt:182` `dateString` is called at `BackupRepository.kt:109`.
+- `BackupRepository.kt:182` `dateString` is called at `BackupRepository.kt:109`. (Stale since `d7a9a45`: that whole file was deleted as dead code — see §8.)
 - `SakuLogo.kt:38` `DrawScope.drawLogo` is called at `SakuLogo.kt:34`.
 - `SakuFormat.kt:21` `MAX_AMOUNT` is used at `SakuFormat.kt:42`.
 - Test classes and `MainActivity` are framework entry points.
@@ -135,3 +137,39 @@ scan because of a name collision with a DAO method of the same name. Removed too
 - `./gradlew :app:testDebugUnitTest` — BUILD SUCCESSFUL
 - Re-ran the unused-import scan: only the three `getValue` false positives remain
   (see §1 note); no new dead declarations or unused tokens
+
+## 8. Re-check 2026-10-18
+
+Baseline moved from `ebe5de5` to `2acac55` (`feature/ios-migration`), after the
+fixes for `CODE_AUDIT.md` findings 1–18. Re-grepped every declaration named in
+§2 and §6: all absent from the tree, so §2 stands as applied.
+
+Two things changed the document itself:
+
+- **`BackupRepository.kt` is gone.** Deleted in `d7a9a45` as audit finding 15:
+  195 lines of Android-only backup code with no caller. The §5 false positive
+  that cites it no longer has a file to point at.
+- **The audit fixes removed more dead code**, all in the same pass that created
+  it, so §2 did not grow:
+
+| Declaration | Removed because |
+|---|---|
+| `data/TransactionDao.kt` `sumIncomeBetween`, `sumExpenseBetween`, `totalsByCategory` | audit 1 replaced the SQL totals with `MonthTotals.kt` |
+| `data/TransactionRepository.kt` `totalsByCategory`, `incomeBetween`, `expenseBetween` | same |
+| `data/TransactionRepository.kt` `insertTransactions` | audit 3 replaced it with `restoreImport`; import was its only caller |
+| `data/TransactionDao.kt` `sumAmountForCategoryBetween` | audit 13 replaced the per-row spend with `expenseTotalsByCategory` |
+| `data/TransactionRepository.kt` `spentForCategory` | same |
+| `data/BudgetDao.kt` `update` | audit 16, no callers |
+| `ui/ringkasan/RingkasanViewModel.kt` `RingkasanUiState.loading`, `CategoryBreakdown.sharePercent` | audit 16, never read |
+| `ui/anggaran/AnggaranViewModel.kt` `AnggaranUiState.toast` | audit 16, never set or read |
+| `data/BudgetRepository.kt` `database` | audit 16, constructor argument never used |
+| `BackupFileStore.writeText` (interface + Android body; iOS copy made private) | audit 18, Android body wrote to a location its own comment calls unreachable |
+| `gradle/libs.versions.toml` `room` 2.8.4 ×3, `animated-vector-drawable` ×2 | audit 17, no `*.kts` referenced them |
+
+Verification at `2acac55`: `:composeApp:testAndroidHostTest` 103 tests, 0
+failures; `:app:assembleDebug` builds; iOS main and test compilations pass.
+
+Two open items from that work, recorded in `CODE_AUDIT.md`: the SQL added in
+audit 13, 14 and 18 has no test (no Room in-memory testing in this source set),
+and `TESTABILITY.md:113-114` still documents a `component_card_transaction`
+suffix that finding 12 removed.
