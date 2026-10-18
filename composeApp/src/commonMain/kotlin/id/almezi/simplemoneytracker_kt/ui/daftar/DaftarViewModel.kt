@@ -2,10 +2,13 @@ package id.almezi.simplemoneytracker_kt.ui.daftar
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import id.almezi.simplemoneytracker_kt.data.CategoryRepository
 import id.almezi.simplemoneytracker_kt.data.Clock
 import id.almezi.simplemoneytracker_kt.data.Transaction
 import id.almezi.simplemoneytracker_kt.data.TransactionRepository
+import id.almezi.simplemoneytracker_kt.data.countedTransactions
 import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuMonth
+import id.almezi.simplemoneytracker_kt.ui.designsystem.TransactionType
 import id.almezi.simplemoneytracker_kt.ui.designsystem.dateOf
 import id.almezi.simplemoneytracker_kt.ui.designsystem.monthOf
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,6 +36,7 @@ data class DaftarUiState(
 
 class DaftarViewModel(
     private val repository: TransactionRepository,
+    private val categoryRepository: CategoryRepository,
     private val clock: Clock
 ) : ViewModel() {
 
@@ -98,14 +102,20 @@ class DaftarViewModel(
     private suspend fun rebuild(month: SakuMonth, all: List<Transaction>) {
         val start = month.startMillis()
         val end = month.endMillisExclusive()
+        val categories = categoryRepository.getAllOnce()
+        // Every row of the month is listed — the user recorded it, so it stays
+        // visible — but only counting categories move the numbers
+        // (`UI_SPEC.md:16`).
         val inMonth = all.filter { it.dateEpochMillis in start until end }
             .sortedByDescending { it.dateEpochMillis }
+        val counted = countedTransactions(all, start, end, categories)
+        val countedIds = counted.mapTo(mutableSetOf()) { it.id }
         val days = inMonth
             .groupBy { dateOf(it.dateEpochMillis) }
             .map { (_, txs) ->
                 TransactionDay(
                     dateMillis = txs.maxOf { it.dateEpochMillis },
-                    netTotal = txs.sumOf { signedAmount(it) },
+                    netTotal = txs.filter { it.id in countedIds }.sumOf { signedAmount(it) },
                     transactions = txs.sortedByDescending { it.createdAt }
                 )
             }
@@ -114,13 +124,17 @@ class DaftarViewModel(
             it.copy(
                 month = month,
                 days = days,
-                incomeTotal = inMonth.filter { tx -> tx.type == "pemasukan" }.sumOf { it.amount },
-                expenseTotal = inMonth.filter { tx -> tx.type == "pengeluaran" }.sumOf { it.amount }
+                incomeTotal = counted.filter { tx -> tx.type == TransactionType.Income.storageValue }.sumOf { it.amount },
+                expenseTotal = counted.filter { tx -> tx.type == TransactionType.Expense.storageValue }.sumOf { it.amount }
             )
         }
     }
 
     private fun signedAmount(transaction: Transaction): Long =
-        if (transaction.type == "pemasukan") transaction.amount else -transaction.amount
+        if (transaction.type == TransactionType.Income.storageValue) {
+            transaction.amount
+        } else {
+            -transaction.amount
+        }
 
 }

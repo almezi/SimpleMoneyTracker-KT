@@ -9,6 +9,8 @@ class CategoryRepository(
 ) {
     fun getAll(): Flow<List<Category>> = categoryDao.getAll()
 
+    suspend fun getAllOnce(): List<Category> = categoryDao.getAllOnce()
+
     suspend fun getByTypeOnce(type: String): List<Category> = categoryDao.getByTypeOnce(type)
 
     suspend fun get(id: String): Category? = categoryDao.getById(id)

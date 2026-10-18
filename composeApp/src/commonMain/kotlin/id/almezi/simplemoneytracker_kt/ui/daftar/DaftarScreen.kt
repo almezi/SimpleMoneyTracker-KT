@@ -73,6 +73,7 @@ fun DaftarScreen(
     val viewModel: DaftarViewModel = viewModel(
         factory = viewModelFactory { initializer { DaftarViewModel(
             container.transactionRepository,
+            container.categoryRepository,
             container.clock,
         ) } },
     )

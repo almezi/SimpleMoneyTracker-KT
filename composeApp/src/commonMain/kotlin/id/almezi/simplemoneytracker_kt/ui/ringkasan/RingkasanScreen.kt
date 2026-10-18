@@ -67,6 +67,7 @@ fun RingkasanScreen(
     val viewModel: RingkasanViewModel = viewModel(
         factory = viewModelFactory { initializer { RingkasanViewModel(
             container.transactionRepository,
+            container.categoryRepository,
             container.clock,
         ) } },
     )

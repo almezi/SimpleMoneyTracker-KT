@@ -34,29 +34,6 @@ interface TransactionDao {
         endMillis: Long
     ): Long
 
-    @Query(
-        "SELECT COALESCE(SUM(CASE WHEN type = 'pemasukan' THEN amount ELSE 0 END), 0) " +
-            "FROM transactions WHERE dateEpochMillis >= :startMillis AND dateEpochMillis < :endMillis"
-    )
-    suspend fun sumIncomeBetween(startMillis: Long, endMillis: Long): Long
-
-    @Query(
-        "SELECT COALESCE(SUM(CASE WHEN type = 'pengeluaran' THEN amount ELSE 0 END), 0) " +
-            "FROM transactions WHERE dateEpochMillis >= :startMillis AND dateEpochMillis < :endMillis"
-    )
-    suspend fun sumExpenseBetween(startMillis: Long, endMillis: Long): Long
-
-    @Query(
-        "SELECT categoryId, COALESCE(SUM(amount), 0) AS total FROM transactions " +
-            "WHERE type = :type AND dateEpochMillis >= :startMillis AND dateEpochMillis < :endMillis " +
-            "GROUP BY categoryId"
-    )
-    suspend fun totalsByCategory(
-        type: String,
-        startMillis: Long,
-        endMillis: Long
-    ): List<CategoryTotal>
-
     @Query("UPDATE transactions SET categoryId = :toCategoryId WHERE categoryId = :fromCategoryId")
     suspend fun moveCategory(fromCategoryId: String, toCategoryId: String)
 
@@ -72,8 +49,3 @@ interface TransactionDao {
     @Query("DELETE FROM transactions WHERE id = :id")
     suspend fun delete(id: Long)
 }
-
-data class CategoryTotal(
-    val categoryId: String,
-    val total: Long
-)

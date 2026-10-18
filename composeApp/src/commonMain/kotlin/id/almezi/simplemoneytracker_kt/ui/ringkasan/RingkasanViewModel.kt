@@ -2,8 +2,11 @@ package id.almezi.simplemoneytracker_kt.ui.ringkasan
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import id.almezi.simplemoneytracker_kt.data.CategoryRepository
+import id.almezi.simplemoneytracker_kt.data.CategoryTotal
 import id.almezi.simplemoneytracker_kt.data.Clock
 import id.almezi.simplemoneytracker_kt.data.TransactionRepository
+import id.almezi.simplemoneytracker_kt.data.monthTotals
 import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuMonth
 import id.almezi.simplemoneytracker_kt.ui.designsystem.monthOf
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,6 +36,7 @@ data class RingkasanUiState(
 
 class RingkasanViewModel(
     private val repository: TransactionRepository,
+    private val categoryRepository: CategoryRepository,
     private val clock: Clock
 ) : ViewModel() {
 
@@ -65,26 +69,26 @@ class RingkasanViewModel(
     private fun refresh(month: SakuMonth) {
         _uiState.update { it.copy(month = month, loading = true) }
         viewModelScope.launch {
-            val start = month.startMillis()
-            val end = month.endMillisExclusive()
-            val income = repository.incomeBetween(start, end)
-            val expense = repository.expenseBetween(start, end)
-            val incomeRows = repository.totalsByCategory("pemasukan", start, end)
-            val expenseRows = repository.totalsByCategory("pengeluaran", start, end)
+            val totals = monthTotals(
+                transactions = repository.getAllTransactionsOnce(),
+                startMillis = month.startMillis(),
+                endMillis = month.endMillisExclusive(),
+                categories = categoryRepository.getAllOnce()
+            )
             _uiState.update {
                 it.copy(
                     loading = false,
-                    balance = income - expense,
-                    income = income,
-                    expense = expense,
-                    incomeByCategory = breakdown(incomeRows, income),
-                    expenseByCategory = breakdown(expenseRows, expense)
+                    balance = totals.balance,
+                    income = totals.income,
+                    expense = totals.expense,
+                    incomeByCategory = breakdown(totals.incomeByCategory, totals.income),
+                    expenseByCategory = breakdown(totals.expenseByCategory, totals.expense)
                 )
             }
         }
     }
 
-    private fun breakdown(rows: List<id.almezi.simplemoneytracker_kt.data.CategoryTotal>, typeTotal: Long) =
+    private fun breakdown(rows: List<CategoryTotal>, typeTotal: Long) =
         rows
             .filter { it.total > 0L }
             .map { row ->

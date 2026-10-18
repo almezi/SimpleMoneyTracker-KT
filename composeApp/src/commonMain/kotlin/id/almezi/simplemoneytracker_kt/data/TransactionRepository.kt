@@ -40,18 +40,6 @@ class TransactionRepository(
         }
     }
 
-    suspend fun totalsByCategory(
-        type: String,
-        startMillis: Long,
-        endMillis: Long
-    ): List<CategoryTotal> = transactionDao.totalsByCategory(type, startMillis, endMillis)
-
-    suspend fun incomeBetween(startMillis: Long, endMillis: Long): Long =
-        transactionDao.sumIncomeBetween(startMillis, endMillis)
-
-    suspend fun expenseBetween(startMillis: Long, endMillis: Long): Long =
-        transactionDao.sumExpenseBetween(startMillis, endMillis)
-
     suspend fun spentForCategory(categoryId: String, startMillis: Long, endMillis: Long): Long =
         transactionDao.sumAmountForCategoryBetween(categoryId, startMillis, endMillis)
 }
