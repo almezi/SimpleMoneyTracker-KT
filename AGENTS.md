@@ -2,6 +2,22 @@
 
 Standing instructions for any AI coding tool working on this repo. Read UI_SPEC.md, CATEGORIES.md and TESTABILITY.md first. Do not ask for or read BUGS.md.
 
+## Doc layout (do not reorganize)
+
+Root contract files stay at root: `README.md`, `LICENSE`, `AGENTS.md`,
+`UI_SPEC.md`, `CATEGORIES.md`, `TESTABILITY.md`. GitHub and AI tools expect
+them there, and `AGENTS.md` plus `docs/` reference them by bare name.
+`improve/` stays at root (`docs/` references `improve/...` paths). Detail
+docs live in `docs/`. Do not consolidate everything under `docs/`.
+
+## Doc layout (do not reorganize)
+
+Root contract files stay at root: `README.md`, `LICENSE`, `AGENTS.md`,
+`UI_SPEC.md`, `CATEGORIES.md`, `TESTABILITY.md`. GitHub and AI tools expect
+them there, and `AGENTS.md` plus `docs/` reference them by bare name.
+`improve/` stays at root (`docs/` references `improve/...` paths). Detail
+docs live in `docs/`. Do not consolidate everything under `docs/`.
+
 ## What this is
 A small, local-only personal money tracker, built purely as a test target for mobile automation. Not a product. Keep it small.
 

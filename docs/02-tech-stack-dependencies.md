@@ -221,7 +221,7 @@ Three things to be aware of:
    `keepRules` are required — `app/src/main/keepRules/rules.keep` contains only
    the template comments.
 2. **No `signingConfigs` block at all.** Release builds are produced
-   **unsigned**. See [05-ci-cd-release-runbook.md](05-ci-cd-release-runbook.md).
+   **unsigned** (manual local builds; no CI).
 3. **`buildConfig` is not enabled.** `BuildConfig` is not generated, so
    `BuildConfig.DEBUG` cannot currently gate debug-only hooks. Turn it on if
    you implement the seed/fake-clock intents (see

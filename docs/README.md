@@ -20,17 +20,13 @@ in the docs. Those sections say so explicitly instead of inventing content.
 
 ## Security & Operations
 
-| # | Document | Covers |
-|---|---|---|
-| 4 | [04-credentials-access-register.md](04-credentials-access-register.md) | Store portals, signing, third-party services — and why most of it does not exist yet |
-| 5 | [05-ci-cd-release-runbook.md](05-ci-cd-release-runbook.md) | Current manual release process, versioning rules, store submission checklist |
+No backend, no credentials, no CI — local-only app, manual `./gradlew` builds. Backup is CSV/JSON via the Cadangan screen.
 
 ## Product & Business
 
 | # | Document | Covers |
 |---|---|---|
-| 6 | [06-functional-spec.md](06-functional-spec.md) | User stories, business rules, edge cases, RBAC |
-| 7 | [07-api-integration.md](07-api-integration.md) | The backup file formats (CSV/JSON) — the app's only "interface" |
+| 6 | [06-functional-spec.md](06-functional-spec.md) | User stories, business rules, edge cases, RBAC; CSV/JSON backup formats (the app's only "interface") |
 | 8 | [08-design-system.md](08-design-system.md) | Tokens, typography, spacing, components, motion, test tags |
 | 9 | [09-ios-migration-plan.md](09-ios-migration-plan.md) | **Plan (not implemented).** 48-step to-do list to release on iOS via KMP + Compose Multiplatform |
 
@@ -45,9 +41,8 @@ test scope. Do not duplicate their content in new places without a reason.
 | `UI_SPEC.md` | What the app does; screen-by-screen behaviour |
 | `CATEGORIES.md` | Category IDs, columns, `countsInTotals` rules |
 | `TESTABILITY.md` | Test-tag contract, debug hooks, seed sets |
-| `improve/` | Design package: design system, screens, prompts, acceptance checklist |
+| `improve/` | Design package: design system and screens |
 | `README.md` | Build commands, key files, APK download |
-| `CODE_REVIEW.md` | Removed dead code and why |
 
 ## Reading order for a new engineer
 

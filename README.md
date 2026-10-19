@@ -302,7 +302,7 @@ Tokens and components live in `app/src/main/java/.../ui/designsystem/` and `ui/c
 - The Transaksi empty state keeps the month switcher at the top so other months can still be browsed.
 
 ## Cleanup
-- Removed unused imports, 23 unused string resources, and the dead code listed in `CODE_REVIEW.md` (unused composables, unused design tokens, unused DAO and repository methods).
+- Removed unused imports, 23 unused string resources, and dead code (unused composables, design tokens, DAO and repository methods).
 - No behaviour change: `./gradlew assembleDebug` and `./gradlew testDebugUnitTest` both pass.
 
 ## Testability
