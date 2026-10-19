@@ -352,3 +352,9 @@ Verify the checksum after rebuilding with `shasum -a 256 release/SimpleMoneyTrac
 - Use `libs.versions.toml` for dependency management
 - Strings in resource files (Indonesian first), no hard-coded UI text
 - Injectable clock — never call system clock directly
+
+## Acknowledging AI Assistance
+Parts of this project were built with AI assistance (code, docs, reviews); humans review and own every change.
+
+## License
+MIT — see [LICENSE](LICENSE). Free to use as a testing app; feedback and input via issues and pull requests are welcome.
