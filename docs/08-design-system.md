@@ -14,8 +14,7 @@ Verified against branch `feature/improve-design-2.0`, HEAD `8c7dc3a`.
 | **Design tokens (canonical)** | `improve/tokens.css` | CSS custom properties | **The source of truth** |
 | **Design system spec** | `improve/01-design-system.md` | Markdown, 20 component sections | Authoritative for intent |
 | **Screen & rule spec** | `improve/02-screens-and-rules.md` | Markdown, 15 artboards | Authoritative for screen behaviour |
-| **Build prompts** | `improve/03-vibe-coding-prompts.md` | Markdown, prompts 0–10 | The ordered build recipe used |
-| **Acceptance checklist** | `improve/04-acceptance-checklist.md` | Markdown | Per-step done criteria |
+| **Acceptance checklist** | (removed — all slices done; lived in git history) |
 | **Package overview** | `improve/00-README.md` | Markdown | How to use the package |
 | **Implementation** | `ui/designsystem/` + `ui/components/` | Kotlin | The tokens, in code |
 | **App spec** | `UI_SPEC.md` §5 | Markdown | Product-level design rules |
@@ -366,7 +365,7 @@ style.
 | `SakuLoadingScreen` | Splash / loading, min 1200 ms |
 
 > `CategoryChipGrid` was **removed** as dead code — `CategoryChipRow` is the
-> variant actually used. See `CODE_REVIEW.md` §2.1.
+> variant actually used.
 
 ---
 

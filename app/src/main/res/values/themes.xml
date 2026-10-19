@@ -1,13 +1,15 @@
 <resources>
-    <!-- Saku is a dark-only app, so day and night share one theme. -->
+    <!-- Dark-only: day and night share one theme. Android 15+ is edge-to-edge,
+         so the bars stay transparent and screens pad with WindowInsets. -->
     <style name="Theme.SimpleMoneyTrackerKT" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/saku_violet</item>
         <item name="colorPrimaryVariant">@color/saku_bg</item>
         <item name="colorOnPrimary">@color/white</item>
         <item name="colorSecondary">@color/saku_violet</item>
         <item name="colorOnSecondary">@color/black</item>
-        <item name="android:statusBarColor">@color/saku_bg</item>
-        <item name="android:navigationBarColor">@color/saku_bg</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowBackground">@color/saku_bg</item>
+        <item name="android:windowLightStatusBar">false</item>
     </style>
 </resources>

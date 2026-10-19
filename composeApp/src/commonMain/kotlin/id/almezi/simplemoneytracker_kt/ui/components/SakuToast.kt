@@ -25,6 +25,7 @@ import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuRadius
 import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuSize
 import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuSpace
 import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuTheme
+import id.almezi.simplemoneytracker_kt.ui.designsystem.safeAreaBottom
 import kotlinx.coroutines.delay
 
 @Immutable
@@ -49,7 +50,7 @@ fun SakuToastHost(
         }
     }
     Box(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize().safeAreaBottom(),
         contentAlignment = Alignment.BottomCenter,
     ) {
         if (toast != null) {

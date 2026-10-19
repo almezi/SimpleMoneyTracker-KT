@@ -1,7 +1,5 @@
 package id.almezi.simplemoneytracker_kt.ui.designsystem
 
-import id.almezi.simplemoneytracker_kt.ui.designsystem.safeAreaTop
-
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.only
@@ -13,20 +11,23 @@ import androidx.compose.ui.Modifier
 /**
  * Keeps content clear of the status bar and any display cutout.
  *
- * This replaces `Modifier.safeAreaTop()`, which is available in
- * commonMain but is an Android-only concept: on iOS it resolves to zero
- * insets, so every screen using it would have drawn under the notch and the
- * Dynamic Island.
- *
- * [WindowInsets.safeDrawing] covers both platforms:
- *  - Android: the status bar, and horizontal cutout/gesture-nav insets
- *  - iOS: the safe area (notch, status area, landscape cutout)
- *
- * Only the top and horizontal sides are applied. The bottom is left to each
- * screen's footer and to the bottom bar's own `navBarBottomOffset`, so padding
- * is not applied twice.
+ * [WindowInsets.safeDrawing] covers both platforms (Android status bar, iOS
+ * notch/Dynamic Island). Only top + horizontal: bottom stays with each
+ * screen's footer and the bottom bar's own insets (see [safeAreaBottom]), so
+ * padding is not applied twice.
  */
 @Composable
 fun Modifier.safeAreaTop(): Modifier = windowInsetsPadding(
     WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
+)
+
+/**
+ * Keeps content clear of the system navigation bar and the iOS home
+ * indicator. Android 15+ draws edge-to-edge, so every scroll container adds
+ * this on top of its design bottom reserve. Bottom only, so it composes with
+ * [safeAreaTop] without double-counting horizontal insets.
+ */
+@Composable
+fun Modifier.safeAreaBottom(): Modifier = windowInsetsPadding(
+    WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom)
 )

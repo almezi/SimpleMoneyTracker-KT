@@ -302,7 +302,7 @@ Tokens and components live in `app/src/main/java/.../ui/designsystem/` and `ui/c
 - The Transaksi empty state keeps the month switcher at the top so other months can still be browsed.
 
 ## Cleanup
-- Removed unused imports, 23 unused string resources, and the dead code listed in `CODE_REVIEW.md` (unused composables, unused design tokens, unused DAO and repository methods).
+- Removed unused imports, 23 unused string resources, and dead code (unused composables, design tokens, DAO and repository methods).
 - No behaviour change: `./gradlew assembleDebug` and `./gradlew testDebugUnitTest` both pass.
 
 ## Testability
@@ -352,3 +352,9 @@ Verify the checksum after rebuilding with `shasum -a 256 release/SimpleMoneyTrac
 - Use `libs.versions.toml` for dependency management
 - Strings in resource files (Indonesian first), no hard-coded UI text
 - Injectable clock — never call system clock directly
+
+## Acknowledging AI Assistance
+Parts of this project were built with AI assistance (code, docs, reviews); humans review and own every change.
+
+## License
+MIT — see [LICENSE](LICENSE). Free to use as a testing app; feedback and input via issues and pull requests are welcome.

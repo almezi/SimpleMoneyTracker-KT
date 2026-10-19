@@ -1,6 +1,6 @@
 # Saku Revamp: Design and Build Package
 
-This package turns the Saku canvas design into instructions you can give to an AI coding tool (vibe coding) to upgrade your existing app.
+This package turned the Saku canvas design into the build instructions used for this app's redesign (build complete — specs in `01`/`02` remain as reference).
 
 ## What is in this package
 
@@ -10,16 +10,14 @@ This package turns the Saku canvas design into instructions you can give to an A
 | `01-design-system.md` | Colors, type, spacing, radius, and every component | Yes |
 | `tokens.css` | Design tokens as CSS variables, ready to paste into your project | Yes |
 | `02-screens-and-rules.md` | Every screen, its states, navigation, and business rules | Yes |
-| `03-vibe-coding-prompts.md` | Step-by-step prompts to run in order | Yes, one step at a time |
-| `04-acceptance-checklist.md` | How to know each step is done | No (for you) |
 
 ## How to use it
 
 1. **Read `02-screen-inventory` first** so you know the full scope.
-2. **Check your current stack.** Vibe coding works best when the AI knows your framework (React, Vue, Flutter, plain HTML, etc.). Put it at the top of every prompt in `03-vibe-coding-prompts.md`.
+2. **Check your current stack.** Vibe coding works best when the AI knows your framework (React, Vue, Flutter, plain HTML, etc.).
 3. **Copy `tokens.css` into your project** before anything else. Every later step uses these variables.
-4. **Run the prompts in order**, one at a time. Do not paste the whole package in a single message. Each step has a checklist in `04-acceptance-checklist.md`.
-5. **Test after each step** on a phone-sized screen (390 px wide). Mark the checklist items before moving on.
+4. **Work from `02-screens-and-rules.md`** for screen behaviour and business rules.
+5. **Test after each step** on a phone-sized screen (390 px wide).
 
 ## Ground rules for the AI
 

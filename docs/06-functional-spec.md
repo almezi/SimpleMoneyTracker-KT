@@ -370,5 +370,4 @@ Fragile invariants worth calling out explicitly:
 ## See also
 
 - `UI_SPEC.md` — the authoritative spec this document explains
-- [07-api-integration.md](07-api-integration.md) — backup file formats
 - [01-architecture-blueprint.md](01-architecture-blueprint.md) — where the rules live in code

@@ -48,6 +48,7 @@ import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuSize
 import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuSpace
 import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuTheme
 import id.almezi.simplemoneytracker_kt.ui.designsystem.TransactionType
+import id.almezi.simplemoneytracker_kt.ui.designsystem.safeAreaBottom
 import id.almezi.simplemoneytracker_kt.ui.designsystem.safeAreaTop
 
 @Composable
@@ -77,8 +78,9 @@ fun TambahKategoriScreen(
         modifier = modifier
             .fillMaxSize()
             .background(SakuTheme.colors.bg)
-            .verticalScroll(rememberScrollState())
             .safeAreaTop()
+            .safeAreaBottom()
+            .verticalScroll(rememberScrollState())
             .padding(horizontal = SakuSpace.screenHorizontal)
             .padding(top = SakuSpace.screenHorizontal, bottom = SakuSpace.screenBottom)
             .testTag(TestTags.KATEGORI_FORM_SCREEN),

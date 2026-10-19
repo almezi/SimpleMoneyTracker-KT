@@ -114,9 +114,7 @@ Hand-written at the repo root:
 ### Secrets
 
 There are none to configure. No API keys, no tokens, no signing properties,
-no credentials file. See
-[04-credentials-access-register.md](04-credentials-access-register.md) for
-what would need to be created to publish this app.
+no credentials file.
 
 If you add a signing config later, read credentials from
 `local.properties` (already git-ignored) or the environment — never commit a
@@ -211,7 +209,6 @@ SimpleMoneyTracker-KT/
 ├── UI_SPEC.md                   What the app does. Authoritative for scope
 ├── CATEGORIES.md                Category IDs, columns, countsInTotals rules
 ├── TESTABILITY.md               Test-tag contract, debug hooks, seed sets
-├── CODE_REVIEW.md               Dead code removed, with reasons
 ├── README.md                    Build commands, key files, APK download
 │
 ├── build.gradle.kts             Plugin aliases, apply false
@@ -251,8 +248,6 @@ SimpleMoneyTracker-KT/
 │   ├── 00-README.md                   How to use the package
 │   ├── 01-design-system.md           Components, colors, type, motion
 │   ├── 02-screens-and-rules.md       Every screen, state, business rule
-│   ├── 03-vibe-coding-prompts.md     Ordered build prompts
-│   ├── 04-acceptance-checklist.md    Per-step done criteria
 │   └── tokens.css                    Design tokens as CSS variables
 │
 ├── third_party/
@@ -368,4 +363,3 @@ From `AGENTS.md` and enforced throughout the codebase:
 
 - [01-architecture-blueprint.md](01-architecture-blueprint.md) — layer responsibilities
 - [02-tech-stack-dependencies.md](02-tech-stack-dependencies.md) — versions in detail
-- [05-ci-cd-release-runbook.md](05-ci-cd-release-runbook.md) — producing a release artifact
