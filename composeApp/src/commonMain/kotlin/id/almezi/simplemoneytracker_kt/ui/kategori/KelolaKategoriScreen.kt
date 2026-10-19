@@ -55,6 +55,7 @@ import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuSize
 import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuSpace
 import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuTheme
 import id.almezi.simplemoneytracker_kt.ui.designsystem.TransactionType
+import id.almezi.simplemoneytracker_kt.ui.designsystem.safeAreaBottom
 import id.almezi.simplemoneytracker_kt.ui.designsystem.safeAreaTop
 import id.almezi.simplemoneytracker_kt.ui.categoryDisplayName
 import id.almezi.simplemoneytracker_kt.data.RenameResult
@@ -90,8 +91,9 @@ fun KelolaKategoriScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .safeAreaTop()
+                .safeAreaBottom()
                 .padding(horizontal = SakuSpace.screenHorizontal)
-                .padding(top = SakuSpace.screenHorizontal),
+                .padding(top = SakuSpace.screenHorizontal, bottom = SakuSpace.screenBottom),
         ) {
             ScreenHeader(title = SakuStrings.kategori_title, onBack = onBack)
 

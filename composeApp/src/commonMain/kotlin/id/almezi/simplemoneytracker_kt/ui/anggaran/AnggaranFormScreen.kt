@@ -46,6 +46,7 @@ import id.almezi.simplemoneytracker_kt.ui.designsystem.TransactionType
 import id.almezi.simplemoneytracker_kt.ui.designsystem.formatMonthLabel
 import id.almezi.simplemoneytracker_kt.ui.designsystem.formatRupiah
 import id.almezi.simplemoneytracker_kt.ui.designsystem.monthOf
+import id.almezi.simplemoneytracker_kt.ui.designsystem.safeAreaBottom
 import id.almezi.simplemoneytracker_kt.ui.designsystem.safeAreaTop
 import id.almezi.simplemoneytracker_kt.ui.categoryDisplayName
 import id.almezi.simplemoneytracker_kt.ui.getCategoryName
@@ -87,8 +88,9 @@ fun AnggaranFormScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
                 .safeAreaTop()
+                .safeAreaBottom()
+                .verticalScroll(rememberScrollState())
                 .padding(horizontal = SakuSpace.screenHorizontal)
                 .padding(top = SakuSpace.screenHorizontal, bottom = SakuSpace.screenBottom),
             verticalArrangement = Arrangement.spacedBy(SakuSpace.screenHorizontal),

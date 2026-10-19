@@ -56,6 +56,7 @@ import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuSpace
 import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuTheme
 import id.almezi.simplemoneytracker_kt.ui.designsystem.TransactionType
 import id.almezi.simplemoneytracker_kt.ui.designsystem.formatShortDate
+import id.almezi.simplemoneytracker_kt.ui.designsystem.safeAreaBottom
 import id.almezi.simplemoneytracker_kt.ui.designsystem.safeAreaTop
 import id.almezi.simplemoneytracker_kt.ui.categoryDisplayName
 
@@ -128,8 +129,9 @@ fun TransactionForm(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
                 .safeAreaTop()
+                .safeAreaBottom()
+                .verticalScroll(rememberScrollState())
                 .padding(horizontal = SakuSpace.screenHorizontal)
                 .padding(top = SakuSpace.screenHorizontal, bottom = bottomReserve),
         ) {

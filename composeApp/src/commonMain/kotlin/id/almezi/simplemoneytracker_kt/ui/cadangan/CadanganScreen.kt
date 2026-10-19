@@ -42,6 +42,7 @@ import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuRadius
 import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuSpace
 import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuTheme
 import id.almezi.simplemoneytracker_kt.ui.designsystem.formatShortDate
+import id.almezi.simplemoneytracker_kt.ui.designsystem.safeAreaBottom
 import id.almezi.simplemoneytracker_kt.ui.designsystem.safeAreaTop
 import kotlinx.coroutines.launch
 
@@ -83,8 +84,9 @@ fun CadanganScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
                 .safeAreaTop()
+                .safeAreaBottom()
+                .verticalScroll(rememberScrollState())
                 .padding(horizontal = SakuSpace.screenHorizontal)
                 .padding(top = SakuSpace.screenHorizontal, bottom = SakuSpace.screenBottom),
             verticalArrangement = Arrangement.spacedBy(SakuSpace.screenHorizontal),

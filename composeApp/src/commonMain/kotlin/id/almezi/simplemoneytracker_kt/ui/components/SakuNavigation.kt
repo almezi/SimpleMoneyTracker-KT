@@ -32,6 +32,7 @@ import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuRadius
 import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuSize
 import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuSpace
 import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuTheme
+import id.almezi.simplemoneytracker_kt.ui.designsystem.safeAreaBottom
 
 /**
  * One entry in the bottom bar.
@@ -64,6 +65,8 @@ fun <T : Any> SakuBottomNav(
     Surface(
         modifier = modifier
             .fillMaxWidth()
+            // Real system-bar inset; bottomOffset alone is a fixed design gap.
+            .safeAreaBottom()
             .padding(horizontal = sideMargin)
             .padding(bottom = bottomOffset)
             .height(height)
