@@ -26,6 +26,7 @@ No backend, no credentials, no CI — local-only app, manual `./gradlew` builds.
 
 | # | Document | Covers |
 |---|---|---|
+| - | [PRD.md](PRD.md) | Product Requirement Document: Executive summary, goals, user stories, detailed features, technical constraints |
 | 6 | [06-functional-spec.md](06-functional-spec.md) | User stories, business rules, edge cases, RBAC; CSV/JSON backup formats (the app's only "interface") |
 | 8 | [08-design-system.md](08-design-system.md) | Tokens, typography, spacing, components, motion, test tags |
 | 9 | [09-ios-migration-plan.md](09-ios-migration-plan.md) | **Plan (not implemented).** 48-step to-do list to release on iOS via KMP + Compose Multiplatform |
