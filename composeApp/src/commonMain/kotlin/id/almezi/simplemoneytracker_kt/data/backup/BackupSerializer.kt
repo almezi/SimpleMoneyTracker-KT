@@ -119,7 +119,9 @@ class BackupSerializer(
         }
 
     internal companion object {
-        val JAKARTA: TimeZone = TimeZone.of("Asia/Jakarta")
+        // The one Jakarta constant for the whole app lives in SakuFormat; the
+        // backup format deliberately pins the same zone (see the class doc).
+        val JAKARTA: TimeZone = id.almezi.simplemoneytracker_kt.ui.designsystem.JAKARTA
     }
 }
 

@@ -48,6 +48,8 @@ object TestTags {
     const val ANGGARAN_EMPTY_STATE = "anggaran_empty_state"
     const val ANGGARAN_FORM_SCREEN = "anggaran_form_screen"
     const val ANGGARAN_FORM_CATEGORY = "anggaran_form_category"
+    const val ANGGARAN_FORM_CATEGORY_SEARCH = "anggaran_form_category_search"
+    const val ANGGARAN_FORM_CATEGORY_SEARCH_EMPTY = "anggaran_form_category_search_empty"
     const val ANGGARAN_FORM_LIMIT = "anggaran_form_limit"
     const val ANGGARAN_FORM_SWITCH = "anggaran_form_switch"
     const val ANGGARAN_FORM_NOTE = "anggaran_form_note"

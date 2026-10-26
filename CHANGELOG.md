@@ -2,6 +2,15 @@
 
 All notable changes to SimpleMoneyTracker-KT are documented here.
 
+## [Unreleased] — Category search on the budget form (2026-10-27)
+
+### Added
+- The "Pilih kategori" sheet on Anggaran baru / Ubah anggaran now has a
+  search field under the title that filters the expense categories by
+  name, case-insensitive, with "Kategori tidak ditemukan" when nothing
+  matches (`UI_SPEC.md` §6.6 updated). New tags:
+  `anggaran_form_category_search` / `anggaran_form_category_search_empty`.
+
 ## [Unreleased] — Automation bug fixes (2026-10-26, `bugs/BUG_Found_05`/`06`)
 
 ### Fixed
@@ -13,13 +22,19 @@ All notable changes to SimpleMoneyTracker-KT are documented here.
   scales either: the category name and type subtitle truncate with an
   ellipsis (`bugs/BUG_Found_06.md` follow-up).
 
+### Changed
+- Built-in (Bawaan) categories no longer offer rename: their rows in Kelola
+  kategori show only the hide action, on both the Pemasukan and Pengeluaran
+  tabs. Edit and delete remain on custom categories (`UI_SPEC.md` §6.5
+  updated to match).
+
 ### Not a bug
 - `bugs/BUG_Found_05.md` closed: the Tambah form composes and saves correctly
   in landscape; the "missing" note field and save button were off-screen nodes
   filtered from the automation dump. Re-verification and harness
   recommendations recorded in the bug file.
 
-## [Unreleased] — P1+P2 fixes from the 2026-10-26 code review (`docs/11-code-review-2026-10-26.md`)
+## [Unreleased] — P1+P2+P3 fixes from the 2026-10-26 code review (`docs/11-code-review-2026-10-26.md`)
 
 ### Fixed
 - Backup export no longer writes the file on the main thread and can no longer
@@ -64,6 +79,33 @@ All notable changes to SimpleMoneyTracker-KT are documented here.
   contentDescription comes from the new `action_back` string instead of a
   hard-coded "Kembali".
 - Deleted dead code: `Category.displayLabel` (unused, ignored its parameter).
+- **P3 hygiene pass** (findings 14–20 of the review):
+  - `copyReleaseApk` now copies `assembleRelease` output (it used to publish a
+    debug APK under a release name; the checked-in `SimpleMoneyTrackerKt-V2.3.apk`
+    was such a build and is replaced by a genuine release artifact — see the
+    README download table for the fresh SHA-256). The disabled release
+    optimization now carries its rationale as a comment.
+  - `:app` trimmed to what `MainActivity` needs: AppCompat, Material
+    Components, Compose material3, the icon pack, tooling previews and the
+    duplicate test dependencies are gone; the theme now parents to framework
+    `android:Theme.Material.NoActionBar`. Release APK drops from 28.7 MB to
+    18.8 MB.
+  - Android Auto Backup now explicitly **excludes** the database and
+    preferences from cloud backup and device transfer — financial data never
+    leaves the device through a system channel; the app's own JSON export is
+    the supported path (matching the Cadangan screen's warning).
+  - `BackupSerializer.JAKARTA` delegates to the single `SakuFormat.JAKARTA`;
+    `UI_SPEC.md` §8 records the Asia/Jakarta pinning as a deliberate product
+    decision.
+  - Nits: removed `SakuContainer`'s self-import; a second `present()` on the
+    Android file picker now cancels the stale callback instead of overwriting
+    it; the Daftar/Ringkasan month arrows stop at `MonthPickerSheet`'s floor
+    (year − 10) instead of walking back unbounded; `UbahTransaksiViewModel`
+    applies the keep-or-clear category rule synchronously on type switch.
+  - Deferred: ViewModel/DAO test suites (finding 19 — needs a
+    `kotlinx-coroutines-test` dependency add), the `KelolaKategoriViewModel`
+    reactive conversion (correct today; noted in review finding 20), and the
+    Cadangan color-token migration (finding 7 remainder).
 
 ## [Unreleased] — PR #13: Fix undetected button in automation
 

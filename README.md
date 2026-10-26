@@ -312,22 +312,30 @@ Tokens and components live in `app/src/main/java/.../ui/designsystem/` and `ui/c
 
 ## Download APK
 
-[Download SimpleMoneyTrackerKT-v2.2.apk](release/SimpleMoneyTrackerKT-v2.2.apk)
+[Download SimpleMoneyTrackerKT-v2.3.apk](release/SimpleMoneyTrackerKT-v2.3.apk)
 
 | | |
 |---|---|
-| Version | 2.2 (`versionCode` 4) |
+| Version | 2.3 (`versionCode` 5) |
 | Build type | Release, unsigned |
 | Min / target SDK | 24 / 37 |
-| Size | 27.40 MiB (28.73 MB) |
-| SHA-256 | `8132c8f0a4ce76bed3327ef37cb1f4d2ea8efa6ef03e63352e70570328d974b3` |
-| Built on | 2026-10-24 |
-| Branch | `feature/fix-undetected-button-in-automation` |
+| Size | 17.97 MiB (18.84 MB) |
+| SHA-256 | `27e6d5d9b101fa1efd35c3d7028c216eb9a2d0161b7350d856d502fc5d52de0a` |
+| Built on | 2026-10-27 |
+| Branch | `feature/fix-bug-detected-by-automation-261026` |
+
+> Built by the corrected `:app:copyReleaseApk` task, which now copies
+> `assembleRelease` output instead of the debug APK it used to copy. The
+> previous `SimpleMoneyTrackerKt-V2.3.apk` (28.7 MB) was such a mislabeled
+> debug build and has been replaced by this file. The size drop against v2.2
+> also reflects the `:app` dependency trim (Material Components, AppCompat and
+> the second Compose toolchain removed).
 
 Previous artifacts:
 
 | File | Version | SHA-256 |
 |---|---|---|
+| `release/SimpleMoneyTrackerKT-v2.2.apk` | 2.2 (`versionCode` 4) | `8132c8f0a4ce76bed3327ef37cb1f4d2ea8efa6ef03e63352e70570328d974b3` |
 | `release/SimpleMoneyTrackerKT-v2.1.apk` | 2.1 (`versionCode` 3) | `e254f7bc5723e2b3a667dac4f1221bf5066efef69db50902c6e59d15f9c74efc` |
 | `release/SimpleMoneyTrackerKT-v2.0.apk` | **mislabeled — actually 1.0 (`versionCode` 1)** | `fd7080e690a9b99212a85019e761d5793f0ef6226bba83bc3f16bb9e03e59b54` |
 
@@ -342,11 +350,17 @@ use `./gradlew installDebug` instead, which produces a signed debug build.
 Rebuild the release artifact with:
 
 ```
-./gradlew clean assembleRelease
-cp app/build/outputs/apk/release/app-release-unsigned.apk release/SimpleMoneyTrackerKT-v2.2.apk
+./gradlew :app:copyReleaseApk
 ```
 
-Verify the checksum after rebuilding with `shasum -a 256 release/SimpleMoneyTrackerKT-v2.2.apk`.
+or, by hand:
+
+```
+./gradlew clean assembleRelease
+cp app/build/outputs/apk/release/app-release-unsigned.apk release/SimpleMoneyTrackerKT-v2.3.apk
+```
+
+Verify the checksum after rebuilding with `shasum -a 256 release/SimpleMoneyTrackerKT-v2.3.apk`.
 
 ## Conventions
 - Kotlin code style: official

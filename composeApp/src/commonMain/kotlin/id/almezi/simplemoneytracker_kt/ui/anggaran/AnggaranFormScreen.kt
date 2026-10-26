@@ -168,6 +168,9 @@ fun AnggaranFormScreen(
                 onSelect = viewModel::selectCategory,
                 onDismissRequest = { showCategorySheet = false },
                 testTag = TestTags.ANGGARAN_FORM_CATEGORY + "_sheet",
+                searchable = true,
+                searchTag = TestTags.ANGGARAN_FORM_CATEGORY_SEARCH,
+                searchEmptyTag = TestTags.ANGGARAN_FORM_CATEGORY_SEARCH_EMPTY,
             )
         }
 

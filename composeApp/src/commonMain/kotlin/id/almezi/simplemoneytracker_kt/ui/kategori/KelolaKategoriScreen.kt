@@ -257,13 +257,15 @@ private fun CategoryRowCard(
                     color = SakuTheme.colors.textMuted,
                 )
             }
-            Spacer(modifier = Modifier.width(SakuSpace.tight))
-            IconActionButton(
-                icon = Icons.Filled.Edit,
-                contentDescription = SakuStrings.cd_ubah_kategori,
-                onClick = onRename,
-                testTag = TestTags.KATEGORI_ROW_EDIT + "_" + row.category.id,
-            )
+            if (!row.isDefault) {
+                Spacer(modifier = Modifier.width(SakuSpace.tight))
+                IconActionButton(
+                    icon = Icons.Filled.Edit,
+                    contentDescription = SakuStrings.cd_ubah_kategori,
+                    onClick = onRename,
+                    testTag = TestTags.KATEGORI_ROW_EDIT + "_" + row.category.id,
+                )
+            }
             Spacer(modifier = Modifier.width(SakuSpace.tight))
             IconActionButton(
                 icon = if (row.isHidden) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,

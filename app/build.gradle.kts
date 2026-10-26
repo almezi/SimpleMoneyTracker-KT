@@ -19,6 +19,11 @@ android {
 
     buildTypes {
         release {
+            // Deliberate, not an oversight: Saku is an automation-test target,
+            // so release bytecode stays unshrunk and unobfuscated — no R8
+            // keep-rules to drift, and stack traces map 1:1 to sources. The
+            // cost is APK size (~27 MiB). Revisit if this ever ships as a
+            // product; note that testTagsAsResourceId does NOT require this.
             optimization {
                 enable = false
             }
@@ -33,14 +38,18 @@ android {
     }
 }
 
-val currentVersionName = android.defaultConfig.versionName ?: "2.2"
+val currentVersionName = android.defaultConfig.versionName ?: "2.3"
 
+// Matches the flow documented in README.md: an assembleRelease artifact
+// (unsigned), named for the release directory. This task used to copy the
+// *debug* APK under a release name — the `SimpleMoneyTrackerKt-V2.3.apk`
+// checked in on 2026-10-26 is such a mislabeled debug build.
 tasks.register<Copy>("copyReleaseApk") {
-    description = "Copies debug APK to release directory with version name"
-    dependsOn("assembleDebug")
-    from(layout.buildDirectory.file("outputs/apk/debug/app-debug.apk"))
+    description = "Copies the release APK to the release directory with version name"
+    dependsOn("assembleRelease")
+    from(layout.buildDirectory.file("outputs/apk/release/app-release-unsigned.apk"))
     into(layout.projectDirectory.dir("../release"))
-    rename("app-debug\\.apk", "SimpleMoneyTrackerKt-V$currentVersionName.apk")
+    rename("app-release-unsigned\\.apk", "SimpleMoneyTrackerKT-v$currentVersionName.apk")
 }
 
 dependencies {
@@ -48,22 +57,13 @@ dependencies {
     // Room and KSP now live in :composeApp.
     implementation(project(":composeApp"))
 
-    implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.material)
+    // MainActivity is the only Android-side UI: a semantics root and
+    // setContent. Material3, the icon pack, AppCompat, Material Components and
+    // the second (older) Compose BOM were all removed — every pixel renders
+    // from :composeApp, and a second Compose toolchain in one APK is pure skew.
     implementation(platform(libs.compose.bom))
     implementation("androidx.compose.ui:ui")
-    implementation("androidx.compose.material3:material3")
-    implementation("androidx.compose.material:material-icons-extended")
-    implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation("androidx.compose.foundation:foundation")
     implementation(libs.androidx.activity.compose)
-    // Navigation comes from :composeApp, which uses the multiplatform
-    // org.jetbrains.androidx.navigation build. AndroidX's navigation-compose is
-    // Android-only and shadows the typed-route API the shared NavGraph needs.
-    debugImplementation("androidx.compose.ui:ui-tooling")
-    implementation(libs.kotlinx.datetime)
     implementation(libs.lifecycle.viewmodel.compose)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(libs.androidx.junit)
 }

@@ -95,6 +95,9 @@ class AndroidFilePicker : FilePicker {
     }
 
     override fun present(onPicked: (String?) -> Unit) {
+        // One result slot: a second present before the first result arrives
+        // cancels the stale callback instead of silently overwriting it.
+        onUriText(null)
         this.onPicked = onPicked
         launch?.invoke(IMPORT_MIME_TYPES)
     }

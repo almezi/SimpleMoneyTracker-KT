@@ -70,7 +70,13 @@ class DaftarViewModel(
 
     fun currentMonthMillis(): Long = clock.currentTimeMillis()
 
-    fun previousMonth() = shiftMonth(_uiState.value.month.minusMonth())
+    // Matches MonthPickerSheet's floor (today.year - 10); the arrows used to
+    // be unbounded and could walk back to year 1.
+    fun previousMonth() {
+        val previous = _uiState.value.month.minusMonth()
+        if (previous < SakuMonth(currentMonth.year - 10, 1)) return
+        shiftMonth(previous)
+    }
 
     fun nextMonth() {
         val next = _uiState.value.month.plusMonth()

@@ -96,7 +96,10 @@ class UbahTransaksiViewModel(
 
     fun updateType(type: TransactionType) {
         if (type == _uiState.value.type) return
-        _uiState.update { it.copy(type = type) }
+        // Apply the keep-or-clear rule synchronously (the flow emission
+        // reapplies the same logic below), so save can never observe a
+        // category belonging to the other type in the window before it lands.
+        _uiState.update { it.copy(type = type).withCategories(it.categories, type) }
         observeCategories(type)
     }
 

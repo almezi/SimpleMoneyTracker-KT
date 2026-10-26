@@ -97,7 +97,7 @@ Same form as Tambah, header "Ubah transaksi", no bottom bar, all fields pre-fill
 - Toggle Pemasukan / Pengeluaran, opening on Pemasukan.
 - A search field under the toggle filters the current tab by category name, case-insensitive. It stays put when the tab changes. No match shows "Kategori tidak ditemukan".
 - Rows: color square, name, "Bawaan" or "Buatan sendiri", and the transaction count. Actions are icon-only buttons on the right of the row.
-- Default categories get edit and hide. Custom categories also get delete. Hidden categories show the show icon instead of the hide icon.
+- Default categories get hide only. Custom categories get edit, hide, and delete. Hidden categories show the show icon instead of the hide icon.
 - Hint "Kategori bawaan tidak bisa dihapus, hanya disembunyikan" and a "Tambah kategori" button.
 - Deleting a custom category asks for confirmation and reports how many transactions move to "Lainnya".
 - Tambah kategori: type toggle Pemasukan / Pengeluaran, opening on Pemasukan, name (1-20 characters, unique per type, case-insensitive), one of the eight palette colors with a live preview chip, and "Simpan kategori" disabled until the name is valid.
@@ -110,6 +110,7 @@ Same form as Tambah, header "Ubah transaksi", no bottom bar, all fields pre-fill
 - The bar never fills past 100%.
 - Empty state "Belum ada anggaran" with "Atur anggaran baru". The total card is hidden when there are no budgets.
 - The form is shared: "Anggaran baru" or "Ubah anggaran", category select (categories without a budget, locked while editing), "Batas bulanan", a note that differs per mode, the switch "Ingatkan saat 80% terpakai" on by default, and "Simpan anggaran". Editing also shows "Hapus anggaran".
+- The category picker on the budget form has a search field under the title that filters the list by category name, case-insensitive, like the Tambah picker. No match shows "Kategori tidak ditemukan".
 - Deleting a budget never touches a transaction.
 
 ### 6.7 Cadangan data
@@ -136,6 +137,7 @@ Login or PIN, multi-wallet, multi-currency, transfers between accounts, recurrin
 - Manual DI: no Hilt, no Koin
 - Injectable clock: never call the system clock directly
 - Testability: all interactive elements use test tags from TestTags.kt
+- Timezone: every date renders in Asia/Jakarta (WIB) regardless of the device zone. Deliberate, for deterministic month totals and parity with the original app; changing it is a conscious product decision, not a bug fix.
 
 ### Known gaps
 - CSV import is not implemented: the import picker offers JSON only, so a CSV file shows the "file tidak valid" message.
