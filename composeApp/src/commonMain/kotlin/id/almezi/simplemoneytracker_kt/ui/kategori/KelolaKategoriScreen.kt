@@ -20,6 +20,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
@@ -39,6 +42,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.lifecycle.viewmodel.compose.viewModel
 import id.almezi.simplemoneytracker_kt.TestTags
+import id.almezi.simplemoneytracker_kt.ui.designsystem.automationTestTags
 import id.almezi.simplemoneytracker_kt.ui.components.CategoryMark
 import id.almezi.simplemoneytracker_kt.ui.components.ConfirmDeleteSheet
 import id.almezi.simplemoneytracker_kt.ui.components.HelperText
@@ -293,40 +297,49 @@ private fun RenameCategoryDialog(
     var text by remember { mutableStateOf(initialName) }
     androidx.compose.material3.AlertDialog(
         onDismissRequest = onDismiss,
+        // AlertDialog content lives in its own composition outside MainActivity's
+        // testTagsAsResourceId flag; re-arm it so automation can resolve tags.
+        modifier = Modifier.automationTestTags(),
         title = { Text(SakuStrings.kategori_rename_title) },
         text = {
-            androidx.compose.foundation.text.BasicTextField(
-                value = text,
-                onValueChange = { if (it.length <= CATEGORY_NAME_MAX) text = it },
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth().testTag(TestTags.KATEGORI_FORM_NAME),
-                decorationBox = { inner ->
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(
-                                SakuTheme.colors.surface,
-                                RoundedCornerShape(SakuRadius.input)
-                            )
-                            .padding(SakuSpace.chipGap)
-                    ) {
-                        if (text.isEmpty()) {
-                            Text(
-                                text = SakuStrings.kategori_rename_hint,
-                                style = SakuTheme.text.body,
-                                color = SakuTheme.colors.textPlaceholder,
-                            )
+            Column {
+                androidx.compose.foundation.text.BasicTextField(
+                    value = text,
+                    onValueChange = { if (it.length <= CATEGORY_NAME_MAX) text = it },
+                    singleLine = true,
+                    textStyle = SakuTheme.text.body.copy(color = SakuTheme.colors.text),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                    cursorBrush = SolidColor(SakuTheme.colors.accentText),
+                    modifier = Modifier.fillMaxWidth().testTag(TestTags.KATEGORI_FORM_NAME),
+                    decorationBox = { inner ->
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(
+                                    SakuTheme.colors.surface,
+                                    RoundedCornerShape(SakuRadius.input)
+                                )
+                                .padding(SakuSpace.chipGap)
+                        ) {
+                            if (text.isEmpty()) {
+                                Text(
+                                    text = SakuStrings.kategori_rename_hint,
+                                    style = SakuTheme.text.body,
+                                    color = SakuTheme.colors.textPlaceholder,
+                                )
+                            }
+                            inner()
                         }
-                        inner()
-                    }
-                },
-            )
-            if (errorText != null) {
-                Text(
-                    text = errorText,
-                    style = SakuTheme.text.body,
-                    color = SakuTheme.colors.danger,
+                    },
                 )
+                if (errorText != null) {
+                    Spacer(modifier = Modifier.height(SakuSpace.tight))
+                    Text(
+                        text = errorText,
+                        style = SakuTheme.text.body,
+                        color = SakuTheme.colors.danger,
+                    )
+                }
             }
         },
         confirmButton = {

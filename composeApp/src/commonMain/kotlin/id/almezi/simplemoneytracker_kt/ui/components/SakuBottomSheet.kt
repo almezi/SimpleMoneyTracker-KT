@@ -30,6 +30,7 @@ import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuRadius
 import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuSize
 import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuSpace
 import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuTheme
+import id.almezi.simplemoneytracker_kt.ui.designsystem.automationTestTags
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,9 +40,14 @@ fun SakuBottomSheet(
     content: @Composable () -> Unit,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    // A ModalBottomSheet renders into its own dialog composition, which is
+    // rooted outside the flag set in MainActivity, so testTags would vanish
+    // for automation inside every sheet. Re-arm the flag at the sheet root.
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
-        modifier = modifier.testTag(TestTags.COMPONENT_SHEET_BOTTOM),
+        modifier = modifier
+            .automationTestTags()
+            .testTag(TestTags.COMPONENT_SHEET_BOTTOM),
         sheetState = sheetState,
         shape = RoundedCornerShape(
             topStart = SakuRadius.sheet,
