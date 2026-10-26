@@ -9,6 +9,9 @@ All notable changes to SimpleMoneyTracker-KT are documented here.
   truncate with an ellipsis (`TextOverflow.Ellipsis`), and the same hardening
   covers the month-switcher label and screen-header titles
   (`bugs/BUG_Found_06.md`).
+- Transaction-card rows (Daftar/Ubah) no longer clip mid-word at large font
+  scales either: the category name and type subtitle truncate with an
+  ellipsis (`bugs/BUG_Found_06.md` follow-up).
 
 ### Not a bug
 - `bugs/BUG_Found_05.md` closed: the Tambah form composes and saves correctly
