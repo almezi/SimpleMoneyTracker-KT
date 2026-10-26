@@ -14,6 +14,7 @@
     <string name="action_ubah">Ubah</string>
     <string name="action_ya_hapus">Ya, hapus</string>
     <string name="action_urungkan">Urungkan</string>
+    <string name="action_back">Kembali</string>
     <string name="cd_back">Kembali</string>
     <string name="cd_previous_month">Bulan sebelumnya</string>
     <string name="cd_next_month">Bulan berikutnya</string>
@@ -140,7 +141,7 @@
     <string name="cadangan_btn_import">Pulihkan dari cadangan</string>
     <string name="cadangan_import_note">Transaksi yang sama persis akan dilewati. Data yang ada tidak pernah dihapus.</string>
     <string name="cadangan_import_result">%1$d transaksi ditambahkan, %2$d dilewati karena sudah ada.</string>
-    <string name="cadangan_import_error">File tidak valid. Pilih file CSV atau JSON dari Saku.</string>
+    <string name="cadangan_import_error">File tidak valid. Pilih file JSON dari Saku.</string>
     <string name="cadangan_importing">Mengimpor…</string>
     <string name="cadangan_local_note">Hanya tersimpan di perangkat ini</string>
     <string name="cadangan_detail">Detail</string>
@@ -152,6 +153,7 @@
     <string name="cadangan_sheet_local_title">Penyimpanan lokal</string>
     <string name="cadangan_local_storage_warning">Data hanya tersimpan di perangkat ini. Hapus aplikasi atau ganti perangkat tanpa cadangan, dan data hilang permanen.</string>
     <string name="cadangan_export_saved">Cadangan tersimpan di %1$s</string>
+    <string name="cadangan_export_error">Ekspor cadangan gagal. Coba lagi.</string>
 
     <!-- Design system: formatting -->
     <string name="date_short_format">%1$d %2$s %3$d</string>

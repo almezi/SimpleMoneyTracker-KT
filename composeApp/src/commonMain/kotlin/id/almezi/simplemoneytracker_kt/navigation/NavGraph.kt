@@ -192,6 +192,7 @@ fun NavGraph(
                             container.backupSerializer,
                             container.backupPreferences,
                             container.transactionRepository,
+                            container.categoryRepository,
                             container.clock,
                         )
                     }
@@ -202,29 +203,30 @@ fun NavGraph(
             val filePicker = rememberFilePicker()
             val backupFileStore = rememberBackupFileStore()
             val lastBackupDate = uiState.lastBackupMillis?.let { formatShortDate(it) }
+            // An export failure must be a toast, not a crash: this scope runs on
+            // main, and an uncaught exception in it takes the app down.
+            fun export(fileName: String, content: suspend () -> String, mimeType: String) {
+                scope.launch {
+                    runCatching {
+                        backupFileStore.shareText(fileName, content(), mimeType)
+                    }
+                        .onSuccess { path -> viewModel.markBackupDone(path) }
+                        .onFailure { viewModel.notifyExportFailed() }
+                }
+            }
             CadanganScreen(
                 transactionCount = uiState.transactionCount,
+                accountCount = uiState.accountCount,
+                categoryCount = uiState.categoryCount,
                 lastBackupDate = lastBackupDate,
+                toast = uiState.toast,
+                onToastDismiss = viewModel::clearToast,
                 onNavigateBack = { navController.popBackStack() },
                 onExportCsv = {
-                    scope.launch {
-                        val path = backupFileStore.shareText(
-                            "saku-cadangan.csv",
-                            viewModel.buildCsv(),
-                            "text/csv",
-                        )
-                        viewModel.markBackupDone(path)
-                    }
+                    export("saku-cadangan.csv", { viewModel.buildCsv() }, "text/csv")
                 },
                 onExportJson = {
-                    scope.launch {
-                        val path = backupFileStore.shareText(
-                            "saku-cadangan.json",
-                            viewModel.buildJson(),
-                            "application/json",
-                        )
-                        viewModel.markBackupDone(path)
-                    }
+                    export("saku-cadangan.json", { viewModel.buildJson() }, "application/json")
                 },
                 onImportBackup = {
                     filePicker.present { raw ->

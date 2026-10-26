@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import id.almezi.simplemoneytracker_kt.data.CategoryRepository
 import id.almezi.simplemoneytracker_kt.data.CategoryTotal
 import id.almezi.simplemoneytracker_kt.data.Clock
+import id.almezi.simplemoneytracker_kt.data.Transaction
 import id.almezi.simplemoneytracker_kt.data.TransactionRepository
 import id.almezi.simplemoneytracker_kt.data.monthTotals
 import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuMonth
@@ -53,44 +54,52 @@ class RingkasanViewModel(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS), emptyMap())
 
     init {
-        refresh(currentMonth)
+        viewModelScope.launch {
+            // Recompute whatever month the user is on whenever the database
+            // changes; required now that tab state is restored instead of the
+            // ViewModel being recreated on every tab switch.
+            repository.getAllTransactions().collect { all -> recompute(_uiState.value.month, all) }
+        }
     }
 
     fun currentMonthMillis(): Long = clock.currentTimeMillis()
 
-    fun previousMonth() {
-        refresh(_uiState.value.month.minusMonth())
-    }
+    fun previousMonth() = shiftMonth(_uiState.value.month.minusMonth())
 
     fun nextMonth() {
         val next = _uiState.value.month.plusMonth()
         if (next > currentMonth) return
-        refresh(next)
+        shiftMonth(next)
     }
 
     fun selectMonth(month: SakuMonth) {
         if (month > currentMonth) return
-        refresh(month)
+        shiftMonth(month)
     }
 
-    private fun refresh(month: SakuMonth) {
+    /** Month moves synchronously (the header flips at once); the totals follow. */
+    private fun shiftMonth(month: SakuMonth) {
         _uiState.update { it.copy(month = month) }
-        viewModelScope.launch {
-            val totals = monthTotals(
-                transactions = repository.getAllTransactionsOnce(),
-                startMillis = month.startMillis(),
-                endMillis = month.endMillisExclusive(),
-                categories = categoryRepository.getAllOnce()
+        viewModelScope.launch { recompute(month, repository.getAllTransactionsOnce()) }
+    }
+
+    private suspend fun recompute(month: SakuMonth, all: List<Transaction>) {
+        val totals = monthTotals(
+            transactions = all,
+            startMillis = month.startMillis(),
+            endMillis = month.endMillisExclusive(),
+            categories = categoryRepository.getAllOnce()
+        )
+        // A newer selection superseded this recompute while it was reading.
+        if (_uiState.value.month != month) return
+        _uiState.update {
+            it.copy(
+                balance = totals.balance,
+                income = totals.income,
+                expense = totals.expense,
+                incomeByCategory = breakdown(totals.incomeByCategory),
+                expenseByCategory = breakdown(totals.expenseByCategory)
             )
-            _uiState.update {
-                it.copy(
-                    balance = totals.balance,
-                    income = totals.income,
-                    expense = totals.expense,
-                    incomeByCategory = breakdown(totals.incomeByCategory),
-                    expenseByCategory = breakdown(totals.expenseByCategory)
-                )
-            }
         }
     }
 

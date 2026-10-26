@@ -78,16 +78,14 @@ class AnggaranFormViewModel(
         if (!state.canSave) return
         val amount = state.amountDigits.toLongOrNull() ?: return
         viewModelScope.launch {
-            budgetRepository.saveBudget(
-                Budget(
+            // Timestamps are the repository's business (`BudgetRepository.saveBudget`).
+            runCatching {
+                budgetRepository.saveBudget(
                     categoryId = categoryId,
                     limitAmount = amount,
-                    alertAt80 = state.alertAt80,
-                    createdAt = state.budget?.createdAt ?: clock.currentTimeMillis(),
-                    updatedAt = clock.currentTimeMillis()
+                    alertAt80 = state.alertAt80
                 )
-            )
-            _uiState.update { it.copy(saved = true) }
+            }.onSuccess { _uiState.update { it.copy(saved = true) } }
         }
     }
 
@@ -99,8 +97,8 @@ class AnggaranFormViewModel(
         val budget = _uiState.value.budget ?: return
         _uiState.update { it.copy(showDeleteSheet = false) }
         viewModelScope.launch {
-            budgetRepository.deleteBudget(budget.categoryId)
-            _uiState.update { it.copy(saved = true) }
+            runCatching { budgetRepository.deleteBudget(budget.categoryId) }
+                .onSuccess { _uiState.update { it.copy(saved = true) } }
         }
     }
 

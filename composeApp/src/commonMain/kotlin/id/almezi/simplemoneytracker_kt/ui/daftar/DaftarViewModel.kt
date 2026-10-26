@@ -61,32 +61,32 @@ class DaftarViewModel(
 
     init {
         viewModelScope.launch {
-            repository.getAllTransactions().collect { all -> rebuild(currentMonth, all) }
+            // Rebuild whatever month the user is looking at, so a database
+            // change from another screen refreshes the list in place instead of
+            // snapping it back to the month the app started in.
+            repository.getAllTransactions().collect { all -> rebuild(_uiState.value.month, all) }
         }
     }
 
     fun currentMonthMillis(): Long = clock.currentTimeMillis()
 
-    fun previousMonth() {
-        viewModelScope.launch {
-            val month = _uiState.value.month.minusMonth()
-            rebuild(month, repository.getAllTransactionsOnce())
-        }
-    }
+    fun previousMonth() = shiftMonth(_uiState.value.month.minusMonth())
 
     fun nextMonth() {
         val next = _uiState.value.month.plusMonth()
         if (next > currentMonth) return
-        viewModelScope.launch {
-            rebuild(next, repository.getAllTransactionsOnce())
-        }
+        shiftMonth(next)
     }
 
     fun selectMonth(month: SakuMonth) {
         if (month > currentMonth) return
-        viewModelScope.launch {
-            rebuild(month, repository.getAllTransactionsOnce())
-        }
+        shiftMonth(month)
+    }
+
+    /** Month moves synchronously (the label flips at once); the data follows. */
+    private fun shiftMonth(month: SakuMonth) {
+        _uiState.update { it.copy(month = month) }
+        viewModelScope.launch { rebuild(month, repository.getAllTransactionsOnce()) }
     }
 
     fun requestDelete(transaction: Transaction) {
@@ -137,6 +137,9 @@ class DaftarViewModel(
                 )
             }
             .sortedByDescending { it.dateMillis }
+        // A newer selection superseded this rebuild while it was reading; drop
+        // the result instead of overwriting the month the user is on now.
+        if (_uiState.value.month != month) return
         _uiState.update {
             it.copy(
                 month = month,

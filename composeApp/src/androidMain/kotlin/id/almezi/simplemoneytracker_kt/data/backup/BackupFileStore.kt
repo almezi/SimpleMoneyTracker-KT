@@ -33,8 +33,12 @@ class AndroidBackupFileStore(
 ) : BackupFileStore {
 
     override suspend fun shareText(fileName: String, content: String, mimeType: String): String {
-        val dir = File(context.cacheDir, "backups").apply { mkdirs() }
-        val file = File(dir, fileName).apply { writeText(content, StandardCharsets.UTF_8) }
+        // The export can be megabytes of JSON; write it on IO, then come back to
+        // the caller's (main) dispatcher, which `startActivity` requires.
+        val file = withContext(Dispatchers.IO) {
+            val dir = File(context.cacheDir, "backups").apply { mkdirs() }
+            File(dir, fileName).apply { writeText(content, StandardCharsets.UTF_8) }
+        }
 
         val uri = FileProvider.getUriForFile(
             context,
@@ -92,7 +96,7 @@ class AndroidFilePicker : FilePicker {
 
     override fun present(onPicked: (String?) -> Unit) {
         this.onPicked = onPicked
-        launch?.invoke(arrayOf("application/json", "text/csv", "*/*"))
+        launch?.invoke(IMPORT_MIME_TYPES)
     }
 
     fun onUriText(text: String?) {
@@ -101,6 +105,11 @@ class AndroidFilePicker : FilePicker {
         callback?.invoke(text)
     }
 }
+
+// JSON import only (`UI_SPEC.md` §6.7): text/plain covers files whose editor
+// saved a .json with a text mime, and keeps the picker from offering the CSV
+// export that the app cannot re-import.
+private val IMPORT_MIME_TYPES = arrayOf("application/json", "text/plain")
 
 @Composable
 actual fun rememberFilePicker(): FilePicker {

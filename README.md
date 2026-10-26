@@ -290,7 +290,7 @@ Bottom navigation: **Tambah**, **Transaksi**, **Ringkasan**. Additional destinat
 - **Ubah Transaksi** — Edit or delete an existing transaction.
 - **Kelola Kategori** — List, rename, hide, delete, and create categories.
 - **Anggaran** — Monthly budget limits per category, plus the budget form.
-- **Cadangan** — Export and import transactions as CSV or JSON.
+- **Cadangan** — Export as CSV (for spreadsheets) or full JSON; restore from a JSON backup only (CSV import is out of scope per `UI_SPEC.md` §7).
 
 ## Design System
 Tokens and components live in `app/src/main/java/.../ui/designsystem/` and `ui/components/`, named `Saku*`. Covers colors, type scale, spacing, radius, sizing, currency/date formatting, cards, fields, buttons, toggles, sheets, toasts, and empty states. Reference docs are in `improve/`.

@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import id.almezi.simplemoneytracker_kt.TestTags
 import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuRadius
@@ -110,6 +111,7 @@ fun <T : Any> SakuBottomNav(
                             style = SakuTheme.text.caption,
                             color = tint,
                             maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
                         )
                     }
                 }
@@ -162,6 +164,7 @@ fun MonthSwitcher(
             color = SakuTheme.colors.accentText,
             textAlign = TextAlign.Center,
             maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
             modifier = labelNode,
         )
         MonthArrowButton(
@@ -247,6 +250,7 @@ fun ScreenHeader(
             color = SakuTheme.colors.text,
             modifier = Modifier.weight(1f),
             maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
         )
         if (action != null) action()
     }

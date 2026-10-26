@@ -118,8 +118,10 @@ class UbahTransaksiViewModel(
         val original = _uiState.value.original ?: return
         _uiState.update { it.copy(showDeleteSheet = false) }
         viewModelScope.launch {
-            repository.deleteTransaction(original.id)
-            _uiState.update { it.copy(finished = true) }
+            // runCatching so a failed write cannot take the screen down with it;
+            // the row simply stays and the user can retry.
+            runCatching { repository.deleteTransaction(original.id) }
+                .onSuccess { _uiState.update { it.copy(finished = true) } }
         }
     }
 
@@ -128,17 +130,18 @@ class UbahTransaksiViewModel(
         val original = state.original ?: return
         if (!state.canSave) return
         viewModelScope.launch {
-            repository.updateTransaction(
-                original.copy(
-                    type = state.type.storageValue,
-                    amount = state.amount,
-                    categoryId = state.selectedCategoryId ?: original.categoryId,
-                    accountId = state.selectedAccountId,
-                    dateEpochMillis = state.dateMillis,
-                    note = state.note.ifBlank { null }
+            runCatching {
+                repository.updateTransaction(
+                    original.copy(
+                        type = state.type.storageValue,
+                        amount = state.amount,
+                        categoryId = state.selectedCategoryId ?: original.categoryId,
+                        accountId = state.selectedAccountId,
+                        dateEpochMillis = state.dateMillis,
+                        note = state.note.ifBlank { null }
+                    )
                 )
-            )
-            _uiState.update { it.copy(finished = true) }
+            }.onSuccess { _uiState.update { it.copy(finished = true) } }
         }
     }
 

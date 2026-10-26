@@ -116,7 +116,7 @@ Same form as Tambah, header "Ubah transaksi", no bottom bar, all fields pre-fill
 
 - Status card: transactions stored on this device and the last backup date, or "belum pernah".
 - Export CSV (UTF-8 with BOM, one row per transaction) and export JSON (transactions, categories, budgets, accounts, plus a version).
-- Import from a picked file, Saku JSON only. A transaction is a duplicate when date, type, amount, category, account and note all match. Result: "12 transaksi ditambahkan, 3 dilewati karena sudah ada." An unreadable file shows "File tidak valid. Pilih file CSV atau JSON dari Saku." Import never deletes anything.
+- Import from a picked file, Saku JSON only (the picker offers JSON, not CSV). A transaction is a duplicate when date, type, amount, category, account and note all match. Result: "12 transaksi ditambahkan, 3 dilewati karena sudah ada." An unreadable file shows "File tidak valid. Pilih file JSON dari Saku." Import never deletes anything.
 - Warning card: "Data hanya tersimpan di perangkat ini. Jika data dihapus atau ganti perangkat, buat cadangan dulu."
 
 ## 7. Out of scope
@@ -138,7 +138,6 @@ Login or PIN, multi-wallet, multi-currency, transfers between accounts, recurrin
 - Testability: all interactive elements use test tags from TestTags.kt
 
 ### Known gaps
-- CSV import is not implemented, so a CSV file shows the "file tidak valid" message.
-- Export writes to the app's own external folder, which Android 11 and later hide from the file picker. There is no share sheet.
+- CSV import is not implemented: the import picker offers JSON only, so a CSV file shows the "file tidak valid" message.
 - The seeded category set (9 income, 27 expense) is much larger than the 6 and 7 in the design reference.
 - No instrumented tests exist yet, so the UI is verified by hand rather than by `connectedAndroidTest`.

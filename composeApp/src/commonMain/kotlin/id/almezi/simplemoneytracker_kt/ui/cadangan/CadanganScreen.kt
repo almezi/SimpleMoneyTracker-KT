@@ -3,6 +3,9 @@ package id.almezi.simplemoneytracker_kt.ui.cadangan
 import id.almezi.simplemoneytracker_kt.SakuStrings
 import id.almezi.simplemoneytracker_kt.format
 import id.almezi.simplemoneytracker_kt.TestTags
+import id.almezi.simplemoneytracker_kt.ui.components.SakuBottomSheet
+import id.almezi.simplemoneytracker_kt.ui.components.SakuToast
+import id.almezi.simplemoneytracker_kt.ui.components.SakuToastHost
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -32,9 +35,7 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -64,11 +65,14 @@ private val Success = Color(0xFF4ADE9B)
 private val Warning = Color(0xFFE0A458)
 private val LinkAccent = Color(0xFF8B7FF0)
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CadanganScreen(
     transactionCount: Int,
+    accountCount: Int,
+    categoryCount: Int,
     lastBackupDate: String?,
+    toast: String?,
+    onToastDismiss: () -> Unit,
     onNavigateBack: () -> Unit,
     onExportCsv: () -> Unit,
     onExportJson: () -> Unit,
@@ -81,15 +85,19 @@ fun CadanganScreen(
     val pillLabel = if (lastBackupDate != null) SakuStrings.cadangan_status_safe else SakuStrings.cadangan_status_none
     val dateValue = lastBackupDate ?: SakuStrings.cadangan_last_backup_none_short
 
-    Column(
+    Box(
         modifier = modifier
             .fillMaxSize()
-            .background(ScreenBg)
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 20.dp)
-            .padding(top = 12.dp, bottom = 24.dp),
-        verticalArrangement = Arrangement.spacedBy(24.dp),
+            .background(ScreenBg),
     ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 20.dp)
+                .padding(top = 12.dp, bottom = 24.dp),
+            verticalArrangement = Arrangement.spacedBy(24.dp),
+        ) {
         // 1. Top bar
         Row(
             modifier = Modifier.padding(bottom = 24.dp),
@@ -105,7 +113,7 @@ fun CadanganScreen(
             ) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = "Kembali",
+                    contentDescription = SakuStrings.action_back,
                     modifier = Modifier.size(18.dp),
                     tint = TextPrimary,
                 )
@@ -204,7 +212,7 @@ fun CadanganScreen(
             Spacer(modifier = Modifier.height(12.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = buildStatLine(transactionCount),
+                    text = buildStatLine(transactionCount, accountCount, categoryCount),
                     style = TextStyle(fontSize = 11.5.sp, color = TextSecondary),
                 )
             }
@@ -316,14 +324,18 @@ fun CadanganScreen(
         }
     }
 
-    // Detail sheet
+        SakuToastHost(
+            toast = toast?.let { SakuToast(text = it) },
+            onDismiss = onToastDismiss,
+            bottomOffset = 24.dp,
+        )
+    }
+
+    // Detail sheet. The shared sheet re-arms `automationTestTags()` — test
+    // tags vanish inside a bare ModalBottomSheet's own window composition.
     if (showDetailsState.value) {
-        ModalBottomSheet(
-            onDismissRequest = { showDetailsState.value = false },
-            containerColor = CardBg,
-            shape = RoundedCornerShape(topStart = 26.dp, topEnd = 26.dp),
-        ) {
-            Column(modifier = Modifier.padding(horizontal = 20.dp)) {
+        SakuBottomSheet(onDismissRequest = { showDetailsState.value = false }) {
+            Column {
                 Row(
                     modifier = Modifier.padding(bottom = 12.dp),
                     verticalAlignment = Alignment.CenterVertically,
@@ -387,7 +399,7 @@ fun CadanganScreen(
 
                 Box(
                     modifier = Modifier
-                        .padding(top = 16.dp, bottom = 24.dp)
+                        .padding(top = 16.dp)
                         .fillMaxWidth()
                         .clickable { showDetailsState.value = false },
                     contentAlignment = Alignment.Center,
@@ -396,7 +408,8 @@ fun CadanganScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(46.dp)
-                            .background(Color(0x14FFFFFF), RoundedCornerShape(14.dp)),
+                            .background(Color(0x14FFFFFF), RoundedCornerShape(14.dp))
+                            .testTag(TestTags.COMPONENT_SHEET_BUTTON_CANCEL),
                         color = Color(0x14FFFFFF),
                         contentColor = TextPrimary,
                     ) {
@@ -491,6 +504,14 @@ private fun ActionRow(
     }
 }
 
-private fun buildStatLine(transactionCount: Int): String {
-    return "${SakuStrings.cadangan_stat_transactions.format(transactionCount)}  ·  ${SakuStrings.cadangan_stat_accounts.format(2)}  ·  ${SakuStrings.cadangan_stat_categories.format(6)}"
+private fun buildStatLine(
+    transactionCount: Int,
+    accountCount: Int,
+    categoryCount: Int,
+): String {
+    return listOf(
+        SakuStrings.cadangan_stat_transactions.format(transactionCount),
+        SakuStrings.cadangan_stat_accounts.format(accountCount),
+        SakuStrings.cadangan_stat_categories.format(categoryCount),
+    ).joinToString("  ·  ")
 }

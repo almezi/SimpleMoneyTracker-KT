@@ -2,6 +2,8 @@ package id.almezi.simplemoneytracker_kt.data.backup
 
 import androidx.compose.runtime.Composable
 import kotlinx.cinterop.BetaInteropApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.usePinned
@@ -20,7 +22,6 @@ import platform.UIKit.UIDocumentPickerDelegateProtocol
 import platform.UIKit.UIDocumentPickerViewController
 import platform.UIKit.UIViewController
 import platform.UIKit.UIWindowScene
-import platform.UniformTypeIdentifiers.UTTypeCommaSeparatedText
 import platform.UniformTypeIdentifiers.UTTypeJSON
 import platform.UniformTypeIdentifiers.UTTypePlainText
 import kotlin.coroutines.resume
@@ -36,26 +37,33 @@ class IosBackupFileStore : BackupFileStore {
 
     override suspend fun shareText(fileName: String, content: String, mimeType: String): String {
         val path = writeText(fileName, content)
+        // Fail loudly instead of reporting a backup that was never shown to the
+        // user; the caller turns this into the export-failed toast.
         val presenter = keyViewController()
-        if (presenter != null) {
-            val activity = UIActivityViewController(
-                activityItems = listOf(NSURL.fileURLWithPath(path)),
-                applicationActivities = null,
-            )
-            // Mandatory on iPad: a popover without an anchor is a hard crash.
-            activity.popoverPresentationController?.sourceView = presenter.view
-            presenter.presentViewController(activity, animated = true, completion = null)
-        }
+            ?: error("No view controller available to present the share sheet")
+        val activity = UIActivityViewController(
+            activityItems = listOf(NSURL.fileURLWithPath(path)),
+            applicationActivities = null,
+        )
+        // Mandatory on iPad: a popover without an anchor is a hard crash.
+        activity.popoverPresentationController?.sourceView = presenter.view
+        presenter.presentViewController(activity, animated = true, completion = null)
         return path
     }
 
     private suspend fun writeText(fileName: String, content: String): String {
         val path = documentsDirectory() + "/" + fileName
-        NSFileManager.defaultManager.createFileAtPath(
-            path = path,
-            contents = content.toNSData(),
-            attributes = null,
-        )
+        // Kotlin/Native has no Dispatchers.IO; Default is the off-main one. The
+        // UIActivityViewController presentation in shareText resumes on the
+        // caller's dispatcher, where UIKit requires it.
+        val wrote = withContext(Dispatchers.Default) {
+            NSFileManager.defaultManager.createFileAtPath(
+                path = path,
+                contents = content.toNSData(),
+                attributes = null,
+            )
+        }
+        if (!wrote) error("Could not write backup file: $path")
         return path
     }
 
@@ -90,8 +98,11 @@ class IosFilePicker : FilePicker {
             onPicked(null)
             return
         }
+        // JSON import only (`UI_SPEC.md` §6.7): plain text covers files whose
+        // editor saved a .json with a text mime, and keeps the picker from
+        // offering the CSV export that the app cannot re-import.
         val picker = UIDocumentPickerViewController(
-            forOpeningContentTypes = listOf(UTTypeJSON, UTTypeCommaSeparatedText, UTTypePlainText),
+            forOpeningContentTypes = listOf(UTTypeJSON, UTTypePlainText),
         )
         picker.delegate = PickerDelegate(onPicked)
         presenter.presentViewController(picker, animated = true, completion = null)
@@ -110,16 +121,30 @@ class IosFilePicker : FilePicker {
 
         private var delivered = false
 
-        override fun documentPicker(
-            controller: UIDocumentPickerViewController,
-            didPickDocumentsAtURLs: List<*>,
-        ) {
-            if (delivered) return
-            delivered = true
-            val url = didPickDocumentsAtURLs.firstOrNull() as? NSURL
-            val path = url?.path
-            onPicked(path?.let { readUtf8File(it) })
+    override fun documentPicker(
+        controller: UIDocumentPickerViewController,
+        didPickDocumentsAtURLs: List<*>,
+    ) {
+        if (delivered) return
+        delivered = true
+        val url = didPickDocumentsAtURLs.firstOrNull() as? NSURL
+        onPicked(url?.let(::readSecurityScoped))
+    }
+
+    /**
+     * Document-picker URLs are security-scoped: outside the sandbox the read
+     * fails with no error unless access is taken explicitly (simulators are
+     * lax about this, physical devices are not).
+     */
+    @OptIn(ExperimentalForeignApi::class)
+    private fun readSecurityScoped(url: NSURL): String? {
+        val scoped = url.startAccessingSecurityScopedResource()
+        try {
+            return url.path?.let { readUtf8File(it) }
+        } finally {
+            if (scoped) url.stopAccessingSecurityScopedResource()
         }
+    }
 
         override fun documentPickerWasCancelled(controller: UIDocumentPickerViewController) {
             if (delivered) return
@@ -187,13 +212,17 @@ internal fun readUtf8File(path: String): String {
 }
 
 /**
- * The scene's key window's root view controller, needed to present any UIKit
+ * The scene's key window's top-most view controller, needed to present any UIKit
  * sheet.
  *
  * `keyWindow` is deprecated in iOS 15 in favour of comparing `windowScene` and
  * `isKeyWindow`, but it stays the shortest correct way to reach a presenter from
  * code that holds no scene reference of its own. Top-level rather than a member
  * because both the store and the picker need it.
+ *
+ * The walk down `presentedViewController` matters: UIKit refuses to present from
+ * the root while anything else is presented, so the sheet must come from the
+ * top of the stack.
  */
 private fun keyViewController(): UIViewController? =
     UIApplication.sharedApplication.connectedScenes
@@ -201,3 +230,4 @@ private fun keyViewController(): UIViewController? =
         .firstOrNull()
         ?.keyWindow
         ?.rootViewController
+        ?.let { root -> generateSequence(root) { it.presentedViewController }.last() }

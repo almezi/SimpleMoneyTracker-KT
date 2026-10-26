@@ -2,7 +2,10 @@ package id.almezi.simplemoneytracker_kt.ui.cadangan
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import id.almezi.simplemoneytracker_kt.SakuStrings
+import id.almezi.simplemoneytracker_kt.data.CategoryRepository
 import id.almezi.simplemoneytracker_kt.data.Clock
+import id.almezi.simplemoneytracker_kt.format
 import id.almezi.simplemoneytracker_kt.data.Transaction
 import id.almezi.simplemoneytracker_kt.data.TransactionRepository
 import id.almezi.simplemoneytracker_kt.data.backup.BackupPreferences
@@ -15,6 +18,7 @@ import id.almezi.simplemoneytracker_kt.data.backup.toTransaction
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -25,6 +29,8 @@ data class ImportResult(
 
 data class CadanganUiState(
     val transactionCount: Int = 0,
+    val accountCount: Int = 0,
+    val categoryCount: Int = 0,
     val lastBackupMillis: Long? = null,
     val importing: Boolean = false,
     val importResult: ImportResult? = null,
@@ -44,6 +50,7 @@ class CadanganViewModel(
     private val serializer: BackupSerializer,
     private val preferences: BackupPreferences,
     private val transactionRepository: TransactionRepository,
+    private val categoryRepository: CategoryRepository,
     private val clock: Clock
 ) : ViewModel() {
 
@@ -52,7 +59,7 @@ class CadanganViewModel(
 
     init {
         _uiState.update { it.copy(lastBackupMillis = readLastBackup()) }
-        refreshCount()
+        refreshCounts()
     }
 
     private fun readLastBackup(): Long? =
@@ -64,16 +71,28 @@ class CadanganViewModel(
     fun markBackupDone(path: String) {
         val now = clock.currentTimeMillis()
         preferences.putLong(KEY_LAST_BACKUP, now)
-        _uiState.update { it.copy(lastBackupMillis = now, toast = path) }
+        _uiState.update { it.copy(lastBackupMillis = now, toast = SakuStrings.cadangan_export_saved.format(path)) }
     }
+
+    /** Export threw before the share sheet could be presented. */
+    fun notifyExportFailed() =
+        _uiState.update { it.copy(toast = SakuStrings.cadangan_export_error) }
 
     fun clearToast() = _uiState.update { it.copy(toast = null) }
 
     fun clearImportResult() = _uiState.update { it.copy(importResult = null, importError = false) }
 
-    private fun refreshCount() {
+    private fun refreshCounts() {
         viewModelScope.launch {
-            _uiState.update { it.copy(transactionCount = transactionRepository.countTransactions()) }
+            val accounts = transactionRepository.getAccounts().first()
+            val categories = categoryRepository.getAllOnce()
+            _uiState.update {
+                it.copy(
+                    transactionCount = transactionRepository.countTransactions(),
+                    accountCount = accounts.size,
+                    categoryCount = categories.size,
+                )
+            }
         }
     }
 
@@ -87,7 +106,13 @@ class CadanganViewModel(
         viewModelScope.launch {
             val parsed = runCatching { serializer.parseJson(rawText) }.getOrNull()
             if (parsed == null) {
-                _uiState.update { it.copy(importing = false, importError = true) }
+                _uiState.update {
+                    it.copy(
+                        importing = false,
+                        importError = true,
+                        toast = SakuStrings.cadangan_import_error,
+                    )
+                }
                 return@launch
             }
             val existing = transactionRepository.getAllTransactionsOnce()
@@ -111,13 +136,20 @@ class CadanganViewModel(
                     _uiState.update {
                         it.copy(
                             importing = false,
-                            importResult = ImportResult(fresh.size, skipped)
+                            importResult = ImportResult(fresh.size, skipped),
+                            toast = SakuStrings.cadangan_import_result.format(fresh.size, skipped),
                         )
                     }
-                    refreshCount()
+                    refreshCounts()
                 }
                 .onFailure {
-                    _uiState.update { state -> state.copy(importing = false, importError = true) }
+                    _uiState.update { state ->
+                        state.copy(
+                            importing = false,
+                            importError = true,
+                            toast = SakuStrings.cadangan_import_error,
+                        )
+                    }
                 }
         }
     }

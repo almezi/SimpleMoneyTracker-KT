@@ -78,17 +78,21 @@ class KelolaKategoriViewModel(
 
     fun setHidden(categoryId: String, hidden: Boolean) {
         viewModelScope.launch {
-            categoryRepository.setHidden(categoryId, hidden)
+            // runCatching so a failed write cannot take the screen down with
+            // it; the row keeps its previous state and the user can retry.
+            runCatching { categoryRepository.setHidden(categoryId, hidden) }
             reload(_uiState.value.type)
         }
     }
 
     fun rename(categoryId: String, name: String, onResult: (RenameResult) -> Unit = {}) {
         viewModelScope.launch {
-            val result = categoryRepository.rename(categoryId, name)
-            _uiState.update { it.copy(renameError = result.takeIf { it != RenameResult.Renamed }) }
-            if (result == RenameResult.Renamed) reload(_uiState.value.type)
-            onResult(result)
+            runCatching { categoryRepository.rename(categoryId, name) }
+                .onSuccess { result ->
+                    _uiState.update { it.copy(renameError = result.takeIf { it != RenameResult.Renamed }) }
+                    if (result == RenameResult.Renamed) reload(_uiState.value.type)
+                    onResult(result)
+                }
         }
     }
 
@@ -116,8 +120,10 @@ class KelolaKategoriViewModel(
         val request = _uiState.value.pendingDelete ?: return
         _uiState.update { it.copy(pendingDelete = null) }
         viewModelScope.launch {
-            fallbackCategory(request.row.category.type)?.let { fallback ->
-                categoryRepository.deleteCustomCategoryAtomically(request.row.category.id, fallback.id)
+            runCatching {
+                fallbackCategory(request.row.category.type)?.let { fallback ->
+                    categoryRepository.deleteCustomCategoryAtomically(request.row.category.id, fallback.id)
+                }
             }
             reload(_uiState.value.type)
         }
