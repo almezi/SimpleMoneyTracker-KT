@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import id.almezi.simplemoneytracker_kt.SakuStrings
 import id.almezi.simplemoneytracker_kt.TestTags
+import id.almezi.simplemoneytracker_kt.ui.designsystem.automationTestTags
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
@@ -56,7 +57,9 @@ fun SakuDatePickerDialog(
 
     DatePickerDialog(
         onDismissRequest = onDismiss,
-        modifier = Modifier.testTag(testTag),
+        // Dialog content lives in its own composition outside MainActivity's
+        // testTagsAsResourceId flag; re-arm it so automation can resolve tags.
+        modifier = Modifier.automationTestTags().testTag(testTag),
         confirmButton = {
             TextButton(
                 onClick = {

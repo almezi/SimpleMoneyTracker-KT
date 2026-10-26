@@ -312,22 +312,23 @@ Tokens and components live in `app/src/main/java/.../ui/designsystem/` and `ui/c
 
 ## Download APK
 
-[Download SimpleMoneyTrackerKT-v2.1.apk](release/SimpleMoneyTrackerKT-v2.1.apk)
+[Download SimpleMoneyTrackerKT-v2.2.apk](release/SimpleMoneyTrackerKT-v2.2.apk)
 
 | | |
 |---|---|
-| Version | 2.1 (`versionCode` 3) |
+| Version | 2.2 (`versionCode` 4) |
 | Build type | Release, unsigned |
 | Min / target SDK | 24 / 37 |
-| Size | 20.67 MiB (21.67 MB) |
-| SHA-256 | `e254f7bc5723e2b3a667dac4f1221bf5066efef69db50902c6e59d15f9c74efc` |
-| Built on | 2026-10-16 |
-| Branch | `feature/add-accessbility-id` |
+| Size | 27.40 MiB (28.73 MB) |
+| SHA-256 | `8132c8f0a4ce76bed3327ef37cb1f4d2ea8efa6ef03e63352e70570328d974b3` |
+| Built on | 2026-10-24 |
+| Branch | `feature/fix-undetected-button-in-automation` |
 
 Previous artifacts:
 
 | File | Version | SHA-256 |
 |---|---|---|
+| `release/SimpleMoneyTrackerKT-v2.1.apk` | 2.1 (`versionCode` 3) | `e254f7bc5723e2b3a667dac4f1221bf5066efef69db50902c6e59d15f9c74efc` |
 | `release/SimpleMoneyTrackerKT-v2.0.apk` | **mislabeled — actually 1.0 (`versionCode` 1)** | `fd7080e690a9b99212a85019e761d5793f0ef6226bba83bc3f16bb9e03e59b54` |
 
 > The `-v2.0.apk` file was renamed from the v1.0 artifact without rebuilding; its
@@ -342,10 +343,10 @@ Rebuild the release artifact with:
 
 ```
 ./gradlew clean assembleRelease
-cp app/build/outputs/apk/release/app-release-unsigned.apk release/SimpleMoneyTrackerKT-v2.1.apk
+cp app/build/outputs/apk/release/app-release-unsigned.apk release/SimpleMoneyTrackerKT-v2.2.apk
 ```
 
-Verify the checksum after rebuilding with `shasum -a 256 release/SimpleMoneyTrackerKT-v2.1.apk`.
+Verify the checksum after rebuilding with `shasum -a 256 release/SimpleMoneyTrackerKT-v2.2.apk`.
 
 ## Conventions
 - Kotlin code style: official

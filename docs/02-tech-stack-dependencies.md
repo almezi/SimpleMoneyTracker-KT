@@ -73,7 +73,7 @@ repositories are declared centrally and no module may add its own.
 
 | Property | Value | Effect |
 |---|---|---|
-| `org.gradle.jvmargs` | `-Xmx2048m -Dfile.encoding=UTF-8` | Daemon heap. Raise to 4096m if builds are slow; Kotlin + KSP + Room compilation is the usual cause |
+| `org.gradle.jvmargs` | `-Xmx4096m -Dfile.encoding=UTF-8` | Daemon heap. Updated to 4096m to prevent Java heap space OOM during Kotlin/Native iOS release framework linking |
 | `org.gradle.configuration-cache` | `true` | Config cache on. If a plugin misbehaves, this is the first flag to check |
 | `kotlin.code.style` | `official` | IntelliJ Kotlin style |
 | `android.disallowKotlinSourceSets` | `false` | Left over from the KMP template |
