@@ -11,8 +11,8 @@ android {
         applicationId = "id.almezi.simplemoneytracker_kt"
         minSdk = 24
         targetSdk = 37
-        versionCode = 4
-        versionName = "2.2"
+        versionCode = 5
+        versionName = "2.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -31,6 +31,15 @@ android {
     buildFeatures {
         compose = true
     }
+}
+
+val currentVersionName = android.defaultConfig.versionName ?: "2.2"
+
+tasks.register<Copy>("copyReleaseApk") {
+    dependsOn("assembleDebug")
+    from(layout.buildDirectory.file("outputs/apk/debug/app-debug.apk"))
+    into(layout.projectDirectory.dir("../release"))
+    rename("app-debug\\.apk", "SimpleMoneyTrackerKt-V${currentVersionName}.apk")
 }
 
 dependencies {
