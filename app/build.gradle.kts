@@ -36,10 +36,11 @@ android {
 val currentVersionName = android.defaultConfig.versionName ?: "2.2"
 
 tasks.register<Copy>("copyReleaseApk") {
+    description = "Copies debug APK to release directory with version name"
     dependsOn("assembleDebug")
     from(layout.buildDirectory.file("outputs/apk/debug/app-debug.apk"))
     into(layout.projectDirectory.dir("../release"))
-    rename("app-debug\\.apk", "SimpleMoneyTrackerKt-V${currentVersionName}.apk")
+    rename("app-debug\\.apk", "SimpleMoneyTrackerKt-V$currentVersionName.apk")
 }
 
 dependencies {
