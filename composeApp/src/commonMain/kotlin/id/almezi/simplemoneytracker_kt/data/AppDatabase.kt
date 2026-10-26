@@ -83,7 +83,8 @@ expect object AppDatabaseConstructor : RoomDatabaseConstructor<AppDatabase> {
  *
  * Adapted for KMP: `withTransaction { }` is Android-only. The KMP equivalent is
  * `useWriterConnection { it.immediateTransaction { } }`. `immediateTransaction`
- * is the recommended choice under WAL, which is the default.
+ * is the recommended choice under WAL; the database now runs TRUNCATE journal
+ * mode (see DatabaseBuilder), so there is no hot -wal window to lose.
  */
 suspend fun AppDatabase.deleteCustomCategoryAtomically(
     categoryId: String,

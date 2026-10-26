@@ -29,4 +29,9 @@ fun buildDatabase(
         .addMigrations(*AppDatabase.ALL_MIGRATIONS)
         .setDriver(BundledSQLiteDriver())
         .setQueryCoroutineContext(dispatcher)
+        // FIX BUG_Found_03: every commit lands directly in the main .db file;
+        // there is no hot -wal window that storage distress can invalidate
+        // and silently discard. TRUNCATE's write cost is irrelevant for a
+        // single-user local tracker.
+        .setJournalMode(RoomDatabase.JournalMode.TRUNCATE)
         .build()
