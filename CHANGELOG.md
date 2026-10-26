@@ -2,6 +2,17 @@
 
 All notable changes to SimpleMoneyTracker-KT are documented here.
 
+## [Unreleased] — Release script (2026-10-27)
+
+### Added
+- `release.sh` at the repo root: one command bumps `versionCode`/`versionName`,
+  builds the unsigned release APK into `release/` via `:app:copyReleaseApk`,
+  and refreshes the README download section (link, version, size, SHA-256,
+  date, branch) while moving the superseded APK into the previous-artifacts
+  table. Safe to re-run with the same version and `--no-build` to finish a
+  partially applied release. CHANGELOG and the README prose note stay
+  human-owned.
+
 ## [Unreleased] — Category search on the budget form (2026-10-27)
 
 ### Added
@@ -27,6 +38,10 @@ All notable changes to SimpleMoneyTracker-KT are documented here.
   kategori show only the hide action, on both the Pemasukan and Pengeluaran
   tabs. Edit and delete remain on custom categories (`UI_SPEC.md` §6.5
   updated to match).
+- Kelola kategori now observes the database instead of reloading once per own
+  mutation: a category added from Tambah kategori (or written by an import)
+  appears in the list as soon as you return to the screen, without switching
+  tabs or re-entering, and hide/rename/delete still apply in place.
 
 ### Not a bug
 - `bugs/BUG_Found_05.md` closed: the Tambah form composes and saves correctly

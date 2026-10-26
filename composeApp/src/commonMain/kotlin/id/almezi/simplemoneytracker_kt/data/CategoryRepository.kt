@@ -19,6 +19,9 @@ class CategoryRepository(
 
     suspend fun getByTypeOnce(type: String): List<Category> = categoryDao.getByTypeOnce(type)
 
+    /** Same rows as [getByTypeOnce], observed — hidden rows included. */
+    fun getByType(type: String): Flow<List<Category>> = categoryDao.getByType(type)
+
     suspend fun get(id: String): Category? = categoryDao.getById(id)
 
     suspend fun usageCount(categoryId: String): Int = transactionDao.countForCategory(categoryId)

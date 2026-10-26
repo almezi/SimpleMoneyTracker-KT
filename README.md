@@ -25,6 +25,7 @@ A small, local-only personal money tracker built with Kotlin and Jetpack Compose
 ## Build Commands
 - Build: `./gradlew build`
 - Build release APK: `./gradlew assembleRelease`
+- Release a new version: `./release.sh` (bumps the version, builds the APK, updates this README — see [Releasing a version](#releasing-a-version))
 - Install debug: `./gradlew installDebug`
 - Clean: `./gradlew clean`
 - Run tests: `./gradlew test`
@@ -310,6 +311,35 @@ Tokens and components live in `app/src/main/java/.../ui/designsystem/` and `ui/c
 - Tags follow format: `<screen>_<type>_<name>`
 - Debug hooks for testing: seed data, fake clock, reset state
 
+## Releasing a version
+
+`./release.sh` automates the full release flow in one command:
+
+- Bumps `versionCode` (+1) and `versionName` in `app/build.gradle.kts`.
+- Builds the unsigned release APK via `:app:copyReleaseApk` and drops it in
+  `release/` as `SimpleMoneyTrackerKT-v<version>.apk`.
+- Refreshes the [Download APK](#download-apk) section: download link, version,
+  size, SHA-256, built-on date, branch, SDKs — and moves the superseded APK
+  (with its checksum) to the top of the previous-artifacts table.
+
+```
+./release.sh                 # next patch version, e.g. 2.3 -> 2.4
+./release.sh 3.0             # explicit version name
+./release.sh -y              # skip the confirmation prompt
+./release.sh 2.4 --no-build -y   # docs-only re-run (recovery path)
+```
+
+Notes:
+- The script prompts before changing anything and never commits or tags. After
+  it finishes: write the CHANGELOG entry, review the prose note under the
+  download table, commit, then `git tag v<version>`.
+- It warns (but proceeds) when the working tree has uncommitted changes, since
+  those changes are baked into the APK.
+- If the README update fails, the version bump and APK are kept; fix the README
+  and re-run with the same version and `--no-build -y` to finish without
+  double-bumping.
+- The APK stays unsigned — see the note in [Download APK](#download-apk).
+
 ## Download APK
 
 [Download SimpleMoneyTrackerKT-v2.3.apk](release/SimpleMoneyTrackerKT-v2.3.apk)
@@ -352,6 +382,9 @@ Rebuild the release artifact with:
 ```
 ./gradlew :app:copyReleaseApk
 ```
+
+`./release.sh` does the bump + build + this section's refresh in one step —
+see [Releasing a version](#releasing-a-version).
 
 or, by hand:
 

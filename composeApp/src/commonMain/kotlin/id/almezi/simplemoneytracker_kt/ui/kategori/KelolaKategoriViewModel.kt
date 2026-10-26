@@ -9,6 +9,7 @@ import id.almezi.simplemoneytracker_kt.data.Clock
 import id.almezi.simplemoneytracker_kt.ui.categoryDisplayName
 import id.almezi.simplemoneytracker_kt.ui.designsystem.TransactionType
 import id.almezi.simplemoneytracker_kt.ui.matchesCategoryQuery
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -60,8 +61,10 @@ class KelolaKategoriViewModel(
     private val _uiState = MutableStateFlow(KelolaKategoriUiState())
     val uiState: StateFlow<KelolaKategoriUiState> = _uiState.asStateFlow()
 
+    private var rowsJob: Job? = null
+
     init {
-        reload(_uiState.value.type)
+        observeRows()
     }
 
     fun todayMillis(): Long = clock.currentTimeMillis()
@@ -69,7 +72,7 @@ class KelolaKategoriViewModel(
     fun updateType(type: TransactionType) {
         if (type == _uiState.value.type) return
         _uiState.update { it.copy(type = type) }
-        reload(type)
+        observeRows()
     }
 
     fun updateQuery(query: String) {
@@ -81,7 +84,6 @@ class KelolaKategoriViewModel(
             // runCatching so a failed write cannot take the screen down with
             // it; the row keeps its previous state and the user can retry.
             runCatching { categoryRepository.setHidden(categoryId, hidden) }
-            reload(_uiState.value.type)
         }
     }
 
@@ -90,7 +92,6 @@ class KelolaKategoriViewModel(
             runCatching { categoryRepository.rename(categoryId, name) }
                 .onSuccess { result ->
                     _uiState.update { it.copy(renameError = result.takeIf { it != RenameResult.Renamed }) }
-                    if (result == RenameResult.Renamed) reload(_uiState.value.type)
                     onResult(result)
                 }
         }
@@ -125,7 +126,6 @@ class KelolaKategoriViewModel(
                     categoryRepository.deleteCustomCategoryAtomically(request.row.category.id, fallback.id)
                 }
             }
-            reload(_uiState.value.type)
         }
     }
 
@@ -134,14 +134,23 @@ class KelolaKategoriViewModel(
             .firstOrNull { it.id == fallbackCategoryId(type) }
             ?: categoryRepository.getByTypeOnce(type).lastOrNull()
 
-    private fun reload(type: TransactionType) {
-        viewModelScope.launch {
-            // Two queries per reload, where this used to run one per row.
-            val rows = categoryRows(
-                categoryRepository.getByTypeOnce(type.storageValue),
-                categoryRepository.usageCounts()
-            )
-            _uiState.update { it.copy(rows = rows) }
+    /**
+     * The list observes the database instead of reloading once per mutation:
+     * categories added from Tambah kategori (or an import) must appear when
+     * this screen sits behind them in the back stack, and hide/rename/delete
+     * apply in place. One collector per type, the same cancel-and-relaunch
+     * pattern as `UbahTransaksiViewModel`. Room re-emits on every categories
+     * write, from this screen or any other. Usage counts are re-queried per
+     * emission; they stay one emission stale after a transaction-only write,
+     * exactly as with the previous one-shot reload.
+     */
+    private fun observeRows() {
+        rowsJob?.cancel()
+        rowsJob = viewModelScope.launch {
+            categoryRepository.getByType(_uiState.value.type.storageValue).collect { ofType ->
+                val rows = categoryRows(ofType, categoryRepository.usageCounts())
+                _uiState.update { it.copy(rows = rows) }
+            }
         }
     }
 
