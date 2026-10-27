@@ -5,15 +5,29 @@ import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Summarize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import kotlinx.coroutines.launch
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
+import id.almezi.simplemoneytracker_kt.SakuContainer
+import id.almezi.simplemoneytracker_kt.SakuStrings
+import id.almezi.simplemoneytracker_kt.data.backup.rememberBackupFileStore
+import id.almezi.simplemoneytracker_kt.data.backup.rememberFilePicker
 import id.almezi.simplemoneytracker_kt.ui.anggaran.AnggaranFormScreen
 import id.almezi.simplemoneytracker_kt.ui.anggaran.AnggaranScreen
+import id.almezi.simplemoneytracker_kt.ui.cadangan.CadanganScreen
+import id.almezi.simplemoneytracker_kt.ui.cadangan.CadanganViewModel
 import id.almezi.simplemoneytracker_kt.ui.components.SakuNavItem
 import id.almezi.simplemoneytracker_kt.ui.daftar.DaftarScreen
 import id.almezi.simplemoneytracker_kt.ui.kategori.KelolaKategoriScreen
@@ -21,8 +35,7 @@ import id.almezi.simplemoneytracker_kt.ui.kategori.TambahKategoriScreen
 import id.almezi.simplemoneytracker_kt.ui.ringkasan.RingkasanScreen
 import id.almezi.simplemoneytracker_kt.ui.tambah.TambahScreen
 import id.almezi.simplemoneytracker_kt.ui.ubah.UbahTransaksiScreen
-import id.almezi.simplemoneytracker_kt.ui.cadangan.CadanganScreen
-import id.almezi.simplemoneytracker_kt.SakuStrings
+import id.almezi.simplemoneytracker_kt.ui.designsystem.formatShortDate
 
 /**
  * Routes as serializable objects rather than string templates.
@@ -171,7 +184,56 @@ fun NavGraph(
         }
 
         composable<Screen.Cadangan> {
-            CadanganScreen(onBack = { navController.popBackStack() })
+            val container = SakuContainer
+            val viewModel: CadanganViewModel = viewModel(
+                factory = viewModelFactory {
+                    initializer {
+                        CadanganViewModel(
+                            container.backupSerializer,
+                            container.backupPreferences,
+                            container.transactionRepository,
+                            container.categoryRepository,
+                            container.clock,
+                        )
+                    }
+                },
+            )
+            val uiState by viewModel.uiState.collectAsState()
+            val scope = rememberCoroutineScope()
+            val filePicker = rememberFilePicker()
+            val backupFileStore = rememberBackupFileStore()
+            val lastBackupDate = uiState.lastBackupMillis?.let { formatShortDate(it) }
+            // An export failure must be a toast, not a crash: this scope runs on
+            // main, and an uncaught exception in it takes the app down.
+            fun export(fileName: String, content: suspend () -> String, mimeType: String) {
+                scope.launch {
+                    runCatching {
+                        backupFileStore.shareText(fileName, content(), mimeType)
+                    }
+                        .onSuccess { path -> viewModel.markBackupDone(path) }
+                        .onFailure { viewModel.notifyExportFailed() }
+                }
+            }
+            CadanganScreen(
+                transactionCount = uiState.transactionCount,
+                accountCount = uiState.accountCount,
+                categoryCount = uiState.categoryCount,
+                lastBackupDate = lastBackupDate,
+                toast = uiState.toast,
+                onToastDismiss = viewModel::clearToast,
+                onNavigateBack = { navController.popBackStack() },
+                onExportCsv = {
+                    export("saku-cadangan.csv", { viewModel.buildCsv() }, "text/csv")
+                },
+                onExportJson = {
+                    export("saku-cadangan.json", { viewModel.buildJson() }, "application/json")
+                },
+                onImportBackup = {
+                    filePicker.present { raw ->
+                        if (raw != null) viewModel.import(raw)
+                    }
+                },
+            )
         }
 
         composable<Screen.UbahTransaksi> { entry ->

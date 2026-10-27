@@ -25,6 +25,7 @@ A small, local-only personal money tracker built with Kotlin and Jetpack Compose
 ## Build Commands
 - Build: `./gradlew build`
 - Build release APK: `./gradlew assembleRelease`
+- Release a new version: `./release.sh` (bumps the version, builds the APK, updates this README — see [Releasing a version](#releasing-a-version))
 - Install debug: `./gradlew installDebug`
 - Clean: `./gradlew clean`
 - Run tests: `./gradlew test`
@@ -290,7 +291,7 @@ Bottom navigation: **Tambah**, **Transaksi**, **Ringkasan**. Additional destinat
 - **Ubah Transaksi** — Edit or delete an existing transaction.
 - **Kelola Kategori** — List, rename, hide, delete, and create categories.
 - **Anggaran** — Monthly budget limits per category, plus the budget form.
-- **Cadangan** — Export and import transactions as CSV or JSON.
+- **Cadangan** — Export as CSV (for spreadsheets) or full JSON; restore from a JSON backup only (CSV import is out of scope per `UI_SPEC.md` §7).
 
 ## Design System
 Tokens and components live in `app/src/main/java/.../ui/designsystem/` and `ui/components/`, named `Saku*`. Covers colors, type scale, spacing, radius, sizing, currency/date formatting, cards, fields, buttons, toggles, sheets, toasts, and empty states. Reference docs are in `improve/`.
@@ -310,24 +311,61 @@ Tokens and components live in `app/src/main/java/.../ui/designsystem/` and `ui/c
 - Tags follow format: `<screen>_<type>_<name>`
 - Debug hooks for testing: seed data, fake clock, reset state
 
+## Releasing a version
+
+`./release.sh` automates the full release flow in one command:
+
+- Bumps `versionCode` (+1) and `versionName` in `app/build.gradle.kts`.
+- Builds the unsigned release APK via `:app:copyReleaseApk` and drops it in
+  `release/` as `SimpleMoneyTrackerKT-v<version>.apk`.
+- Refreshes the [Download APK](#download-apk) section: download link, version,
+  size, SHA-256, built-on date, branch, SDKs — and moves the superseded APK
+  (with its checksum) to the top of the previous-artifacts table.
+
+```
+./release.sh                 # next patch version, e.g. 2.3 -> 2.4
+./release.sh 3.0             # explicit version name
+./release.sh -y              # skip the confirmation prompt
+./release.sh 2.4 --no-build -y   # docs-only re-run (recovery path)
+```
+
+Notes:
+- The script prompts before changing anything and never commits or tags. After
+  it finishes: write the CHANGELOG entry, review the prose note under the
+  download table, commit, then `git tag v<version>`.
+- It warns (but proceeds) when the working tree has uncommitted changes, since
+  those changes are baked into the APK.
+- If the README update fails, the version bump and APK are kept; fix the README
+  and re-run with the same version and `--no-build -y` to finish without
+  double-bumping.
+- The APK stays unsigned — see the note in [Download APK](#download-apk).
+
 ## Download APK
 
-[Download SimpleMoneyTrackerKT-v2.2.apk](release/SimpleMoneyTrackerKT-v2.2.apk)
+[Download SimpleMoneyTrackerKT-v2.3.apk](release/SimpleMoneyTrackerKT-v2.3.apk)
 
 | | |
 |---|---|
-| Version | 2.2 (`versionCode` 4) |
+| Version | 2.3 (`versionCode` 5) |
 | Build type | Release, unsigned |
 | Min / target SDK | 24 / 37 |
-| Size | 27.40 MiB (28.73 MB) |
-| SHA-256 | `8132c8f0a4ce76bed3327ef37cb1f4d2ea8efa6ef03e63352e70570328d974b3` |
-| Built on | 2026-10-24 |
-| Branch | `feature/fix-undetected-button-in-automation` |
+| Size | 17.97 MiB (18.84 MB) |
+| SHA-256 | `27e6d5d9b101fa1efd35c3d7028c216eb9a2d0161b7350d856d502fc5d52de0a` |
+| Built on | 2026-10-27 |
+| Branch | `feature/fix-bug-detected-by-automation-261026` |
+
+> Built by the corrected `:app:copyReleaseApk` task, which now copies
+> `assembleRelease` output instead of the debug APK it used to copy. The
+> previous `SimpleMoneyTrackerKt-V2.3.apk` (28.7 MB) was such a mislabeled
+> debug build and has been replaced by this file. The size drop against v2.2
+> also reflects the `:app` dependency trim (Material Components, AppCompat and
+> the second Compose toolchain removed).
 
 Previous artifacts:
 
 | File | Version | SHA-256 |
 |---|---|---|
+| `release/SimpleMoneyTrackerKT-v2.2.apk` | 2.2 (`versionCode` 4) | `8132c8f0a4ce76bed3327ef37cb1f4d2ea8efa6ef03e63352e70570328d974b3` |
 | `release/SimpleMoneyTrackerKT-v2.1.apk` | 2.1 (`versionCode` 3) | `e254f7bc5723e2b3a667dac4f1221bf5066efef69db50902c6e59d15f9c74efc` |
 | `release/SimpleMoneyTrackerKT-v2.0.apk` | **mislabeled — actually 1.0 (`versionCode` 1)** | `fd7080e690a9b99212a85019e761d5793f0ef6226bba83bc3f16bb9e03e59b54` |
 
@@ -342,11 +380,20 @@ use `./gradlew installDebug` instead, which produces a signed debug build.
 Rebuild the release artifact with:
 
 ```
-./gradlew clean assembleRelease
-cp app/build/outputs/apk/release/app-release-unsigned.apk release/SimpleMoneyTrackerKT-v2.2.apk
+./gradlew :app:copyReleaseApk
 ```
 
-Verify the checksum after rebuilding with `shasum -a 256 release/SimpleMoneyTrackerKT-v2.2.apk`.
+`./release.sh` does the bump + build + this section's refresh in one step —
+see [Releasing a version](#releasing-a-version).
+
+or, by hand:
+
+```
+./gradlew clean assembleRelease
+cp app/build/outputs/apk/release/app-release-unsigned.apk release/SimpleMoneyTrackerKT-v2.3.apk
+```
+
+Verify the checksum after rebuilding with `shasum -a 256 release/SimpleMoneyTrackerKT-v2.3.apk`.
 
 ## Conventions
 - Kotlin code style: official

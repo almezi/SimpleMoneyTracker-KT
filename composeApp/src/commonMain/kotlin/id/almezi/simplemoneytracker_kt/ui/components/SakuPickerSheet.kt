@@ -35,6 +35,7 @@ import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuSize
 import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuSpace
 import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuTheme
 import id.almezi.simplemoneytracker_kt.ui.filterCategoryGroups
+import id.almezi.simplemoneytracker_kt.ui.matchesCategoryQuery
 
 data class SakuPickerOption(
     val id: String,
@@ -57,7 +58,18 @@ fun SakuPickerSheet(
     modifier: Modifier = Modifier,
     testTag: String = TestTags.COMPONENT_PICKER_SHEET,
     itemTag: String = testTag + "_option",
+    searchable: Boolean = false,
+    searchTag: String = TestTags.COMPONENT_FIELD_SEARCH,
+    searchEmptyTag: String = TestTags.COMPONENT_STATE_EMPTY,
 ) {
+    var query by remember { mutableStateOf("") }
+    val visibleOptions = if (searchable) {
+        options.filter { matchesCategoryQuery(it.label, query) }
+    } else {
+        options
+    }
+    val noResults = searchable && visibleOptions.isEmpty()
+
     SakuBottomSheet(onDismissRequest = onDismissRequest, modifier = modifier.testTag(testTag)) {
         Text(
             text = title,
@@ -65,20 +77,41 @@ fun SakuPickerSheet(
             color = SakuTheme.colors.text,
         )
         Spacer(modifier = Modifier.height(SakuSpace.cardInner))
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(SakuSpace.chipGap),
-        ) {
-            options.forEach { option ->
-                PickerRow(
-                    option = option,
-                    selected = option.id == selectedId,
-                    onClick = {
-                        onSelect(option.id)
-                        onDismissRequest()
-                    },
-                    testTag = itemTag + "_" + option.id,
-                )
+        if (searchable) {
+            SearchField(
+                value = query,
+                onValueChange = { query = it },
+                placeholder = SakuStrings.cari_kategori_placeholder,
+                testTag = searchTag,
+            )
+            Spacer(modifier = Modifier.height(SakuSpace.cardInner))
+        }
+        if (noResults) {
+            Text(
+                text = SakuStrings.kategori_tidak_ditemukan,
+                style = SakuTheme.text.body,
+                color = SakuTheme.colors.textMuted,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = SakuSpace.cardInner)
+                    .testTag(searchEmptyTag),
+            )
+        } else {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(SakuSpace.chipGap),
+            ) {
+                visibleOptions.forEach { option ->
+                    PickerRow(
+                        option = option,
+                        selected = option.id == selectedId,
+                        onClick = {
+                            onSelect(option.id)
+                            onDismissRequest()
+                        },
+                        testTag = itemTag + "_" + option.id,
+                    )
+                }
             }
         }
     }

@@ -2,7 +2,6 @@ package id.almezi.simplemoneytracker_kt.ui.kategori
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import id.almezi.simplemoneytracker_kt.data.Category
 import id.almezi.simplemoneytracker_kt.data.CategoryRepository
 import id.almezi.simplemoneytracker_kt.data.Clock
 import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuCategoryPalette
@@ -20,11 +19,12 @@ data class TambahKategoriUiState(
     val name: String = "",
     val colorHex: String = SakuCategoryPalette.defaultHex,
     val nameError: Boolean = false,
+    val isSaving: Boolean = false,
     val saved: Boolean = false
 ) {
     val trimmedName: String get() = name.trim()
     val nameValid: Boolean get() = isValidCategoryName(name)
-    val canSave: Boolean get() = nameValid && !nameError
+    val canSave: Boolean get() = nameValid && !nameError && !isSaving
 }
 
 class TambahKategoriViewModel(
@@ -52,34 +52,45 @@ class TambahKategoriViewModel(
             _uiState.update { it.copy(nameError = true) }
             return
         }
+        // One save in flight: a double-tap used to pass the duplicate check
+        // twice and insert the same name twice.
+        if (state.isSaving) return
+        _uiState.update { it.copy(isSaving = true) }
         viewModelScope.launch {
-            val duplicates = categoryRepository.countWithName(
-                type = state.type.storageValue,
-                name = state.trimmedName,
-                excludeId = NEW_CATEGORY_SENTINEL
-            )
-            if (duplicates > 0) {
-                _uiState.update { it.copy(nameError = true) }
-                return@launch
+            // null marks "duplicate name", not a failure — the runCatching is
+            // here so a failed write cannot take the screen down with it.
+            runCatching {
+                val duplicates = categoryRepository.countWithName(
+                    type = state.type.storageValue,
+                    name = state.trimmedName,
+                    excludeId = NEW_CATEGORY_SENTINEL
+                )
+                if (duplicates > 0) return@runCatching null
+                val id = "cus_" + state.type.storageValue.take(3) + "_" + clock.currentTimeMillis()
+                categoryRepository.create(
+                    id = id,
+                    type = state.type.storageValue,
+                    name = state.trimmedName,
+                    colorHex = state.colorHex,
+                    createdAt = clock.currentTimeMillis()
+                )
             }
-            val id = "cus_" + state.type.storageValue.take(3) + "_" + clock.currentTimeMillis()
-            categoryRepository.create(
-                id = id,
-                type = state.type.storageValue,
-                name = state.trimmedName,
-                colorHex = state.colorHex,
-                createdAt = clock.currentTimeMillis()
-            )
-            _uiState.update { it.copy(saved = true) }
+                .onSuccess { created ->
+                    if (created == null) {
+                        _uiState.update { it.copy(nameError = true, isSaving = false) }
+                    } else {
+                        _uiState.update { it.copy(saved = true) }
+                    }
+                }
+                .onFailure {
+                    _uiState.update { it.copy(isSaving = false) }
+                }
         }
     }
 
 }
 
 const val NEW_CATEGORY_SENTINEL = "__new__"
-
-fun Category.displayLabel(defaultResId: Int, fallback: String): String =
-    customName ?: fallback
 
 /**
  * Category names are 1-20 characters (`CATEGORIES.md:25`). Rename used to write

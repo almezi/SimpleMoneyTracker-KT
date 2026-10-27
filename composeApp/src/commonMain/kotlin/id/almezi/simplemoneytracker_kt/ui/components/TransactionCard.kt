@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import id.almezi.simplemoneytracker_kt.TestTags
 import id.almezi.simplemoneytracker_kt.ui.designsystem.SakuRadius
@@ -61,12 +62,14 @@ fun TransactionCard(
                         style = SakuTheme.text.bodyStrong,
                         color = SakuTheme.colors.text,
                         maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
                     )
                     Text(
                         text = typeLabel,
                         style = SakuTheme.text.typeLabel,
                         color = SakuTheme.colors.textMuted,
                         maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
                     )
                 }
                 Text(

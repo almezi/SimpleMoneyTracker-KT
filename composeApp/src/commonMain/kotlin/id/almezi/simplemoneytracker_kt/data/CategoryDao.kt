@@ -17,6 +17,10 @@ interface CategoryDao {
     @Query("SELECT * FROM categories WHERE type = :type ORDER BY isDefault DESC, id ASC")
     suspend fun getByTypeOnce(type: String): List<Category>
 
+    /** Same rows as [getByTypeOnce], observed — hidden rows included. */
+    @Query("SELECT * FROM categories WHERE type = :type ORDER BY isDefault DESC, id ASC")
+    fun getByType(type: String): Flow<List<Category>>
+
     @Query("SELECT * FROM categories WHERE type = :type AND isHidden = 0 ORDER BY isDefault DESC, id ASC")
     fun getVisibleByType(type: String): Flow<List<Category>>
 

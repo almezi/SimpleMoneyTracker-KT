@@ -1,12 +1,9 @@
 <resources>
     <!-- Dark-only: day and night share one theme. Android 15+ is edge-to-edge,
-         so the bars stay transparent and screens pad with WindowInsets. -->
-    <style name="Theme.SimpleMoneyTrackerKT" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/saku_violet</item>
-        <item name="colorPrimaryVariant">@color/saku_bg</item>
-        <item name="colorOnPrimary">@color/white</item>
-        <item name="colorSecondary">@color/saku_violet</item>
-        <item name="colorOnSecondary">@color/black</item>
+         so the bars stay transparent and screens pad with WindowInsets.
+         Framework Material parent: the Compose-only app needs no AppCompat or
+         Material Components library — only the window background and the bars. -->
+    <style name="Theme.SimpleMoneyTrackerKT" parent="android:Theme.Material.NoActionBar">
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowBackground">@color/saku_bg</item>

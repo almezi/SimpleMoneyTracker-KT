@@ -8,9 +8,7 @@ import id.almezi.simplemoneytracker_kt.data.CategoryRepository
 import id.almezi.simplemoneytracker_kt.data.Transaction
 import id.almezi.simplemoneytracker_kt.data.TransactionRepository
 import kotlinx.datetime.Instant
-import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.json.Json
 
@@ -111,24 +109,19 @@ class BackupSerializer(
             date.dayOfMonth.toString().padStart(2, '0')
     }
 
-    /** Jakarta midnight for a `yyyy-MM-dd` string. The inverse of [backupDateString]. */
-    fun parseBackupDate(text: String): Long {
-        val parts = text.split("-")
-        require(parts.size == 3) { "expected yyyy-MM-dd, got '$text'" }
-        return LocalDate(parts[0].toInt(), parts[1].toInt(), parts[2].toInt())
-            .atStartOfDayIn(JAKARTA)
-            .toEpochMilliseconds()
-    }
-
+    // A note containing a newline would split the row for every spreadsheet
+    // consumer, so newlines quote the field just like a comma or a quote does.
     private fun csvEscape(value: String): String =
-        if (value.contains(',') || value.contains('"')) {
+        if (value.any { it == ',' || it == '"' || it == '\n' || it == '\r' }) {
             "\"" + value.replace("\"", "\"\"") + "\""
         } else {
             value
         }
 
     internal companion object {
-        val JAKARTA: TimeZone = TimeZone.of("Asia/Jakarta")
+        // The one Jakarta constant for the whole app lives in SakuFormat; the
+        // backup format deliberately pins the same zone (see the class doc).
+        val JAKARTA: TimeZone = id.almezi.simplemoneytracker_kt.ui.designsystem.JAKARTA
     }
 }
 

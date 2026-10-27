@@ -38,6 +38,7 @@ class AppContainer(
     )
 
     val budgetRepository: BudgetRepository = BudgetRepository(
+        database,
         budgetDao,
         clock
     )

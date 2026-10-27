@@ -37,6 +37,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.testTag
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
@@ -153,7 +154,8 @@ fun KelolaKategoriScreen(
                         ) {
                             HelperText(
                                 text = SakuStrings.kategori_tidak_ditemukan,
-                                modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier
+                                .fillMaxWidth(),
                             )
                         }
                     }
@@ -255,13 +257,15 @@ private fun CategoryRowCard(
                     color = SakuTheme.colors.textMuted,
                 )
             }
-            Spacer(modifier = Modifier.width(SakuSpace.tight))
-            IconActionButton(
-                icon = Icons.Filled.Edit,
-                contentDescription = SakuStrings.cd_ubah_kategori,
-                onClick = onRename,
-                testTag = TestTags.KATEGORI_ROW_EDIT + "_" + row.category.id,
-            )
+            if (!row.isDefault) {
+                Spacer(modifier = Modifier.width(SakuSpace.tight))
+                IconActionButton(
+                    icon = Icons.Filled.Edit,
+                    contentDescription = SakuStrings.cd_ubah_kategori,
+                    onClick = onRename,
+                    testTag = TestTags.KATEGORI_ROW_EDIT + "_" + row.category.id,
+                )
+            }
             Spacer(modifier = Modifier.width(SakuSpace.tight))
             IconActionButton(
                 icon = if (row.isHidden) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
@@ -294,7 +298,8 @@ private fun RenameCategoryDialog(
     onDismiss: () -> Unit,
     onConfirm: (String) -> Unit
 ) {
-    var text by remember { mutableStateOf(initialName) }
+    var text by remember(initialName) { mutableStateOf(initialName) }
+    var focused by remember { mutableStateOf(false) }
     androidx.compose.material3.AlertDialog(
         onDismissRequest = onDismiss,
         // AlertDialog content lives in its own composition outside MainActivity's
@@ -324,7 +329,9 @@ private fun RenameCategoryDialog(
                             textStyle = SakuTheme.text.body.copy(color = SakuTheme.colors.text),
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                             cursorBrush = SolidColor(SakuTheme.colors.accentText),
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .onFocusChanged { focused = it.isFocused },
                             decorationBox = { inner ->
                                 Box(modifier = Modifier.fillMaxWidth()) {
                                     if (text.isEmpty()) {

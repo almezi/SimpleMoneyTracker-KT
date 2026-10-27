@@ -14,6 +14,7 @@ import id.almezi.simplemoneytracker_kt.ui.designsystem.monthOf
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -73,28 +74,47 @@ class AnggaranViewModel(
     private val _uiState = MutableStateFlow(AnggaranUiState(month = currentMonth))
     val uiState: StateFlow<AnggaranUiState> = _uiState.asStateFlow()
 
+    init {
+        viewModelScope.launch {
+            // Either side changing — a budget edited here, a transaction edited
+            // elsewhere — must move the spend numbers. Required now that tab
+            // state is restored instead of the ViewModel being recreated on
+            // every tab switch. The transactions flow only re-triggers; the
+            // spend itself still comes from the one grouped SQL query.
+            combine(
+                budgetRepository.getAllBudgets(),
+                transactionRepository.getAllTransactions(),
+            ) { budgets, _ -> budgets }.collect { budgets ->
+                recompute(_uiState.value.month, budgets)
+            }
+        }
+    }
+
     fun refresh() {
         val month = _uiState.value.month
         viewModelScope.launch {
-            // Three queries whatever the number of budgets, where this used to
-            // run two per budget row.
-            val budgets = budgetRepository.getAllBudgets().first()
-            val rows = budgetRows(
-                budgets = budgets,
-                categoriesById = categoryRepository.getAllOnce().associateBy { it.id },
-                spentByCategory = transactionRepository.expenseSpentByCategory(
-                    month.startMillis(),
-                    month.endMillisExclusive(),
-                )
+            recompute(month, budgetRepository.getAllBudgets().first())
+        }
+    }
+
+    private suspend fun recompute(month: SakuMonth, budgets: List<Budget>) {
+        val rows = budgetRows(
+            budgets = budgets,
+            categoriesById = categoryRepository.getAllOnce().associateBy { it.id },
+            spentByCategory = transactionRepository.expenseSpentByCategory(
+                month.startMillis(),
+                month.endMillisExclusive(),
             )
-            _uiState.update {
-                it.copy(
-                    month = month,
-                    rows = rows,
-                    totalLimit = rows.sumOf { row -> row.limit },
-                    totalSpent = rows.sumOf { row -> row.spent }
-                )
-            }
+        )
+        // A newer month selection superseded this recompute while it was reading.
+        if (_uiState.value.month != month) return
+        _uiState.update {
+            it.copy(
+                month = month,
+                rows = rows,
+                totalLimit = rows.sumOf { row -> row.limit },
+                totalSpent = rows.sumOf { row -> row.spent }
+            )
         }
     }
 

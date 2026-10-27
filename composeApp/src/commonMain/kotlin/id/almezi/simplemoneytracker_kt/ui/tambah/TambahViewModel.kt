@@ -11,6 +11,7 @@ import id.almezi.simplemoneytracker_kt.data.TransactionRepository
 import id.almezi.simplemoneytracker_kt.ui.designsystem.TransactionType
 import id.almezi.simplemoneytracker_kt.ui.designsystem.isAmountInRange
 import id.almezi.simplemoneytracker_kt.ui.designsystem.parseAmountDigits
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -169,8 +170,14 @@ class TambahViewModel(
         }
     }
 
+    // One live collector at a time: `updateType` swaps it, so switching type N
+    // times cannot pile up N Room observers writing the same list (and possibly
+    // landing out of order). Same pattern as `UbahTransaksiViewModel`.
+    private var categoriesJob: Job? = null
+
     private fun observeCategories(type: TransactionType) {
-        viewModelScope.launch {
+        categoriesJob?.cancel()
+        categoriesJob = viewModelScope.launch {
             repository.getVisibleCategoriesByType(type.storageValue).collect { _categories.value = it }
         }
     }

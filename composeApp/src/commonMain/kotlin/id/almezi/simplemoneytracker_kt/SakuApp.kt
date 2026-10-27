@@ -72,7 +72,16 @@ fun SakuApp(
                     currentRoute = currentTab,
                     onSelect = { route ->
                         navController.navigate(route) {
+                            // The standard bottom-nav trio: pop the current tab
+                            // (saving it), never stack a duplicate of the tab
+                            // already on top, and restore the saved tab — so
+                            // scroll position and the selected month survive a
+                            // tab switch. `restoreState` only works because the
+                            // totals ViewModels observe the database instead of
+                            // refreshing once per creation.
                             popUpTo(Screen.Tambah) { saveState = true }
+                            launchSingleTop = true
+                            restoreState = true
                         }
                     },
                     modifier = Modifier.align(Alignment.BottomCenter),
