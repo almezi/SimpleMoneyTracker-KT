@@ -52,6 +52,11 @@ All notable changes to SimpleMoneyTracker-KT are documented here.
 ## [Unreleased] — P1+P2+P3 fixes from the 2026-10-26 code review (`docs/11-code-review-2026-10-26.md`)
 
 ### Fixed
+- The Cadangan header (back button, title, info button) sat under the status
+  bar / display cutout: the screen was the only one without `safeAreaTop()`.
+  It now uses the shared `ScreenHeader` inside the same inset pattern as
+  Anggaran / Kelola kategori / Ubah, so the header sits at the identical
+  position as on the tab pages.
 - Backup export no longer writes the file on the main thread and can no longer
   crash the app: Android writes on `Dispatchers.IO`, iOS writes off-main and
   reports a failed `createFileAtPath`, and `NavGraph` wraps both exports in

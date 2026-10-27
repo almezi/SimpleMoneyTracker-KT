@@ -3,9 +3,12 @@ package id.almezi.simplemoneytracker_kt.ui.cadangan
 import id.almezi.simplemoneytracker_kt.SakuStrings
 import id.almezi.simplemoneytracker_kt.format
 import id.almezi.simplemoneytracker_kt.TestTags
+import id.almezi.simplemoneytracker_kt.ui.components.ScreenHeader
 import id.almezi.simplemoneytracker_kt.ui.components.SakuBottomSheet
 import id.almezi.simplemoneytracker_kt.ui.components.SakuToast
 import id.almezi.simplemoneytracker_kt.ui.components.SakuToastHost
+import id.almezi.simplemoneytracker_kt.ui.designsystem.safeAreaBottom
+import id.almezi.simplemoneytracker_kt.ui.designsystem.safeAreaTop
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -27,7 +30,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.filled.List
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.List as AutoMirroredList
 import androidx.compose.material.icons.filled.Close
@@ -55,7 +57,6 @@ import androidx.compose.ui.unit.sp
 
 private val ScreenBg = Color(0xFF0D0C11)
 private val CardBg = Color(0xFF15141A)
-private val TileBg = Color(0xFF1B1A22)
 private val TextPrimary = Color(0xFFF2F1F5)
 private val TextSecondary = Color(0xFF75747F)
 private val TextTertiary = Color(0xFF5E5D6A)
@@ -94,55 +95,36 @@ fun CadanganScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
+                .safeAreaTop()
+                .safeAreaBottom()
                 .padding(horizontal = 20.dp)
                 .padding(top = 12.dp, bottom = 24.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp),
         ) {
-        // 1. Top bar
-        Row(
+        // 1. Top bar — the shared header, so the back button and title sit at
+        // the same position as on Anggaran / Kelola kategori / Ubah, clear of
+        // the status bar and any display cutout.
+        ScreenHeader(
+            title = SakuStrings.cadangan_title,
+            onBack = onNavigateBack,
+            action = {
+                Box(
+                    modifier = Modifier
+                        .size(36.dp)
+                        .clickable { showDetailsState.value = true }
+                        .background(Color.Transparent, CircleShape),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Info,
+                        contentDescription = null,
+                        modifier = Modifier.size(19.dp),
+                        tint = TextTertiary,
+                    )
+                }
+            },
             modifier = Modifier.padding(bottom = 24.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(44.dp)
-                    .clickable { onNavigateBack() }
-                    .background(TileBg, RoundedCornerShape(14.dp))
-                    .border(1.dp, Hairline, RoundedCornerShape(14.dp)),
-                contentAlignment = Alignment.Center,
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = SakuStrings.action_back,
-                    modifier = Modifier.size(18.dp),
-                    tint = TextPrimary,
-                )
-            }
-            Spacer(modifier = Modifier.width(12.dp))
-            Text(
-                text = SakuStrings.cadangan_title,
-                style = TextStyle(
-                    fontSize = 21.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = TextPrimary,
-                ),
-                modifier = Modifier.weight(1f),
-            )
-            Box(
-                modifier = Modifier
-                    .size(36.dp)
-                    .clickable { showDetailsState.value = true }
-                    .background(Color.Transparent, CircleShape),
-                contentAlignment = Alignment.Center,
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Info,
-                    contentDescription = null,
-                    modifier = Modifier.size(19.dp),
-                    tint = TextTertiary,
-                )
-            }
-        }
+        )
 
         // 2. Backup status card
         Column(
