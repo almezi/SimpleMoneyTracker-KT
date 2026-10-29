@@ -21,6 +21,7 @@ A small, local-only personal money tracker built with Kotlin and Jetpack Compose
 - `iosApp/iosApp.xcodeproj` — Xcode project for the iOS app, target and scheme `Saku`
 - `iosApp/iosApp/SakuApp.swift` — Swift host that hands Compose's `UIViewController` to UIKit
 - `iosApp/build-app.sh`, `iosApp/run-app.sh` — Build the iOS app, then boot, install, launch and screenshot it
+- `iosApp/release.sh` — Build a Release `.app` (simulator / device / archive), sync the version from `app/build.gradle.kts`, drop it in `release/ios/`
 
 ## Build Commands
 - Build: `./gradlew build`
@@ -33,6 +34,7 @@ A small, local-only personal money tracker built with Kotlin and Jetpack Compose
 - Reset app data: `adb shell pm clear id.almezi.simplemoneytracker_kt`
 - Build iOS app: `./iosApp/build-app.sh`
 - Build, install and launch iOS app: `./iosApp/run-app.sh --build`
+- Build iOS release `.app`: `./iosApp/release.sh` (syncs the iOS version from Android, outputs to `release/ios/`)
 
 iOS has its own section below: [Build and Run on iOS](#build-and-run-on-ios)
 
@@ -252,7 +254,7 @@ resources were not packaged: rebuild through Xcode or `build-app.sh` and confirm
 | Bundle id | `id.almezi.saku` |
 | Deployment target | iOS 15.0 |
 | Devices | iPhone and iPad (`TARGETED_DEVICE_FAMILY = "1,2"`) |
-| Version | 1.0 (build 1) |
+| Version | 2.4 (build 6) — synced from `app/build.gradle.kts` by `iosApp/release.sh` |
 | Kotlin framework | `ComposeApp`, static, `iosArm64` + `iosSimulatorArm64` |
 | Swift host | `iosApp/iosApp/SakuApp.swift` — `AppDelegate` + `SceneDelegate` |
 | Signing | disabled in-project; see above for the device overrides |
@@ -317,10 +319,16 @@ Tokens and components live in `app/src/main/java/.../ui/designsystem/` and `ui/c
 
 - Bumps `versionCode` (+1) and `versionName` in `app/build.gradle.kts`.
 - Builds the unsigned release APK via `:app:copyReleaseApk` and drops it in
-  `release/` as `SimpleMoneyTrackerKT-v<version>.apk`.
+  `release/android/` as `SimpleMoneyTrackerKT-v<version>.apk`.
 - Refreshes the [Download APK](#download-apk) section: download link, version,
   size, SHA-256, built-on date, branch, SDKs — and moves the superseded APK
   (with its checksum) to the top of the previous-artifacts table.
+
+iOS releases run separately with `./iosApp/release.sh` (see
+[Build and Run on iOS](#build-and-run-on-ios)): it reads the same
+`versionName`/`versionCode` just bumped, writes them into `Info.plist` and
+`project.pbxproj`, and copies the signed-off `.app` to
+`release/ios/Saku-v<version>.app`.
 
 ```
 ./release.sh                 # next patch version, e.g. 2.3 -> 2.4
@@ -365,7 +373,7 @@ Previous artifacts:
 
 | File | Version | SHA-256 |
 |---|---|---|
-| `release/SimpleMoneyTrackerKT-v2.3.apk` | 2.3 (`versionCode` 5) | `27e6d5d9b101fa1efd35c3d7028c216eb9a2d0161b7350d856d502fc5d52de0a` |
+| `release/android/SimpleMoneyTrackerKt-V2.3.apk` | 2.3 (`versionCode` 5) | `27e6d5d9b101fa1efd35c3d7028c216eb9a2d0161b7350d856d502fc5d52de0a` |
 | `release/android/SimpleMoneyTrackerKT-v2.2.apk` | 2.2 (`versionCode` 4) | `8132c8f0a4ce76bed3327ef37cb1f4d2ea8efa6ef03e63352e70570328d974b3` |
 | `release/android/SimpleMoneyTrackerKT-v2.1.apk` | 2.1 (`versionCode` 3) | `e254f7bc5723e2b3a667dac4f1221bf5066efef69db50902c6e59d15f9c74efc` |
 | `release/android/SimpleMoneyTrackerKT-v2.0.apk` | **mislabeled — actually 1.0 (`versionCode` 1)** | `fd7080e690a9b99212a85019e761d5793f0ef6226bba83bc3f16bb9e03e59b54` |
@@ -391,10 +399,10 @@ or, by hand:
 
 ```
 ./gradlew clean assembleRelease
-cp app/build/outputs/apk/release/app-release-unsigned.apk release/SimpleMoneyTrackerKT-v2.4.apk
+cp app/build/outputs/apk/release/app-release-unsigned.apk release/android/SimpleMoneyTrackerKT-v2.4.apk
 ```
 
-Verify the checksum after rebuilding with `shasum -a 256 release/SimpleMoneyTrackerKT-v2.4.apk`.
+Verify the checksum after rebuilding with `shasum -a 256 release/android/SimpleMoneyTrackerKT-v2.4.apk`.
 
 ## Conventions
 - Kotlin code style: official

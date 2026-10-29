@@ -57,6 +57,7 @@ test scope. Do not duplicate their content in new places without a reason.
 ## Status
 
 Last verified against the working tree on the `feature/improve-design-2.0`
-branch (HEAD `8c7dc3a`). No CI configuration, signing configuration, or backend
-exists in the repository as of this writing; see documents 4, 5 and 7. The app
-is Android-only; document 9 is a plan for adding iOS.
+branch (HEAD `8c7dc3a`). No CI configuration or signing configuration exists in the repository as of
+this writing; see documents 4, 5 and 7. The app ships on Android and iOS from
+one `commonMain` (`docs/09` is the original plan; its checkboxes are a
+historical snapshot — see `../README.md` for current build commands).

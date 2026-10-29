@@ -3,10 +3,17 @@
 Purpose: turn Saku into a dual-platform (Android + iOS) app using Kotlin
 Multiplatform and Compose Multiplatform, and give you an executable to-do list.
 
-**Nothing in this document has been implemented yet.** This is a plan.
+**Historical document.** Written 2026-10-12 against branch
+`feature/improve-design-2.0`, HEAD `8c7dc3a`, when nothing was implemented
+yet. The migration has since shipped: `:composeApp` holds the shared
+`commonMain`/`iosMain` code, `iosApp/iosApp.xcodeproj` is the Xcode project
+(target and scheme `Saku`), the app builds for simulator and device, and
+`iosApp/release.sh` publishes `release/ios/Saku-v<version>.app` with the
+version synced from `app/build.gradle.kts`. Keep reading for design
+rationale; for current facts see `README.md` and `CHANGELOG.md`. Checkbox
+states below are as of the original writing and not maintained.
 
-Written 2026-10-12 against branch `feature/improve-design-2.0`, HEAD `8c7dc3a`.
-External versions verified against JetBrains and Google documentation on
+External versions were verified against JetBrains and Google documentation on
 2026-10-12.
 
 ---

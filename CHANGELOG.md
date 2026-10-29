@@ -2,6 +2,48 @@
 
 All notable changes to SimpleMoneyTracker-KT are documented here.
 
+## [Unreleased] — Cadangan test tags + iOS release pipeline (2026-10-29, `feature/fix-bug-29oct26`)
+
+### Fixed
+- Cadangan screen restored the six test tags the v2.3 redesign dropped,
+  re-verified against the TESTABILITY.md contract: `cadangan_screen`,
+  `cadangan_status_card`, `cadangan_import_button`, `cadangan_import_result`,
+  `cadangan_import_error`, `cadangan_warning`. All nine contracted tags render
+  again on both platforms, so the automation harness can drop its text-based
+  lookups in `cadangan.page.ts` / `cadangan.ios.page.ts`
+  (`bugs/BUG_Found_15.md`).
+- Import outcome on Cadangan has a UI surface again: a success card showing
+  added/skipped counts and an error card, driven by the `importResult` /
+  `importError` state the ViewModel already held but the screen never
+  displayed (`CadanganScreen` gained both parameters; `NavGraph` passes them).
+- `bugs/BUG_Found_03.md` closed as Fixed: the WAL silent-data-loss fix
+  (`DatabaseBuilder.kt:36`, journal mode TRUNCATE) was already in code;
+  resolution notes and verification evidence recorded in the bug file.
+
+### Added
+- `iosApp/release.sh`: one command builds a release `.app` — `simulator`
+  (default), `device`, or `archive` (`.xcarchive` for App Store export) —
+  and copies the output into `release/ios/` with a versioned bundle name
+  (`Saku-v<version>.app`).
+- iOS versioning now syncs from Android before every build: `release.sh`
+  reads `versionName`/`versionCode` from `app/build.gradle.kts` and writes
+  them to `Info.plist` (`CFBundleShortVersionString`, `CFBundleVersion`) and
+  `project.pbxproj` (`MARKETING_VERSION`, `CURRENT_PROJECT_VERSION`).
+  iOS and Android both ship 2.4 (build 6) instead of iOS sitting at a
+  hard-coded 1.0.
+- Bug reports for the 2026-10-25/28 automation sessions:
+  `bugs/BUG_Found_04.md` (rename dialog self-dismisses under WebdriverIO —
+  harness-owned), `bugs/BUG_Found_05.md` (landscape "missing" fields — closed,
+  automation-visibility artifact), `bugs/BUG_Found_06.md` (font-scale label
+  clipping — fixed), `bugs/BUG_Found_15.md` (this entry's Cadangan fix).
+
+### Changed
+- Release artifacts split by platform: historical APKs moved to
+  `release/android/`, iOS builds land in `release/ios/`. The root
+  `release.sh` and README download links now point at `release/android/`.
+- v2.4 APK published (`versionCode 6`): `release/android/SimpleMoneyTrackerKT-v2.4.apk`
+  with refreshed checksum/version metadata in the README download table.
+
 ## [Unreleased] — Release script (2026-10-27)
 
 ### Added

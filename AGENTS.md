@@ -10,23 +10,15 @@ them there, and `AGENTS.md` plus `docs/` reference them by bare name.
 `improve/` stays at root (`docs/` references `improve/...` paths). Detail
 docs live in `docs/`. Do not consolidate everything under `docs/`.
 
-## Doc layout (do not reorganize)
-
-Root contract files stay at root: `README.md`, `LICENSE`, `AGENTS.md`,
-`UI_SPEC.md`, `CATEGORIES.md`, `TESTABILITY.md`. GitHub and AI tools expect
-them there, and `AGENTS.md` plus `docs/` reference them by bare name.
-`improve/` stays at root (`docs/` references `improve/...` paths). Detail
-docs live in `docs/`. Do not consolidate everything under `docs/`.
-
 ## What this is
 A small, local-only personal money tracker, built purely as a test target for mobile automation. Not a product. Keep it small.
 
 ## Stack
-- Kotlin Multiplatform + Compose Multiplatform. The shared code lives in the
+- Android and iOS through Compose Multiplatform. The shared code lives in the
   `:composeApp` module (`commonMain`); `:app` is the Android application and
-  depends on it.
+  depends on it; `iosApp/` is the thin Swift host.
 - Room KMP or SQLDelight, `kotlinx-datetime`
-- Android first; iOS comes later
+- Android first; iOS ships from the same `commonMain` (see `docs/09-ios-migration-plan.md`)
 
 ## Architecture rules
 - MVVM: UI -> ViewModel (StateFlow) -> Repository -> DB
@@ -73,4 +65,6 @@ Adjust after the Stage 0 spike:
 ```
 ./gradlew installDebug        # install on emulator/device
 adb shell pm clear <package>  # reset app data
+./iosApp/build-app.sh         # iOS debug build (simulator)
+./iosApp/release.sh           # iOS release .app -> release/ios/Saku-v<version>.app
 ```

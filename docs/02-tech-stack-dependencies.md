@@ -29,20 +29,14 @@ Sources: `gradle/libs.versions.toml`, `app/build.gradle.kts`,
 
 ### A note on Kotlin Multiplatform
 
-`AGENTS.md` lists "Kotlin Multiplatform + Compose Multiplatform (official
-template)" as the stack, and the multiplatform playground template left
-`android.disallowKotlinSourceSets=false` in `gradle.properties`.
-
-**The codebase is currently Android-only.** The plugins applied are
-`com.android.application`, `org.jetbrains.kotlin.plugin.compose`, and
-`com.google.devtools.ksp` — there is no `kotlin-multiplatform` plugin, no
-`iosMain`/`commonMain` source set, and no `compose.ui` KMP artifacts. Sources
-live in `app/src/main/java`, the traditional Android layout. Room is the
-AndroidX Room, not Room KMP.
-
-Treat "iOS comes later" as the stated intent, and read the multiplatform
-mentions as inherited from the template. Verify against `app/build.gradle.kts`
-before planning any cross-platform work.
+**The codebase is Android + iOS through Compose Multiplatform.** The shared
+code lives in the `:composeApp` module (`commonMain`, plus `iosMain`); `:app`
+is the Android application and depends on it; `iosApp/` is the thin Swift
+host with an Xcode project (`Saku` target and scheme). The iOS targets are
+`iosArm64` and `iosSimulatorArm64` — there is no `ios_x64` target, so
+simulator builds run on Apple Silicon only. Room runs as Room KMP in
+`commonMain`. Verify against `composeApp/build.gradle.kts` and
+`app/build.gradle.kts` before planning cross-platform work.
 
 ---
 
@@ -196,8 +190,8 @@ android {
         applicationId = "id.almezi.simplemoneytracker_kt"
         minSdk = 24
         targetSdk = 37
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 6
+        versionName = "2.4"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -273,7 +267,7 @@ Adaptive icon with three layers: `ic_launcher_background.xml`,
 | SharedPreferences file | `saku_backup` (single `Long`) |
 | Export files | `saku-cadangan.csv`, `saku-cadangan.json` in `getExternalFilesDir(null)` |
 | Debug build APK | produced by `installDebug`, signed with the debug keystore |
-| Release APK | `release/SimpleMoneyTrackerKT-v1.0.apk`, 14.67 MB, **unsigned**, SHA-256 `fd7080e690a9b99212a85019e761d5793f0ef6226bba83bc3f16bb9e03e59b54`, built 2026-10-11 |
+| Release APK | `release/android/SimpleMoneyTrackerKT-v2.4.apk`, 18.84 MB, **unsigned**, SHA-256 `cd16b7134fdc4ddf86731a0a282ac2d941c8456c777a63d0071907a3ba66da0e`, built 2026-10-29 |
 
 ---
 

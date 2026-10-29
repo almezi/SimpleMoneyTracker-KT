@@ -404,7 +404,7 @@ structure without relying on screen-specific markup. The full registry is
 | Daftar | `daftar_screen`, `daftar_item`, `daftar_month_switcher`, `daftar_summary_masuk`, `daftar_summary_keluar`, `daftar_day_header`, `daftar_empty_state` |
 | Anggaran | `anggaran_row`, `anggaran_total_card`, `anggaran_form_limit`, `anggaran_form_switch` |
 | Kategori | `kategori_row_edit`, `kategori_row_hide`, `kategori_row_delete`, `kategori_form_swatch` |
-| Cadangan | `cadangan_export_csv`, `cadangan_export_json`, `cadangan_import_result`, `cadangan_import_error` |
+| Cadangan | `cadangan_screen`, `cadangan_status_card`, `cadangan_export_csv`, `cadangan_export_json`, `cadangan_import_button`, `cadangan_import_result`, `cadangan_import_error`, `cadangan_warning` |
 | Ringkasan | `ringkasan_balance_value`, `ringkasan_savings_value`, `ringkasan_breakdown_income` |
 | Shared | `component_button_primary`, `component_sheet_bottom`, `component_card_transaction`, `component_switcher_month` |
 

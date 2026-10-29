@@ -48,8 +48,8 @@ Current divergence: `main..feature/improve-design-2.0` = 29 commits,
 fast-forward of `main`.
 
 There are **no git tags** in the repository, so there is no released-version
-marker on any commit. The shipped `v1.0` exists only as the APK file in
-`release/`.
+marker on any commit. The shipped versions exist only as the APK files in
+`release/android/`.
 
 ### A branch rule from `AGENTS.md`
 
@@ -190,8 +190,8 @@ adb shell am force-stop id.almezi.simplemoneytracker_kt
 
 ```bash
 ./gradlew clean assembleRelease
-cp app/build/outputs/apk/release/app-release-unsigned.apk release/SimpleMoneyTrackerKT-v1.0.apk
-shasum -a 256 release/SimpleMoneyTrackerKT-v1.0.apk
+cp app/build/outputs/apk/release/app-release-unsigned.apk release/android/SimpleMoneyTrackerKT-v2.4.apk
+shasum -a 256 release/android/SimpleMoneyTrackerKT-v2.4.apk
 ```
 
 The APK is unsigned because `app/build.gradle.kts` declares no
@@ -256,7 +256,8 @@ SimpleMoneyTracker-KT/
 │   └── gen_launcher_icon.py          Regenerates the adaptive icon
 │
 ├── release/
-│   └── SimpleMoneyTrackerKT-v1.0.apk Unsigned release artifact
+│   ├── android/                    Unsigned release APKs (v2.0 … v2.4)
+│   └── ios/                        Release .app bundles (Saku-v2.4.app)
 │
 └── docs/                          THIS documentation set
 ```
