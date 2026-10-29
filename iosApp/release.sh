@@ -17,15 +17,44 @@ unset ANDROID_PREFS_ROOT
 
 MODE="${1:-simulator}"
 ROOT="$(cd "$(dirname "$0")" && pwd)"
+REPO="$(dirname "$ROOT")"
 PROJECT="$ROOT/iosApp.xcodeproj"
 SCHEME="Saku"
 DERIVED="$ROOT/build/DerivedData"
 ARCHIVE_PATH="$ROOT/build/Saku.xcarchive"
 EXPORT_PATH="$ROOT/build/Export"
-RELEASE_ROOT="$(dirname "$ROOT")/release/ios"
+RELEASE_ROOT="$REPO/release/ios"
+
+# Sync version from Android (app/build.gradle.kts)
+GRADLE_FILE="$REPO/app/build.gradle.kts"
+INFO_PLIST="$ROOT/iosApp/Info.plist"
+PBXPROJ="$PROJECT/project.pbxproj"
+
+VERSION_NAME="$(sed -n 's/^        versionName = "\([^"]*\)"$/\1/p' "$GRADLE_FILE")"
+VERSION_CODE="$(sed -n 's/^        versionCode = \([0-9]\{1,\}\)$/\1/p' "$GRADLE_FILE")"
+
+if [ -z "$VERSION_NAME" ] || [ -z "$VERSION_CODE" ]; then
+  echo "ERROR: Could not parse version from $GRADLE_FILE" >&2
+  exit 1
+fi
+
+echo "==> Syncing iOS version with Android: $VERSION_NAME (build $VERSION_CODE)"
+
+# Update Info.plist
+/usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $VERSION_NAME" "$INFO_PLIST"
+/usr/libexec/PlistBuddy -c "Set :CFBundleVersion $VERSION_CODE" "$INFO_PLIST"
+echo "    Updated $INFO_PLIST"
+
+# Update project.pbxproj (MARKETING_VERSION and CURRENT_PROJECT_VERSION)
+sed -i '' "s/MARKETING_VERSION = [0-9.]*/MARKETING_VERSION = $VERSION_NAME/g" "$PBXPROJ"
+sed -i '' "s/CURRENT_PROJECT_VERSION = [0-9.]*/CURRENT_PROJECT_VERSION = $VERSION_CODE/g" "$PBXPROJ"
+echo "    Updated $PBXPROJ"
 
 # Create release directory if it doesn't exist
 mkdir -p "$RELEASE_ROOT"
+
+# Versioned app bundle name
+APP_NAME="Saku-v$VERSION_NAME.app"
 
 case "$MODE" in
   simulator)
@@ -43,12 +72,12 @@ case "$MODE" in
     APP="$DERIVED/Build/Products/Release-iphonesimulator/Saku.app"
     echo "==> Built $APP"
 
-    # Copy to release directory
-    echo "==> Copying to $RELEASE_ROOT"
-    rm -rf "$RELEASE_ROOT/Saku.app"
-    cp -R "$APP" "$RELEASE_ROOT/Saku.app"
-    echo "==> Release app copied to $RELEASE_ROOT/Saku.app"
-    echo "    Install on simulator: xcrun simctl install booted '$RELEASE_ROOT/Saku.app'"
+    # Copy to release directory with versioned name
+    echo "==> Copying to $RELEASE_ROOT/$APP_NAME"
+    rm -rf "$RELEASE_ROOT/$APP_NAME"
+    cp -R "$APP" "$RELEASE_ROOT/$APP_NAME"
+    echo "==> Release app copied to $RELEASE_ROOT/$APP_NAME"
+    echo "    Install on simulator: xcrun simctl install booted '$RELEASE_ROOT/$APP_NAME'"
     ;;
 
   device)
@@ -66,12 +95,12 @@ case "$MODE" in
     APP="$DERIVED/Build/Products/Release-iphoneos/Saku.app"
     echo "==> Built $APP"
 
-    # Copy to release directory
-    echo "==> Copying to $RELEASE_ROOT"
-    rm -rf "$RELEASE_ROOT/Saku.app"
-    cp -R "$APP" "$RELEASE_ROOT/Saku.app"
-    echo "==> Release app copied to $RELEASE_ROOT/Saku.app"
-    echo "    Install on device: ios-deploy --bundle '$RELEASE_ROOT/Saku.app' (requires ios-deploy)"
+    # Copy to release directory with versioned name
+    echo "==> Copying to $RELEASE_ROOT/$APP_NAME"
+    rm -rf "$RELEASE_ROOT/$APP_NAME"
+    cp -R "$APP" "$RELEASE_ROOT/$APP_NAME"
+    echo "==> Release app copied to $RELEASE_ROOT/$APP_NAME"
+    echo "    Install on device: ios-deploy --bundle '$RELEASE_ROOT/$APP_NAME' (requires ios-deploy)"
     ;;
 
   archive)
@@ -96,16 +125,17 @@ case "$MODE" in
       exit 1
     fi
 
-    # Copy archive to release directory
-    echo "==> Copying archive to $RELEASE_ROOT"
-    rm -rf "$RELEASE_ROOT/Saku.xcarchive"
-    cp -R "$ARCHIVE_PATH" "$RELEASE_ROOT/Saku.xcarchive"
-    echo "==> Archive copied to $RELEASE_ROOT/Saku.xcarchive"
+    # Copy archive to release directory with versioned name
+    ARCHIVE_NAME="Saku-v$VERSION_NAME.xcarchive"
+    echo "==> Copying archive to $RELEASE_ROOT/$ARCHIVE_NAME"
+    rm -rf "$RELEASE_ROOT/$ARCHIVE_NAME"
+    cp -R "$ARCHIVE_PATH" "$RELEASE_ROOT/$ARCHIVE_NAME"
+    echo "==> Archive copied to $RELEASE_ROOT/$ARCHIVE_NAME"
     echo ""
     echo "To export an IPA for App Store:"
-    echo "  1. Open Xcode: open '$RELEASE_ROOT/Saku.xcarchive'"
+    echo "  1. Open Xcode: open '$RELEASE_ROOT/$ARCHIVE_NAME'"
     echo "  2. Distribute App → App Store Connect"
-    echo "  3. Or use: xcodebuild -exportArchive -archivePath '$RELEASE_ROOT/Saku.xcarchive' -exportPath '$EXPORT_PATH' -exportOptionsPlist <plist>"
+    echo "  3. Or use: xcodebuild -exportArchive -archivePath '$RELEASE_ROOT/$ARCHIVE_NAME' -exportPath '$EXPORT_PATH' -exportOptionsPlist <plist>"
     ;;
 
   *)
