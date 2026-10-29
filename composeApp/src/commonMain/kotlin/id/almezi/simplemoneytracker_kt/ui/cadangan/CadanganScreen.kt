@@ -72,6 +72,8 @@ fun CadanganScreen(
     accountCount: Int,
     categoryCount: Int,
     lastBackupDate: String?,
+    importResult: ImportResult?,
+    importError: Boolean,
     toast: String?,
     onToastDismiss: () -> Unit,
     onNavigateBack: () -> Unit,
@@ -89,7 +91,8 @@ fun CadanganScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(ScreenBg),
+            .background(ScreenBg)
+            .testTag(TestTags.CADANGAN_SCREEN),
     ) {
         Column(
             modifier = Modifier
@@ -132,7 +135,8 @@ fun CadanganScreen(
                 .clip(RoundedCornerShape(20.dp))
                 .background(CardBg)
                 .border(1.dp, Hairline, RoundedCornerShape(20.dp))
-                .padding(16.dp),
+                .padding(16.dp)
+                .testTag(TestTags.CADANGAN_STATUS_CARD),
         ) {
             Row(verticalAlignment = Alignment.Top) {
                 Box(
@@ -245,7 +249,8 @@ fun CadanganScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 24.dp)
-                .clickable { onImportBackup() },
+                .clickable { onImportBackup() }
+                .testTag(TestTags.CADANGAN_IMPORT_BUTTON),
             color = Accent,
             contentColor = Color.White,
             shape = RoundedCornerShape(16.dp),
@@ -274,12 +279,50 @@ fun CadanganScreen(
             }
         }
 
-        // 5. Safety strip
+        // 5. Import result or error (if any)
+        if (importResult != null) {
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp)
+                    .testTag(TestTags.CADANGAN_IMPORT_RESULT),
+                color = Color(0xFF1A2E1F),
+                contentColor = Success,
+                shape = RoundedCornerShape(12.dp),
+            ) {
+                Text(
+                    text = SakuStrings.cadangan_import_result.format(importResult.added, importResult.skipped),
+                    modifier = Modifier.padding(12.dp),
+                    style = TextStyle(fontSize = 13.sp),
+                )
+            }
+        }
+
+        if (importError) {
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp)
+                    .testTag(TestTags.CADANGAN_IMPORT_ERROR),
+                color = Color(0xFF2E1A1A),
+                contentColor = Color(0xFFE05252),
+                shape = RoundedCornerShape(12.dp),
+            ) {
+                Text(
+                    text = SakuStrings.cadangan_import_error,
+                    modifier = Modifier.padding(12.dp),
+                    style = TextStyle(fontSize = 13.sp),
+                )
+            }
+        }
+
+        // 6. Safety strip
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 4.dp, vertical = 12.dp)
-                .clickable { showDetailsState.value = true },
+                .clickable { showDetailsState.value = true }
+                .testTag(TestTags.CADANGAN_WARNING),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(

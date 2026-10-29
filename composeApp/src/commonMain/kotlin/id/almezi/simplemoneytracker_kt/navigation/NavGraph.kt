@@ -219,6 +219,8 @@ fun NavGraph(
                 accountCount = uiState.accountCount,
                 categoryCount = uiState.categoryCount,
                 lastBackupDate = lastBackupDate,
+                importResult = uiState.importResult,
+                importError = uiState.importError,
                 toast = uiState.toast,
                 onToastDismiss = viewModel::clearToast,
                 onNavigateBack = { navController.popBackStack() },
