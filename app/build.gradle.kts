@@ -11,8 +11,8 @@ android {
         applicationId = "id.almezi.simplemoneytracker_kt"
         minSdk = 24
         targetSdk = 37
-        versionCode = 5
-        versionName = "2.3"
+        versionCode = 6
+        versionName = "2.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -38,7 +38,7 @@ android {
     }
 }
 
-val currentVersionName = android.defaultConfig.versionName ?: "2.3"
+val currentVersionName = android.defaultConfig.versionName ?: "2.4"
 
 // Matches the flow documented in README.md: an assembleRelease artifact
 // (unsigned), named for the release directory. This task used to copy the

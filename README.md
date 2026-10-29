@@ -342,17 +342,17 @@ Notes:
 
 ## Download APK
 
-[Download SimpleMoneyTrackerKT-v2.3.apk](release/SimpleMoneyTrackerKT-v2.3.apk)
+[Download SimpleMoneyTrackerKT-v2.4.apk](release/android/SimpleMoneyTrackerKT-v2.4.apk)
 
 | | |
 |---|---|
-| Version | 2.3 (`versionCode` 5) |
+| Version | 2.4 (`versionCode` 6) |
 | Build type | Release, unsigned |
 | Min / target SDK | 24 / 37 |
-| Size | 17.97 MiB (18.84 MB) |
-| SHA-256 | `27e6d5d9b101fa1efd35c3d7028c216eb9a2d0161b7350d856d502fc5d52de0a` |
-| Built on | 2026-10-27 |
-| Branch | `feature/fix-bug-detected-by-automation-261026` |
+| Size | 17.96 MiB (18.84 MB) |
+| SHA-256 | `cd16b7134fdc4ddf86731a0a282ac2d941c8456c777a63d0071907a3ba66da0e` |
+| Built on | 2026-10-29 |
+| Branch | `feature/fix-bug-29oct26` |
 
 > Built by the corrected `:app:copyReleaseApk` task, which now copies
 > `assembleRelease` output instead of the debug APK it used to copy. The
@@ -365,9 +365,10 @@ Previous artifacts:
 
 | File | Version | SHA-256 |
 |---|---|---|
-| `release/SimpleMoneyTrackerKT-v2.2.apk` | 2.2 (`versionCode` 4) | `8132c8f0a4ce76bed3327ef37cb1f4d2ea8efa6ef03e63352e70570328d974b3` |
-| `release/SimpleMoneyTrackerKT-v2.1.apk` | 2.1 (`versionCode` 3) | `e254f7bc5723e2b3a667dac4f1221bf5066efef69db50902c6e59d15f9c74efc` |
-| `release/SimpleMoneyTrackerKT-v2.0.apk` | **mislabeled — actually 1.0 (`versionCode` 1)** | `fd7080e690a9b99212a85019e761d5793f0ef6226bba83bc3f16bb9e03e59b54` |
+| `release/SimpleMoneyTrackerKT-v2.3.apk` | 2.3 (`versionCode` 5) | `27e6d5d9b101fa1efd35c3d7028c216eb9a2d0161b7350d856d502fc5d52de0a` |
+| `release/android/SimpleMoneyTrackerKT-v2.2.apk` | 2.2 (`versionCode` 4) | `8132c8f0a4ce76bed3327ef37cb1f4d2ea8efa6ef03e63352e70570328d974b3` |
+| `release/android/SimpleMoneyTrackerKT-v2.1.apk` | 2.1 (`versionCode` 3) | `e254f7bc5723e2b3a667dac4f1221bf5066efef69db50902c6e59d15f9c74efc` |
+| `release/android/SimpleMoneyTrackerKT-v2.0.apk` | **mislabeled — actually 1.0 (`versionCode` 1)** | `fd7080e690a9b99212a85019e761d5793f0ef6226bba83bc3f16bb9e03e59b54` |
 
 > The `-v2.0.apk` file was renamed from the v1.0 artifact without rebuilding; its
 > embedded manifest still reports `versionName 1.0` / `versionCode 1`. It is kept
@@ -390,10 +391,10 @@ or, by hand:
 
 ```
 ./gradlew clean assembleRelease
-cp app/build/outputs/apk/release/app-release-unsigned.apk release/SimpleMoneyTrackerKT-v2.3.apk
+cp app/build/outputs/apk/release/app-release-unsigned.apk release/SimpleMoneyTrackerKT-v2.4.apk
 ```
 
-Verify the checksum after rebuilding with `shasum -a 256 release/SimpleMoneyTrackerKT-v2.3.apk`.
+Verify the checksum after rebuilding with `shasum -a 256 release/SimpleMoneyTrackerKT-v2.4.apk`.
 
 ## Conventions
 - Kotlin code style: official

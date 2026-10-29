@@ -131,7 +131,7 @@ All notable changes to SimpleMoneyTracker-KT are documented here.
 
 ### Added
 - `Modifier.automationTestTags()` expect/actual extension that re-arms `testTagsAsResourceId` on Android for compositions rooted outside `MainActivity` (bottom sheets, dialogs); no-op on iOS.
-- `release/SimpleMoneyTrackerKT-v2.2.apk` release artifact.
+- `release/android/SimpleMoneyTrackerKT-v2.2.apk` release artifact.
 
 ### Fixed
 - Test tags were missing from the accessibility hierarchy in separate window compositions, so automation could not resolve buttons in `SakuBottomSheet`, `SakuDatePicker`, and the category rename `AlertDialog`. Re-armed the flag at each root.

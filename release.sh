@@ -34,7 +34,7 @@ cd "$REPO"
 
 GRADLE_FILE="app/build.gradle.kts"
 README_FILE="README.md"
-RELEASE_DIR="release"
+RELEASE_DIR="release/android"
 
 ASSUME_YES=0
 NO_BUILD=0
@@ -264,10 +264,10 @@ sub(r"\| Min / target SDK \| \d+ / \d+ \|",
 # so the new row goes directly under the header). Skipped on a docs-only
 # re-run where published == new, and when the row is already recorded.
 if published_name != new_name:
-    row = (f"| `release/{published_file}` | {published_name} "
+    row = (f"| `release/android/{published_file}` | {published_name} "
            f"(`versionCode` {published_code}) | `{published_sha}` |\n")
     header = "| File | Version | SHA-256 |\n|---|---|---|\n"
-    if f"release/{published_file}`" in text:
+    if f"release/android/{published_file}`" in text:
         pass
     elif header in text:
         text = text.replace(header, header + row, 1)
