@@ -2,7 +2,7 @@
 
 ## Status
 
-- **State:** Open
+- **State:** Fixed
 - **Summary:** The Tambah category sheet renders the health-medication category as **"Obat-obatan"**,
   while TESTABILITY.md:302 and `src/config/category-labels.ts:43` both contract **"Obat-obat"** —
   so `exp_health_medicine` is a latent failure in the text-lookup path (`BUG_Found-07`'s
@@ -95,3 +95,32 @@ P2 — fix in the next contract pass; it blocks nothing currently executed.
   to `byTag()` and this whole class of drift disappears (see the header comment of
   `src/config/category-labels.ts`).
 - Related: `BUG_Found_16.md`.
+
+## Resolution — FIXED 2026-10-29 (branch `feature/fix-bug-29oct26`)
+
+The app was right and the contract was wrong. Both string resources
+(`app/src/main/res/values/strings.xml:191`,
+`composeApp/shared-strings/strings.xml:217`) define
+`cat_exp_health_medicine` as **"Obat-obatan"**, and `git log -S` shows no
+revision ever shipped "Obat-obat" — the CATEGORIES.md table carried the
+truncated label from the day it was written. The sheet renders
+`SakuStrings.cat_exp_health_medicine` via `CategorySeed.kt` →
+`CategoryUiMapper.kt:30`, so v2.3's "Obat-obatan" is the intended string.
+
+Fix: one character in `CATEGORIES.md:58` — `Obat-obat` → `Obat-obatan`.
+No code changed.
+
+The requested full re-verification sweep was done statically instead of a
+live sheet dump: every label in CATEGORIES.md (27 expense + 9 income) was
+compared against both string resources. Result: this was the only drift; the
+earlier `&amp;`-vs-`&` differences are XML escaping, resolved to `&` at
+runtime. After the edit the sweep reports zero drift.
+
+Not fixable from this branch (harness lives on `feature/implement-ios-automation`
+/ the automation repo, not this tree): the same one-character correction still
+needs to reach `TESTABILITY.md:302` and `src/config/category-labels.ts:43`
+there. On this branch TESTABILITY.md carries no label table — §"Categories are
+referenced by ID from CATEGORIES.md" (line 225) — so CATEGORIES.md was the
+only in-repo file to correct. Deeper root cause remains `BUG_Found_07`
+(missing `tambah_category_item_<categoryId>` tags forcing text-locator
+fragility); once tags exist, label drift stops being a locator concern.
