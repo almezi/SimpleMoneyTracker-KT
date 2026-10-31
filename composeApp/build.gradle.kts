@@ -39,7 +39,7 @@ plugins {
 kotlin {
     // Per the official JetBrains convention for an existing Android app:
     // https://kotlinlang.org/docs/multiplatform/multiplatform-integrate-in-existing-app.html
-    androidLibrary {
+    android {
         namespace = "id.almezi.simplemoneytracker_kt.shared"
         compileSdk = 37
 
@@ -76,14 +76,16 @@ kotlin {
 
             implementation(libs.kotlinx.datetime)
 
-            // Compose DSL accessors only. Never pin
-            // org.jetbrains.compose.material3 — it has no stable release past
-            // 1.9.0; the Compose Gradle plugin resolves it internally.
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material3)
-            implementation(compose.materialIconsExtended)
-            implementation(compose.ui)
+            // Compose Multiplatform 1.12.1 — specify dependencies directly
+            // (the compose.runtime / compose.foundation / etc. accessors are
+            // deprecated). Versions match what the CMP 1.12.1 plugin resolves:
+            // runtime/foundation/ui at 1.12.1, material3 at 1.9.0,
+            // material-icons-extended at 1.7.3.
+            implementation("org.jetbrains.compose.runtime:runtime:1.12.1")
+            implementation("org.jetbrains.compose.foundation:foundation:1.12.1")
+            implementation("org.jetbrains.compose.material3:material3:1.9.0")
+            implementation("org.jetbrains.compose.material:material-icons-extended:1.7.3")
+            implementation("org.jetbrains.compose.ui:ui:1.12.1")
             // Only iosMain reads Res.font.* — Android loads the same TTFs from
             // its own src/androidMain/res/font. Compose Multiplatform does not
             // generate working accessors for the Android target, so Android must
